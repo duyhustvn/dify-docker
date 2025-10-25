@@ -111,6 +111,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-difyai123456}
       POSTGRES_DB: ${POSTGRES_DB:-dify}
       PGDATA: ${PGDATA:-/var/lib/postgresql/data/pgdata}
+      POSTGRESQL_SHARED_PRELOAD_LIBRARIES: pg_stat_statements,pgaudit
     ports:
       - 5432:5432
     command: >

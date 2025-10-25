@@ -406,7 +406,7 @@ services:
       ENABLE_WEBSITE_WATERCRAWL: ${ENABLE_WEBSITE_WATERCRAWL:-true}
   # The postgres database.
   db:
-    image: postgres:16-alpine
+    image: postgres:16
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -519,6 +519,7 @@ services:
       SENTRY_DSN: ${PLUGIN_SENTRY_DSN:-}
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
+      - "5002:5002"
     volumes:
       - ./volumes/plugin_daemon:/app/storage
     depends_on:

@@ -542,8 +542,6 @@ services:
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
       - "5002:5002"
-    volumes:
-      - ./volumes/plugin_daemon:/app/storage
     depends_on:
       db:
         condition: service_healthy

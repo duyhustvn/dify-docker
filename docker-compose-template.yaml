@@ -2,7 +2,7 @@ x-shared-env: &shared-api-worker-env
 services:
   # API service
   api:
-    image: langgenius/dify-api:1.6.0
+    image: langgenius/dify-api:1.8.1
     restart: always
     container_name: dify-api
     environment:
@@ -32,7 +32,7 @@ services:
   # worker service
   # The Celery worker for processing the queue.
   worker:
-    image: langgenius/dify-api:1.6.0
+    image: langgenius/dify-api:1.8.1
     container_name: dify-worker
     restart: always
     environment:
@@ -60,7 +60,7 @@ services:
   # worker_beat service
   # Celery beat for scheduling periodic tasks.
   worker_beat:
-    image: langgenius/dify-api:1.6.0
+    image: langgenius/dify-api:1.8.1
     container_name: dify-beat
     restart: always
     environment:
@@ -79,7 +79,7 @@ services:
 
   # Frontend web application.
   web:
-    image: langgenius/dify-web:1.6.0 
+    image: langgenius/dify-web:1.8.1 
     container_name: dify-web
     restart: always
     environment:
@@ -190,8 +190,8 @@ services:
 
   # plugin daemon
   plugin_daemon:
-    # image: langgenius/dify-plugin-daemon:0.3.0-local
-    image: dify-plugin-daemon:0.3.0-local
+    image: langgenius/dify-plugin-daemon:0.3.0-local
+    # image: dify-plugin-daemon:0.3.0-local
     container_name: dify-plugin-daemon
     restart: always
     environment:

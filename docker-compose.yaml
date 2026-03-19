@@ -264,13 +264,18 @@ x-shared-env: &shared-api-worker-env
   PLUGIN_PYTHON_ENV_INIT_TIMEOUT: ${PLUGIN_PYTHON_ENV_INIT_TIMEOUT:-120}
   PLUGIN_MAX_EXECUTION_TIMEOUT: ${PLUGIN_MAX_EXECUTION_TIMEOUT:-600}
   PIP_MIRROR_URL: ${PIP_MIRROR_URL:-}
-  PLUGIN_STORAGE_TYPE: ${PLUGIN_STORAGE_TYPE:-local}
-  PLUGIN_STORAGE_LOCAL_ROOT: ${PLUGIN_STORAGE_LOCAL_ROOT:-/app/storage}
-  PLUGIN_WORKING_PATH: ${PLUGIN_WORKING_PATH:-/app/storage/cwd}
+  PLUGIN_STORAGE_TYPE: ${PLUGIN_STORAGE_TYPE:-aws_s3}
+  PLUGIN_S3_USE_AWS: ${PLUGIN_S3_USE_AWS:-false}
+  PLUGIN_S3_USE_AWS_MANAGED_IAM: ${PLUGIN_S3_USE_AWS_MANAGED_IAM:-false}
+  PLUGIN_S3_ENDPOINT: ${PLUGIN_S3_ENDPOINT:-http://minio:9000}
+  PLUGIN_S3_USE_PATH_STYLE: ${PLUGIN_S3_USE_PATH_STYLE:-true}
+  PLUGIN_AWS_ACCESS_KEY: ${PLUGIN_AWS_ACCESS_KEY:-admin}
+  PLUGIN_AWS_SECRET_KEY: ${PLUGIN_AWS_SECRET_KEY:-changeme}
+  PLUGIN_AWS_REGION: ${PLUGIN_AWS_REGION:-us-east-1}
+  PLUGIN_STORAGE_OSS_BUCKET: ${PLUGIN_STORAGE_OSS_BUCKET:-dify-plugin}
   PLUGIN_INSTALLED_PATH: ${PLUGIN_INSTALLED_PATH:-plugin}
   PLUGIN_PACKAGE_CACHE_PATH: ${PLUGIN_PACKAGE_CACHE_PATH:-plugin_packages}
   PLUGIN_MEDIA_CACHE_PATH: ${PLUGIN_MEDIA_CACHE_PATH:-assets}
-  PLUGIN_STORAGE_OSS_BUCKET: ${PLUGIN_STORAGE_OSS_BUCKET:-}
   ENABLE_OTEL: ${ENABLE_OTEL:-false}
   OTLP_TRACE_ENDPOINT: ${OTLP_TRACE_ENDPOINT:-}
   OTLP_METRIC_ENDPOINT: ${OTLP_METRIC_ENDPOINT:-}
@@ -305,6 +310,7 @@ services:
   # API service
   api:
     image: langgenius/dify-api:1.13.2
+    container_name: dify-api
     restart: always
     environment:
       # Use the shared environment variables.
@@ -334,6 +340,7 @@ services:
   # The Celery worker for processing the queue.
   worker:
     image: langgenius/dify-api:1.13.2
+    container_name: dify-worker
     restart: always
     environment:
       # Use the shared environment variables.
@@ -361,6 +368,7 @@ services:
   # Celery beat for scheduling periodic tasks.
   worker_beat:
     image: langgenius/dify-api:1.13.2
+    container_name: dify-worker-beat
     restart: always
     environment:
       # Use the shared environment variables.
@@ -379,6 +387,7 @@ services:
   # Frontend web application.
   web:
     image: langgenius/dify-web:1.13.2
+    container_name: dify-web
     restart: always
     environment:
       NEXT_PUBLIC_BASE_PATH: /chat-bot
@@ -443,6 +452,7 @@ services:
   # The redis cache.
   redis:
     image: redis:8
+    container_name: redis
     restart: always
     environment:
       REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
@@ -463,6 +473,7 @@ services:
   # The DifySandbox
   sandbox:
     image: langgenius/dify-sandbox:0.2.12
+    container_name: dify-sandbox
     restart: always
     environment:
       # The DifySandbox configurations
@@ -487,6 +498,7 @@ services:
   # plugin daemon
   plugin_daemon:
     image: langgenius/dify-plugin-daemon:0.5.4-local
+    container_name: dify-plugin-daemon
     restart: always
     environment:
       # Use the shared environment variables.
@@ -508,20 +520,27 @@ services:
       PLUGIN_STDIO_BUFFER_SIZE: ${PLUGIN_STDIO_BUFFER_SIZE:-1024}
       PLUGIN_STDIO_MAX_BUFFER_SIZE: ${PLUGIN_STDIO_MAX_BUFFER_SIZE:-5242880}
       PIP_MIRROR_URL: ${PIP_MIRROR_URL:-}
-      PLUGIN_STORAGE_TYPE: ${PLUGIN_STORAGE_TYPE:-local}
-      PLUGIN_STORAGE_LOCAL_ROOT: ${PLUGIN_STORAGE_LOCAL_ROOT:-/app/storage}
+
+      # Using minio to store plugin
+      PLUGIN_STORAGE_TYPE: ${PLUGIN_STORAGE_TYPE:-aws_s3}
+      S3_USE_AWS_MANAGED_IAM: ${PLUGIN_S3_USE_AWS_MANAGED_IAM:-false}
+      S3_USE_AWS: ${PLUGIN_S3_USE_AWS:-false}
+      S3_ENDPOINT: ${PLUGIN_S3_ENDPOINT:-http://minio:9000}
+      S3_USE_PATH_STYLE: ${PLUGIN_S3_USE_PATH_STYLE:-true}
+      AWS_ACCESS_KEY: ${PLUGIN_AWS_ACCESS_KEY:-admin}
+      AWS_SECRET_KEY: ${PLUGIN_AWS_SECRET_KEY:-changeme}
+      AWS_REGION: ${PLUGIN_AWS_REGION:-us-east-1}
+      # Plugin oss bucket
+      PLUGIN_STORAGE_OSS_BUCKET: ${PLUGIN_STORAGE_OSS_BUCKET:-dify-plugin}
       PLUGIN_INSTALLED_PATH: ${PLUGIN_INSTALLED_PATH:-plugin}
       PLUGIN_PACKAGE_CACHE_PATH: ${PLUGIN_PACKAGE_CACHE_PATH:-plugin_packages}
       PLUGIN_MEDIA_CACHE_PATH: ${PLUGIN_MEDIA_CACHE_PATH:-assets}
-      PLUGIN_STORAGE_OSS_BUCKET: ${PLUGIN_STORAGE_OSS_BUCKET:-}
 
       SENTRY_ENABLED: ${PLUGIN_SENTRY_ENABLED:-false}
       SENTRY_DSN: ${PLUGIN_SENTRY_DSN:-}
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
       - "5002:5002"
-    volumes:
-      - ./volumes/plugin_daemon:/app/storage
     depends_on:
       db:
         condition: service_healthy
@@ -531,6 +550,7 @@ services:
   # https://docs.dify.ai/learn-more/faq/install-faq#18-why-is-ssrf-proxy-needed%3F
   ssrf_proxy:
     image: ubuntu/squid:latest
+    container_name: ssrf-proxy
     restart: always
     volumes:
       - ./ssrf_proxy/squid.conf.template:/etc/squid/squid.conf.template
@@ -556,6 +576,7 @@ services:
   # used for reverse proxying the API service and Web service.
   nginx:
     image: nginx:latest
+    container_name: nginx
     restart: always
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
@@ -595,6 +616,7 @@ services:
   # The Weaviate vector store.
   weaviate:
     image: semitechnologies/weaviate:1.30.0
+    container_name: weaviate
     profiles:
       - ""
       - weaviate
@@ -620,8 +642,8 @@ services:
       AUTHORIZATION_ADMINLIST_USERS: ${WEAVIATE_AUTHORIZATION_ADMINLIST_USERS:-hello@dify.ai}
 
   minio:
-    container_name: minio
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    container_name: minio
     ports:
       - 9000:9000 # MinIO API port
       - 9001:9001 # MinIO Console port

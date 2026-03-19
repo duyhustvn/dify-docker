@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict GgX5GPiWh4jojrbhpp6iPsHpbHYeqXHYaNVuYP1Wc8HmK7AsjisHhgLeBYbu46E
+\restrict HaIKOtymJGo4cYFkmbQLU7iTGbH5JdUCe58pfiduCvneMEwfcdflMqfhKaRGuNS
 
--- Dumped from database version 16.10 (Debian 16.10-1.pgdg13+1)
--- Dumped by pg_dump version 16.10 (Debian 16.10-1.pgdg13+1)
+-- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
+-- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -18,20 +18,6 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
---
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
-
-
---
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
-
-
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -41,7 +27,7 @@ SET default_table_access_method = heap;
 --
 
 CREATE TABLE public.agent_strategy_installations (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     tenant_id uuid NOT NULL,
@@ -58,7 +44,7 @@ ALTER TABLE public.agent_strategy_installations OWNER TO postgres;
 --
 
 CREATE TABLE public.ai_model_installations (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     provider character varying(127) NOT NULL,
@@ -75,7 +61,7 @@ ALTER TABLE public.ai_model_installations OWNER TO postgres;
 --
 
 CREATE TABLE public.datasource_installations (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     tenant_id uuid NOT NULL,
@@ -92,7 +78,7 @@ ALTER TABLE public.datasource_installations OWNER TO postgres;
 --
 
 CREATE TABLE public.endpoints (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     name character varying(127) DEFAULT 'default'::character varying,
@@ -113,10 +99,10 @@ ALTER TABLE public.endpoints OWNER TO postgres;
 --
 
 CREATE TABLE public.install_tasks (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    status text NOT NULL,
+    status character varying(50) NOT NULL,
     tenant_id uuid NOT NULL,
     total_plugins bigint NOT NULL,
     completed_plugins bigint NOT NULL,
@@ -131,7 +117,7 @@ ALTER TABLE public.install_tasks OWNER TO postgres;
 --
 
 CREATE TABLE public.plugin_declarations (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     plugin_unique_identifier character varying(255),
@@ -147,7 +133,7 @@ ALTER TABLE public.plugin_declarations OWNER TO postgres;
 --
 
 CREATE TABLE public.plugin_installations (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     tenant_id uuid,
@@ -164,11 +150,27 @@ CREATE TABLE public.plugin_installations (
 ALTER TABLE public.plugin_installations OWNER TO postgres;
 
 --
+-- Name: plugin_readme_records; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.plugin_readme_records (
+    id uuid NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    plugin_unique_identifier character varying(255) NOT NULL,
+    language character varying(10) NOT NULL,
+    content text NOT NULL
+);
+
+
+ALTER TABLE public.plugin_readme_records OWNER TO postgres;
+
+--
 -- Name: plugins; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.plugins (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     plugin_unique_identifier character varying(255),
@@ -188,7 +190,7 @@ ALTER TABLE public.plugins OWNER TO postgres;
 --
 
 CREATE TABLE public.serverless_runtimes (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     plugin_unique_identifier character varying(255),
@@ -206,7 +208,7 @@ ALTER TABLE public.serverless_runtimes OWNER TO postgres;
 --
 
 CREATE TABLE public.tenant_storages (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     tenant_id character varying(255) NOT NULL,
@@ -222,7 +224,7 @@ ALTER TABLE public.tenant_storages OWNER TO postgres;
 --
 
 CREATE TABLE public.tool_installations (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
     tenant_id uuid NOT NULL,
@@ -233,6 +235,23 @@ CREATE TABLE public.tool_installations (
 
 
 ALTER TABLE public.tool_installations OWNER TO postgres;
+
+--
+-- Name: trigger_installations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trigger_installations (
+    id uuid NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    tenant_id uuid NOT NULL,
+    provider character varying(127) NOT NULL,
+    plugin_unique_identifier character varying(255),
+    plugin_id character varying(255)
+);
+
+
+ALTER TABLE public.trigger_installations OWNER TO postgres;
 
 --
 -- Data for Name: agent_strategy_installations; Type: TABLE DATA; Schema: public; Owner: postgres
@@ -291,6 +310,14 @@ COPY public.plugin_installations (id, created_at, updated_at, tenant_id, plugin_
 
 
 --
+-- Data for Name: plugin_readme_records; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.plugin_readme_records (id, created_at, updated_at, plugin_unique_identifier, language, content) FROM stdin;
+\.
+
+
+--
 -- Data for Name: plugins; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -319,6 +346,14 @@ COPY public.tenant_storages (id, created_at, updated_at, tenant_id, plugin_id, s
 --
 
 COPY public.tool_installations (id, created_at, updated_at, tenant_id, provider, plugin_unique_identifier, plugin_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: trigger_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trigger_installations (id, created_at, updated_at, tenant_id, provider, plugin_unique_identifier, plugin_id) FROM stdin;
 \.
 
 
@@ -379,6 +414,14 @@ ALTER TABLE ONLY public.plugin_installations
 
 
 --
+-- Name: plugin_readme_records plugin_readme_records_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.plugin_readme_records
+    ADD CONSTRAINT plugin_readme_records_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: plugins plugins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -408,6 +451,14 @@ ALTER TABLE ONLY public.tenant_storages
 
 ALTER TABLE ONLY public.tool_installations
     ADD CONSTRAINT tool_installations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trigger_installations trigger_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_installations
+    ADD CONSTRAINT trigger_installations_pkey PRIMARY KEY (id);
 
 
 --
@@ -540,6 +591,13 @@ CREATE INDEX idx_endpoints_user_id ON public.endpoints USING btree (user_id);
 
 
 --
+-- Name: idx_install_tasks_status; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_install_tasks_status ON public.install_tasks USING btree (status);
+
+
+--
 -- Name: idx_plugin_declarations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -568,6 +626,20 @@ CREATE INDEX idx_plugin_installations_tenant_id ON public.plugin_installations U
 
 
 --
+-- Name: idx_plugin_readme_records_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_plugin_readme_records_plugin_unique_identifier ON public.plugin_readme_records USING btree (plugin_unique_identifier);
+
+
+--
+-- Name: idx_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_plugin_unique_identifier ON public.plugins USING btree (plugin_unique_identifier);
+
+
+--
 -- Name: idx_plugins_install_type; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -582,17 +654,17 @@ CREATE INDEX idx_plugins_plugin_id ON public.plugins USING btree (plugin_id);
 
 
 --
--- Name: idx_plugins_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX idx_plugins_plugin_unique_identifier ON public.plugins USING btree (plugin_unique_identifier);
-
-
---
 -- Name: idx_serverless_runtimes_checksum; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX idx_serverless_runtimes_checksum ON public.serverless_runtimes USING btree (checksum);
+
+
+--
+-- Name: idx_tenant_plugin; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_tenant_plugin ON public.plugin_installations USING btree (tenant_id, plugin_id);
 
 
 --
@@ -638,8 +710,36 @@ CREATE INDEX idx_tool_installations_tenant_id ON public.tool_installations USING
 
 
 --
+-- Name: idx_trigger_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_trigger_installations_plugin_id ON public.trigger_installations USING btree (plugin_id);
+
+
+--
+-- Name: idx_trigger_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_trigger_installations_plugin_unique_identifier ON public.trigger_installations USING btree (plugin_unique_identifier);
+
+
+--
+-- Name: idx_trigger_installations_provider; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_trigger_installations_provider ON public.trigger_installations USING btree (provider);
+
+
+--
+-- Name: idx_trigger_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_trigger_installations_tenant_id ON public.trigger_installations USING btree (tenant_id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict GgX5GPiWh4jojrbhpp6iPsHpbHYeqXHYaNVuYP1Wc8HmK7AsjisHhgLeBYbu46E
+\unrestrict HaIKOtymJGo4cYFkmbQLU7iTGbH5JdUCe58pfiduCvneMEwfcdflMqfhKaRGuNS
 

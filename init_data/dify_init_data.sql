@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict GosiRzAaXS6mo8uIEaaM18fxO6S4HRYdo6lLh7ov3JWEUWdJpUkJUBN2zC7UlAZ
+\restrict 5zgOvXV5ENvOBBCutAbQ7UzIICAD23MwMgq5PkbdReKQWLPvlqVa3DsKiUOEkNE
 
--- Dumped from database version 16.10 (Debian 16.10-1.pgdg13+1)
--- Dumped by pg_dump version 16.10 (Debian 16.10-1.pgdg13+1)
+-- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
+-- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -30,6 +30,62 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
+--
+-- Name: uuidv7(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.uuidv7() RETURNS uuid
+    LANGUAGE sql PARALLEL SAFE
+    AS $$
+    -- Replace the first 48 bits of a uuidv4 with the current
+    -- number of milliseconds since 1970-01-01 UTC
+    -- and set the "ver" field to 7 by setting additional bits
+SELECT encode(
+               set_bit(
+                       set_bit(
+                               overlay(uuid_send(gen_random_uuid()) placing
+                                       substring(int8send((extract(epoch from clock_timestamp()) * 1000)::bigint) from
+                                                 3)
+                                       from 1 for 6),
+                               52, 1),
+                       53, 1), 'hex')::uuid;
+$$;
+
+
+ALTER FUNCTION public.uuidv7() OWNER TO postgres;
+
+--
+-- Name: FUNCTION uuidv7(); Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON FUNCTION public.uuidv7() IS 'Generate a uuid-v7 value with a 48-bit timestamp (millisecond precision) and 74 bits of randomness';
+
+
+--
+-- Name: uuidv7_boundary(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION public.uuidv7_boundary(timestamp with time zone) RETURNS uuid
+    LANGUAGE sql STABLE STRICT PARALLEL SAFE
+    AS $_$
+    /* uuid fields: version=0b0111, variant=0b10 */
+SELECT encode(
+               overlay('\x00000000000070008000000000000000'::bytea
+                       placing substring(int8send(floor(extract(epoch from $1) * 1000)::bigint) from 3)
+                       from 1 for 6),
+               'hex')::uuid;
+$_$;
+
+
+ALTER FUNCTION public.uuidv7_boundary(timestamp with time zone) OWNER TO postgres;
+
+--
+-- Name: FUNCTION uuidv7_boundary(timestamp with time zone); Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON FUNCTION public.uuidv7_boundary(timestamp with time zone) IS 'Generate a non-random uuidv7 with the given timestamp (first 48 bits) and all random bits to 0. As the smallest possible uuidv7 for that timestamp, it may be used as a boundary for partitions.';
 
 
 SET default_tablespace = '';
@@ -66,6 +122,21 @@ CREATE TABLE public.account_plugin_permissions (
 
 
 ALTER TABLE public.account_plugin_permissions OWNER TO postgres;
+
+--
+-- Name: account_trial_app_records; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.account_trial_app_records (
+    id uuid NOT NULL,
+    account_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    count integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.account_trial_app_records OWNER TO postgres;
 
 --
 -- Name: accounts; Type: TABLE; Schema: public; Owner: postgres
@@ -267,6 +338,26 @@ CREATE TABLE public.app_model_configs (
 ALTER TABLE public.app_model_configs OWNER TO postgres;
 
 --
+-- Name: app_triggers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.app_triggers (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    node_id character varying(64) NOT NULL,
+    trigger_type character varying(50) NOT NULL,
+    title character varying(255) NOT NULL,
+    provider_name character varying(255) DEFAULT ''::character varying,
+    status character varying(50) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.app_triggers OWNER TO postgres;
+
+--
 -- Name: apps; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -321,8 +412,8 @@ ALTER SEQUENCE public.task_id_sequence OWNER TO postgres;
 
 CREATE TABLE public.celery_taskmeta (
     id integer DEFAULT nextval('public.task_id_sequence'::regclass) NOT NULL,
-    task_id character varying(155),
-    status character varying(50),
+    task_id character varying(155) NOT NULL,
+    status character varying(50) NOT NULL,
     result bytea,
     date_done timestamp without time zone,
     traceback text,
@@ -357,7 +448,7 @@ ALTER SEQUENCE public.taskset_id_sequence OWNER TO postgres;
 
 CREATE TABLE public.celery_tasksetmeta (
     id integer DEFAULT nextval('public.taskset_id_sequence'::regclass) NOT NULL,
-    taskset_id character varying(155),
+    taskset_id character varying(155) NOT NULL,
     result bytea,
     date_done timestamp without time zone
 );
@@ -645,11 +736,73 @@ CREATE TABLE public.datasets (
     embedding_model_provider character varying(255) DEFAULT 'openai'::character varying,
     collection_binding_id uuid,
     retrieval_model jsonb,
-    built_in_field_enabled boolean DEFAULT false NOT NULL
+    built_in_field_enabled boolean DEFAULT false NOT NULL,
+    keyword_number integer DEFAULT 10,
+    icon_info jsonb,
+    runtime_mode character varying(255) DEFAULT 'general'::character varying,
+    pipeline_id uuid,
+    chunk_structure character varying(255),
+    enable_api boolean DEFAULT true NOT NULL,
+    is_multimodal boolean DEFAULT false NOT NULL,
+    summary_index_setting jsonb
 );
 
 
 ALTER TABLE public.datasets OWNER TO postgres;
+
+--
+-- Name: datasource_oauth_params; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.datasource_oauth_params (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    plugin_id character varying(255) NOT NULL,
+    provider character varying(255) NOT NULL,
+    system_credentials jsonb NOT NULL
+);
+
+
+ALTER TABLE public.datasource_oauth_params OWNER TO postgres;
+
+--
+-- Name: datasource_oauth_tenant_params; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.datasource_oauth_tenant_params (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    provider character varying(255) NOT NULL,
+    plugin_id character varying(255) NOT NULL,
+    client_params jsonb NOT NULL,
+    enabled boolean NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.datasource_oauth_tenant_params OWNER TO postgres;
+
+--
+-- Name: datasource_providers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.datasource_providers (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    name character varying(255) NOT NULL,
+    provider character varying(128) NOT NULL,
+    plugin_id character varying(255) NOT NULL,
+    auth_type character varying(255) NOT NULL,
+    encrypted_credentials jsonb NOT NULL,
+    avatar_url text,
+    is_default boolean DEFAULT false NOT NULL,
+    expires_at integer DEFAULT '-1'::integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.datasource_providers OWNER TO postgres;
 
 --
 -- Name: dify_setups; Type: TABLE; Schema: public; Owner: postgres
@@ -662,6 +815,50 @@ CREATE TABLE public.dify_setups (
 
 
 ALTER TABLE public.dify_setups OWNER TO postgres;
+
+--
+-- Name: document_pipeline_execution_logs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.document_pipeline_execution_logs (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    pipeline_id uuid NOT NULL,
+    document_id uuid NOT NULL,
+    datasource_type character varying(255) NOT NULL,
+    datasource_info text NOT NULL,
+    datasource_node_id character varying(255) NOT NULL,
+    input_data json NOT NULL,
+    created_by uuid,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.document_pipeline_execution_logs OWNER TO postgres;
+
+--
+-- Name: document_segment_summaries; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.document_segment_summaries (
+    id uuid NOT NULL,
+    dataset_id uuid NOT NULL,
+    document_id uuid NOT NULL,
+    chunk_id uuid NOT NULL,
+    summary_content text,
+    summary_index_node_id character varying(255),
+    summary_index_node_hash character varying(255),
+    tokens integer,
+    status character varying(32) DEFAULT 'generating'::character varying NOT NULL,
+    error text,
+    enabled boolean DEFAULT true NOT NULL,
+    disabled_at timestamp without time zone,
+    disabled_by uuid,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.document_segment_summaries OWNER TO postgres;
 
 --
 -- Name: document_segments; Type: TABLE; Schema: public; Owner: postgres
@@ -742,7 +939,8 @@ CREATE TABLE public.documents (
     doc_type character varying(40),
     doc_metadata jsonb,
     doc_form character varying(255) DEFAULT 'text_model'::character varying NOT NULL,
-    doc_language character varying(255)
+    doc_language character varying(255),
+    need_summary boolean DEFAULT false NOT NULL
 );
 
 
@@ -785,6 +983,40 @@ CREATE TABLE public.end_users (
 ALTER TABLE public.end_users OWNER TO postgres;
 
 --
+-- Name: execution_extra_contents; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.execution_extra_contents (
+    id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    type character varying(30) NOT NULL,
+    workflow_run_id uuid NOT NULL,
+    message_id uuid,
+    form_id uuid
+);
+
+
+ALTER TABLE public.execution_extra_contents OWNER TO postgres;
+
+--
+-- Name: exporle_banners; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.exporle_banners (
+    id uuid NOT NULL,
+    content json NOT NULL,
+    link character varying(255) NOT NULL,
+    sort integer NOT NULL,
+    status character varying(255) DEFAULT 'enabled'::character varying NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    language character varying(255) DEFAULT 'en-US'::character varying NOT NULL
+);
+
+
+ALTER TABLE public.exporle_banners OWNER TO postgres;
+
+--
 -- Name: external_knowledge_apis; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -812,7 +1044,7 @@ CREATE TABLE public.external_knowledge_bindings (
     tenant_id uuid NOT NULL,
     external_knowledge_api_id uuid NOT NULL,
     dataset_id uuid NOT NULL,
-    external_knowledge_id text NOT NULL,
+    external_knowledge_id character varying(512) NOT NULL,
     created_by uuid NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
     updated_by uuid,
@@ -821,6 +1053,69 @@ CREATE TABLE public.external_knowledge_bindings (
 
 
 ALTER TABLE public.external_knowledge_bindings OWNER TO postgres;
+
+--
+-- Name: human_input_form_deliveries; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.human_input_form_deliveries (
+    id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    form_id uuid NOT NULL,
+    delivery_method_type character varying(20) NOT NULL,
+    delivery_config_id uuid,
+    channel_payload text NOT NULL
+);
+
+
+ALTER TABLE public.human_input_form_deliveries OWNER TO postgres;
+
+--
+-- Name: human_input_form_recipients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.human_input_form_recipients (
+    id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    form_id uuid NOT NULL,
+    delivery_id uuid NOT NULL,
+    recipient_type character varying(20) NOT NULL,
+    recipient_payload text NOT NULL,
+    access_token character varying(32) NOT NULL
+);
+
+
+ALTER TABLE public.human_input_form_recipients OWNER TO postgres;
+
+--
+-- Name: human_input_forms; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.human_input_forms (
+    id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    workflow_run_id uuid,
+    form_kind character varying(20) NOT NULL,
+    node_id character varying(60) NOT NULL,
+    form_definition text NOT NULL,
+    rendered_content text NOT NULL,
+    status character varying(20) NOT NULL,
+    expiration_time timestamp without time zone NOT NULL,
+    selected_action_id character varying(200),
+    submitted_data text,
+    submitted_at timestamp without time zone,
+    submission_user_id uuid,
+    submission_end_user_id uuid,
+    completed_by_recipient_id uuid
+);
+
+
+ALTER TABLE public.human_input_forms OWNER TO postgres;
 
 --
 -- Name: installed_apps; Type: TABLE; Schema: public; Owner: postgres
@@ -895,7 +1190,9 @@ CREATE TABLE public.load_balancing_model_configs (
     encrypted_config text,
     enabled boolean DEFAULT true NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    credential_id uuid,
+    credential_source_type character varying(40)
 );
 
 
@@ -951,7 +1248,7 @@ CREATE TABLE public.message_annotations (
     account_id uuid NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
     updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    question text,
+    question text NOT NULL,
     hit_count integer DEFAULT 0 NOT NULL
 );
 
@@ -1050,11 +1347,30 @@ CREATE TABLE public.messages (
     error text,
     message_metadata text,
     invoke_from character varying(255),
-    parent_message_id uuid
+    parent_message_id uuid,
+    app_mode character varying(255)
 );
 
 
 ALTER TABLE public.messages OWNER TO postgres;
+
+--
+-- Name: oauth_provider_apps; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.oauth_provider_apps (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    app_icon character varying(255) NOT NULL,
+    app_label json DEFAULT '{}'::json NOT NULL,
+    client_id character varying(255) NOT NULL,
+    client_secret character varying(255) NOT NULL,
+    redirect_uris json DEFAULT '[]'::json NOT NULL,
+    scope character varying(255) DEFAULT 'read:name read:email read:avatar read:interface_language read:timezone'::character varying NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+);
+
+
+ALTER TABLE public.oauth_provider_apps OWNER TO postgres;
 
 --
 -- Name: operation_logs; Type: TABLE; Schema: public; Owner: postgres
@@ -1091,6 +1407,128 @@ CREATE TABLE public.pinned_conversations (
 ALTER TABLE public.pinned_conversations OWNER TO postgres;
 
 --
+-- Name: pipeline_built_in_templates; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pipeline_built_in_templates (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    name character varying(255) NOT NULL,
+    description text NOT NULL,
+    chunk_structure character varying(255) NOT NULL,
+    icon json NOT NULL,
+    yaml_content text NOT NULL,
+    copyright character varying(255) NOT NULL,
+    privacy_policy character varying(255) NOT NULL,
+    "position" integer NOT NULL,
+    install_count integer NOT NULL,
+    language character varying(255) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.pipeline_built_in_templates OWNER TO postgres;
+
+--
+-- Name: pipeline_customized_templates; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pipeline_customized_templates (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    name character varying(255) NOT NULL,
+    description text NOT NULL,
+    chunk_structure character varying(255) NOT NULL,
+    icon json NOT NULL,
+    "position" integer NOT NULL,
+    yaml_content text NOT NULL,
+    install_count integer NOT NULL,
+    language character varying(255) NOT NULL,
+    created_by uuid NOT NULL,
+    updated_by uuid,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.pipeline_customized_templates OWNER TO postgres;
+
+--
+-- Name: pipeline_recommended_plugins; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pipeline_recommended_plugins (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    plugin_id text NOT NULL,
+    provider_name text NOT NULL,
+    "position" integer NOT NULL,
+    active boolean NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    type character varying(50) DEFAULT 'tool'::character varying NOT NULL
+);
+
+
+ALTER TABLE public.pipeline_recommended_plugins OWNER TO postgres;
+
+--
+-- Name: pipelines; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pipelines (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    name character varying(255) NOT NULL,
+    description text DEFAULT ''::character varying NOT NULL,
+    workflow_id uuid,
+    is_public boolean DEFAULT false NOT NULL,
+    is_published boolean DEFAULT false NOT NULL,
+    created_by uuid,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_by uuid,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.pipelines OWNER TO postgres;
+
+--
+-- Name: provider_credentials; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.provider_credentials (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    provider_name character varying(255) NOT NULL,
+    credential_name character varying(255) NOT NULL,
+    encrypted_config text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.provider_credentials OWNER TO postgres;
+
+--
+-- Name: provider_model_credentials; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.provider_model_credentials (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    provider_name character varying(255) NOT NULL,
+    model_name character varying(255) NOT NULL,
+    model_type character varying(40) NOT NULL,
+    credential_name character varying(255) NOT NULL,
+    encrypted_config text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.provider_model_credentials OWNER TO postgres;
+
+--
 -- Name: provider_model_settings; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1119,10 +1557,10 @@ CREATE TABLE public.provider_models (
     provider_name character varying(255) NOT NULL,
     model_name character varying(255) NOT NULL,
     model_type character varying(40) NOT NULL,
-    encrypted_config text,
     is_valid boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    credential_id uuid
 );
 
 
@@ -1163,14 +1601,14 @@ CREATE TABLE public.providers (
     tenant_id uuid NOT NULL,
     provider_name character varying(255) NOT NULL,
     provider_type character varying(40) DEFAULT 'custom'::character varying NOT NULL,
-    encrypted_config text,
     is_valid boolean DEFAULT false NOT NULL,
     last_used timestamp without time zone,
     quota_type character varying(40) DEFAULT ''::character varying,
     quota_limit bigint,
     quota_used bigint,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    credential_id uuid
 );
 
 
@@ -1229,6 +1667,23 @@ CREATE TABLE public.saved_messages (
 
 
 ALTER TABLE public.saved_messages OWNER TO postgres;
+
+--
+-- Name: segment_attachment_bindings; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.segment_attachment_bindings (
+    id uuid NOT NULL,
+    tenant_id uuid NOT NULL,
+    dataset_id uuid NOT NULL,
+    document_id uuid NOT NULL,
+    segment_id uuid NOT NULL,
+    attachment_id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.segment_attachment_bindings OWNER TO postgres;
 
 --
 -- Name: sites; Type: TABLE; Schema: public; Owner: postgres
@@ -1315,6 +1770,23 @@ CREATE TABLE public.tenant_account_joins (
 ALTER TABLE public.tenant_account_joins OWNER TO postgres;
 
 --
+-- Name: tenant_credit_pools; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tenant_credit_pools (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    tenant_id uuid NOT NULL,
+    pool_type character varying(40) DEFAULT 'trial'::character varying NOT NULL,
+    quota_limit bigint NOT NULL,
+    quota_used bigint NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.tenant_credit_pools OWNER TO postgres;
+
+--
 -- Name: tenant_default_models; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1330,6 +1802,25 @@ CREATE TABLE public.tenant_default_models (
 
 
 ALTER TABLE public.tenant_default_models OWNER TO postgres;
+
+--
+-- Name: tenant_plugin_auto_upgrade_strategies; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tenant_plugin_auto_upgrade_strategies (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    tenant_id uuid NOT NULL,
+    strategy_setting character varying(16) DEFAULT 'fix_only'::character varying NOT NULL,
+    upgrade_time_of_day integer NOT NULL,
+    upgrade_mode character varying(16) DEFAULT 'exclude'::character varying NOT NULL,
+    exclude_plugins json NOT NULL,
+    include_plugins json NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.tenant_plugin_auto_upgrade_strategies OWNER TO postgres;
 
 --
 -- Name: tenant_preferred_model_providers; Type: TABLE; Schema: public; Owner: postgres
@@ -1419,7 +1910,11 @@ CREATE TABLE public.tool_builtin_providers (
     provider character varying(256) NOT NULL,
     encrypted_credentials text,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    name character varying(256) DEFAULT 'API KEY 1'::character varying NOT NULL,
+    is_default boolean DEFAULT false NOT NULL,
+    credential_type character varying(32) DEFAULT 'api-key'::character varying NOT NULL,
+    expires_at bigint DEFAULT '-1'::integer NOT NULL
 );
 
 
@@ -1482,7 +1977,7 @@ ALTER TABLE public.tool_label_bindings OWNER TO postgres;
 CREATE TABLE public.tool_mcp_providers (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     name character varying(40) NOT NULL,
-    server_identifier character varying(24) NOT NULL,
+    server_identifier character varying(64) NOT NULL,
     server_url text NOT NULL,
     server_url_hash character varying(64) NOT NULL,
     icon character varying(255),
@@ -1492,7 +1987,10 @@ CREATE TABLE public.tool_mcp_providers (
     authed boolean NOT NULL,
     tools text NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    timeout double precision DEFAULT 30 NOT NULL,
+    sse_read_timeout double precision DEFAULT 300 NOT NULL,
+    encrypted_headers text
 );
 
 
@@ -1508,7 +2006,7 @@ CREATE TABLE public.tool_model_invokes (
     tenant_id uuid NOT NULL,
     provider character varying(255) NOT NULL,
     tool_type character varying(40) NOT NULL,
-    tool_name character varying(40) NOT NULL,
+    tool_name character varying(128) NOT NULL,
     model_parameters text NOT NULL,
     prompt_messages text NOT NULL,
     model_response text NOT NULL,
@@ -1525,6 +2023,36 @@ CREATE TABLE public.tool_model_invokes (
 
 
 ALTER TABLE public.tool_model_invokes OWNER TO postgres;
+
+--
+-- Name: tool_oauth_system_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tool_oauth_system_clients (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    plugin_id character varying(512) NOT NULL,
+    provider character varying(255) NOT NULL,
+    encrypted_oauth_params text NOT NULL
+);
+
+
+ALTER TABLE public.tool_oauth_system_clients OWNER TO postgres;
+
+--
+-- Name: tool_oauth_tenant_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tool_oauth_tenant_clients (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    tenant_id uuid NOT NULL,
+    plugin_id character varying(255) NOT NULL,
+    provider character varying(255) NOT NULL,
+    enabled boolean DEFAULT true NOT NULL,
+    encrypted_oauth_params text NOT NULL
+);
+
+
+ALTER TABLE public.tool_oauth_tenant_clients OWNER TO postgres;
 
 --
 -- Name: tool_published_apps; Type: TABLE; Schema: public; Owner: postgres
@@ -1588,6 +2116,142 @@ CREATE TABLE public.trace_app_config (
 ALTER TABLE public.trace_app_config OWNER TO postgres;
 
 --
+-- Name: trial_apps; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trial_apps (
+    id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    tenant_id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    trial_limit integer NOT NULL
+);
+
+
+ALTER TABLE public.trial_apps OWNER TO postgres;
+
+--
+-- Name: trigger_oauth_system_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trigger_oauth_system_clients (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    plugin_id character varying(255) NOT NULL,
+    provider character varying(255) NOT NULL,
+    encrypted_oauth_params text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.trigger_oauth_system_clients OWNER TO postgres;
+
+--
+-- Name: trigger_oauth_tenant_clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trigger_oauth_tenant_clients (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    tenant_id uuid NOT NULL,
+    plugin_id character varying(255) NOT NULL,
+    provider character varying(255) NOT NULL,
+    enabled boolean DEFAULT true NOT NULL,
+    encrypted_oauth_params text NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.trigger_oauth_tenant_clients OWNER TO postgres;
+
+--
+-- Name: trigger_subscriptions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.trigger_subscriptions (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    name character varying(255) NOT NULL,
+    tenant_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    provider_id character varying(255) NOT NULL,
+    endpoint_id character varying(255) NOT NULL,
+    parameters json NOT NULL,
+    properties json NOT NULL,
+    credentials json NOT NULL,
+    credential_type character varying(50) NOT NULL,
+    credential_expires_at integer NOT NULL,
+    expires_at integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.trigger_subscriptions OWNER TO postgres;
+
+--
+-- Name: COLUMN trigger_subscriptions.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.name IS 'Subscription instance name';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.provider_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.provider_id IS 'Provider identifier (e.g., plugin_id/provider_name)';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.endpoint_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.endpoint_id IS 'Subscription endpoint';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.parameters; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.parameters IS 'Subscription parameters JSON';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.properties; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.properties IS 'Subscription properties JSON';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.credentials; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.credentials IS 'Subscription credentials JSON';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.credential_type; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.credential_type IS 'oauth or api_key';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.credential_expires_at; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.credential_expires_at IS 'OAuth token expiration timestamp, -1 for never';
+
+
+--
+-- Name: COLUMN trigger_subscriptions.expires_at; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.trigger_subscriptions.expires_at IS 'Subscription instance expiration timestamp, -1 for never';
+
+
+--
 -- Name: upload_files; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1647,6 +2311,38 @@ CREATE TABLE public.workflow_app_logs (
 ALTER TABLE public.workflow_app_logs OWNER TO postgres;
 
 --
+-- Name: workflow_archive_logs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_archive_logs (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    log_id uuid,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    workflow_id uuid NOT NULL,
+    workflow_run_id uuid NOT NULL,
+    created_by_role character varying(255) NOT NULL,
+    created_by uuid NOT NULL,
+    log_created_at timestamp without time zone,
+    log_created_from character varying(255),
+    run_version character varying(255) NOT NULL,
+    run_status character varying(255) NOT NULL,
+    run_triggered_from character varying(255) NOT NULL,
+    run_error text,
+    run_elapsed_time double precision DEFAULT 0 NOT NULL,
+    run_total_tokens bigint DEFAULT 0 NOT NULL,
+    run_total_steps integer DEFAULT 0,
+    run_created_at timestamp without time zone NOT NULL,
+    run_finished_at timestamp without time zone,
+    run_exceptions_count integer DEFAULT 0,
+    trigger_metadata text,
+    archived_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.workflow_archive_logs OWNER TO postgres;
+
+--
 -- Name: workflow_conversation_variables; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1661,6 +2357,67 @@ CREATE TABLE public.workflow_conversation_variables (
 
 
 ALTER TABLE public.workflow_conversation_variables OWNER TO postgres;
+
+--
+-- Name: workflow_draft_variable_files; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_draft_variable_files (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    upload_file_id uuid NOT NULL,
+    size bigint NOT NULL,
+    length integer,
+    value_type character varying(20) NOT NULL
+);
+
+
+ALTER TABLE public.workflow_draft_variable_files OWNER TO postgres;
+
+--
+-- Name: COLUMN workflow_draft_variable_files.tenant_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variable_files.tenant_id IS 'The tenant to which the WorkflowDraftVariableFile belongs, referencing Tenant.id';
+
+
+--
+-- Name: COLUMN workflow_draft_variable_files.app_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variable_files.app_id IS 'The application to which the WorkflowDraftVariableFile belongs, referencing App.id';
+
+
+--
+-- Name: COLUMN workflow_draft_variable_files.user_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variable_files.user_id IS 'The owner to of the WorkflowDraftVariableFile, referencing Account.id';
+
+
+--
+-- Name: COLUMN workflow_draft_variable_files.upload_file_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variable_files.upload_file_id IS 'Reference to UploadFile containing the large variable data';
+
+
+--
+-- Name: COLUMN workflow_draft_variable_files.size; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variable_files.size IS 'Size of the original variable content in bytes';
+
+
+--
+-- Name: COLUMN workflow_draft_variable_files.length; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variable_files.length IS 'Length of the original variable content. For array and array-like types, this represents the number of elements. For object types, it indicates the number of keys. For other types, the value is NULL.';
+
 
 --
 -- Name: workflow_draft_variables; Type: TABLE; Schema: public; Owner: postgres
@@ -1680,11 +2437,45 @@ CREATE TABLE public.workflow_draft_variables (
     value text NOT NULL,
     visible boolean NOT NULL,
     editable boolean NOT NULL,
-    node_execution_id uuid
+    node_execution_id uuid,
+    file_id uuid,
+    is_default_value boolean DEFAULT false NOT NULL,
+    user_id uuid
 );
 
 
 ALTER TABLE public.workflow_draft_variables OWNER TO postgres;
+
+--
+-- Name: COLUMN workflow_draft_variables.file_id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variables.file_id IS 'Reference to WorkflowDraftVariableFile if variable is offloaded to external storage';
+
+
+--
+-- Name: COLUMN workflow_draft_variables.is_default_value; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.workflow_draft_variables.is_default_value IS 'Indicates whether the current value is the default for a conversation variable. Always `FALSE` for other types of variables.';
+
+
+--
+-- Name: workflow_node_execution_offload; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_node_execution_offload (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    node_execution_id uuid,
+    type character varying(20) NOT NULL,
+    file_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.workflow_node_execution_offload OWNER TO postgres;
 
 --
 -- Name: workflow_node_executions; Type: TABLE; Schema: public; Owner: postgres
@@ -1720,6 +2511,60 @@ CREATE TABLE public.workflow_node_executions (
 ALTER TABLE public.workflow_node_executions OWNER TO postgres;
 
 --
+-- Name: workflow_pause_reasons; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_pause_reasons (
+    id uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    pause_id uuid NOT NULL,
+    type_ character varying(20) NOT NULL,
+    form_id character varying(36) NOT NULL,
+    node_id character varying(255) NOT NULL,
+    message character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.workflow_pause_reasons OWNER TO postgres;
+
+--
+-- Name: workflow_pauses; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_pauses (
+    workflow_id uuid NOT NULL,
+    workflow_run_id uuid NOT NULL,
+    resumed_at timestamp without time zone,
+    state_object_key character varying(255) NOT NULL,
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.workflow_pauses OWNER TO postgres;
+
+--
+-- Name: workflow_plugin_triggers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_plugin_triggers (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    app_id uuid NOT NULL,
+    node_id character varying(64) NOT NULL,
+    tenant_id uuid NOT NULL,
+    provider_id character varying(512) NOT NULL,
+    event_name character varying(255) NOT NULL,
+    subscription_id character varying(255) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.workflow_plugin_triggers OWNER TO postgres;
+
+--
 -- Name: workflow_runs; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1750,6 +2595,76 @@ CREATE TABLE public.workflow_runs (
 ALTER TABLE public.workflow_runs OWNER TO postgres;
 
 --
+-- Name: workflow_schedule_plans; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_schedule_plans (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    app_id uuid NOT NULL,
+    node_id character varying(64) NOT NULL,
+    tenant_id uuid NOT NULL,
+    cron_expression character varying(255) NOT NULL,
+    timezone character varying(64) NOT NULL,
+    next_run_at timestamp without time zone,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.workflow_schedule_plans OWNER TO postgres;
+
+--
+-- Name: workflow_trigger_logs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_trigger_logs (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    workflow_id uuid NOT NULL,
+    workflow_run_id uuid,
+    root_node_id character varying(255),
+    trigger_metadata text NOT NULL,
+    trigger_type character varying(50) NOT NULL,
+    trigger_data text NOT NULL,
+    inputs text NOT NULL,
+    outputs text,
+    status character varying(50) NOT NULL,
+    error text,
+    queue_name character varying(100) NOT NULL,
+    celery_task_id character varying(255),
+    retry_count integer NOT NULL,
+    elapsed_time double precision,
+    total_tokens integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    created_by_role character varying(255) NOT NULL,
+    created_by character varying(255) NOT NULL,
+    triggered_at timestamp without time zone,
+    finished_at timestamp without time zone
+);
+
+
+ALTER TABLE public.workflow_trigger_logs OWNER TO postgres;
+
+--
+-- Name: workflow_webhook_triggers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_webhook_triggers (
+    id uuid DEFAULT public.uuidv7() NOT NULL,
+    app_id uuid NOT NULL,
+    node_id character varying(64) NOT NULL,
+    tenant_id uuid NOT NULL,
+    webhook_id character varying(24) NOT NULL,
+    created_by uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.workflow_webhook_triggers OWNER TO postgres;
+
+--
 -- Name: workflows; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1768,7 +2683,8 @@ CREATE TABLE public.workflows (
     environment_variables text DEFAULT '{}'::text NOT NULL,
     conversation_variables text DEFAULT '{}'::text NOT NULL,
     marked_name character varying DEFAULT ''::character varying NOT NULL,
-    marked_comment character varying DEFAULT ''::character varying NOT NULL
+    marked_comment character varying DEFAULT ''::character varying NOT NULL,
+    rag_pipeline_variables text DEFAULT '{}'::text NOT NULL
 );
 
 
@@ -1798,6 +2714,14 @@ COPY public.account_plugin_permissions (id, tenant_id, install_permission, debug
 
 
 --
+-- Data for Name: account_trial_app_records; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.account_trial_app_records (id, account_id, app_id, count, created_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: accounts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1810,7 +2734,7 @@ COPY public.accounts (id, name, email, password, password_salt, avatar, interfac
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-58eb7bdb93fe
+6b5f9f8b1a2c
 \.
 
 
@@ -1875,6 +2799,14 @@ COPY public.app_mcp_servers (id, tenant_id, app_id, name, description, server_co
 --
 
 COPY public.app_model_configs (id, app_id, provider, model_id, configs, created_at, updated_at, opening_statement, suggested_questions, suggested_questions_after_answer, more_like_this, model, user_input_form, pre_prompt, agent_mode, speech_to_text, sensitive_word_avoidance, retriever_resource, dataset_query_variable, prompt_type, chat_prompt_config, completion_prompt_config, dataset_configs, external_data_tools, file_upload, text_to_speech, created_by, updated_by) FROM stdin;
+\.
+
+
+--
+-- Data for Name: app_triggers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.app_triggers (id, tenant_id, app_id, node_id, trigger_type, title, provider_name, status, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -2010,7 +2942,31 @@ COPY public.dataset_retriever_resources (id, message_id, "position", dataset_id,
 -- Data for Name: datasets; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.datasets (id, tenant_id, name, description, provider, permission, data_source_type, indexing_technique, index_struct, created_by, created_at, updated_by, updated_at, embedding_model, embedding_model_provider, collection_binding_id, retrieval_model, built_in_field_enabled) FROM stdin;
+COPY public.datasets (id, tenant_id, name, description, provider, permission, data_source_type, indexing_technique, index_struct, created_by, created_at, updated_by, updated_at, embedding_model, embedding_model_provider, collection_binding_id, retrieval_model, built_in_field_enabled, keyword_number, icon_info, runtime_mode, pipeline_id, chunk_structure, enable_api, is_multimodal, summary_index_setting) FROM stdin;
+\.
+
+
+--
+-- Data for Name: datasource_oauth_params; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.datasource_oauth_params (id, plugin_id, provider, system_credentials) FROM stdin;
+\.
+
+
+--
+-- Data for Name: datasource_oauth_tenant_params; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.datasource_oauth_tenant_params (id, tenant_id, provider, plugin_id, client_params, enabled, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: datasource_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.datasource_providers (id, tenant_id, name, provider, plugin_id, auth_type, encrypted_credentials, avatar_url, is_default, expires_at, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -2019,6 +2975,22 @@ COPY public.datasets (id, tenant_id, name, description, provider, permission, da
 --
 
 COPY public.dify_setups (version, setup_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: document_pipeline_execution_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.document_pipeline_execution_logs (id, pipeline_id, document_id, datasource_type, datasource_info, datasource_node_id, input_data, created_by, created_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: document_segment_summaries; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.document_segment_summaries (id, dataset_id, document_id, chunk_id, summary_content, summary_index_node_id, summary_index_node_hash, tokens, status, error, enabled, disabled_at, disabled_by, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -2034,7 +3006,7 @@ COPY public.document_segments (id, tenant_id, dataset_id, document_id, "position
 -- Data for Name: documents; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.documents (id, tenant_id, dataset_id, "position", data_source_type, data_source_info, dataset_process_rule_id, batch, name, created_from, created_by, created_api_request_id, created_at, processing_started_at, file_id, word_count, parsing_completed_at, cleaning_completed_at, splitting_completed_at, tokens, indexing_latency, completed_at, is_paused, paused_by, paused_at, error, stopped_at, indexing_status, enabled, disabled_at, disabled_by, archived, archived_reason, archived_by, archived_at, updated_at, doc_type, doc_metadata, doc_form, doc_language) FROM stdin;
+COPY public.documents (id, tenant_id, dataset_id, "position", data_source_type, data_source_info, dataset_process_rule_id, batch, name, created_from, created_by, created_api_request_id, created_at, processing_started_at, file_id, word_count, parsing_completed_at, cleaning_completed_at, splitting_completed_at, tokens, indexing_latency, completed_at, is_paused, paused_by, paused_at, error, stopped_at, indexing_status, enabled, disabled_at, disabled_by, archived, archived_reason, archived_by, archived_at, updated_at, doc_type, doc_metadata, doc_form, doc_language, need_summary) FROM stdin;
 \.
 
 
@@ -2055,6 +3027,22 @@ COPY public.end_users (id, tenant_id, app_id, type, external_user_id, name, is_a
 
 
 --
+-- Data for Name: execution_extra_contents; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.execution_extra_contents (id, created_at, updated_at, type, workflow_run_id, message_id, form_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: exporle_banners; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.exporle_banners (id, content, link, sort, status, created_at, language) FROM stdin;
+\.
+
+
+--
 -- Data for Name: external_knowledge_apis; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -2067,6 +3055,30 @@ COPY public.external_knowledge_apis (id, name, description, tenant_id, settings,
 --
 
 COPY public.external_knowledge_bindings (id, tenant_id, external_knowledge_api_id, dataset_id, external_knowledge_id, created_by, created_at, updated_by, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: human_input_form_deliveries; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.human_input_form_deliveries (id, created_at, updated_at, form_id, delivery_method_type, delivery_config_id, channel_payload) FROM stdin;
+\.
+
+
+--
+-- Data for Name: human_input_form_recipients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.human_input_form_recipients (id, created_at, updated_at, form_id, delivery_id, recipient_type, recipient_payload, access_token) FROM stdin;
+\.
+
+
+--
+-- Data for Name: human_input_forms; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.human_input_forms (id, created_at, updated_at, tenant_id, app_id, workflow_run_id, form_kind, node_id, form_definition, rendered_content, status, expiration_time, selected_action_id, submitted_data, submitted_at, submission_user_id, submission_end_user_id, completed_by_recipient_id) FROM stdin;
 \.
 
 
@@ -2090,7 +3102,7 @@ COPY public.invitation_codes (id, batch, code, status, used_at, used_by_tenant_i
 -- Data for Name: load_balancing_model_configs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.load_balancing_model_configs (id, tenant_id, provider_name, model_name, model_type, name, encrypted_config, enabled, created_at, updated_at) FROM stdin;
+COPY public.load_balancing_model_configs (id, tenant_id, provider_name, model_name, model_type, name, encrypted_config, enabled, created_at, updated_at, credential_id, credential_source_type) FROM stdin;
 \.
 
 
@@ -2138,7 +3150,15 @@ COPY public.message_files (id, message_id, type, transfer_method, url, upload_fi
 -- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.messages (id, app_id, model_provider, model_id, override_model_configs, conversation_id, inputs, query, message, message_tokens, message_unit_price, answer, answer_tokens, answer_unit_price, provider_response_latency, total_price, currency, from_source, from_end_user_id, from_account_id, created_at, updated_at, agent_based, message_price_unit, answer_price_unit, workflow_run_id, status, error, message_metadata, invoke_from, parent_message_id) FROM stdin;
+COPY public.messages (id, app_id, model_provider, model_id, override_model_configs, conversation_id, inputs, query, message, message_tokens, message_unit_price, answer, answer_tokens, answer_unit_price, provider_response_latency, total_price, currency, from_source, from_end_user_id, from_account_id, created_at, updated_at, agent_based, message_price_unit, answer_price_unit, workflow_run_id, status, error, message_metadata, invoke_from, parent_message_id, app_mode) FROM stdin;
+\.
+
+
+--
+-- Data for Name: oauth_provider_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.oauth_provider_apps (id, app_icon, app_label, client_id, client_secret, redirect_uris, scope, created_at) FROM stdin;
 \.
 
 
@@ -2159,6 +3179,54 @@ COPY public.pinned_conversations (id, app_id, conversation_id, created_by, creat
 
 
 --
+-- Data for Name: pipeline_built_in_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pipeline_built_in_templates (id, name, description, chunk_structure, icon, yaml_content, copyright, privacy_policy, "position", install_count, language, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: pipeline_customized_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pipeline_customized_templates (id, tenant_id, name, description, chunk_structure, icon, "position", yaml_content, install_count, language, created_by, updated_by, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: pipeline_recommended_plugins; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pipeline_recommended_plugins (id, plugin_id, provider_name, "position", active, created_at, updated_at, type) FROM stdin;
+\.
+
+
+--
+-- Data for Name: pipelines; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pipelines (id, tenant_id, name, description, workflow_id, is_public, is_published, created_by, created_at, updated_by, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: provider_credentials; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.provider_credentials (id, tenant_id, provider_name, credential_name, encrypted_config, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: provider_model_credentials; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.provider_model_credentials (id, tenant_id, provider_name, model_name, model_type, credential_name, encrypted_config, created_at, updated_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: provider_model_settings; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -2170,7 +3238,7 @@ COPY public.provider_model_settings (id, tenant_id, provider_name, model_name, m
 -- Data for Name: provider_models; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.provider_models (id, tenant_id, provider_name, model_name, model_type, encrypted_config, is_valid, created_at, updated_at) FROM stdin;
+COPY public.provider_models (id, tenant_id, provider_name, model_name, model_type, is_valid, created_at, updated_at, credential_id) FROM stdin;
 \.
 
 
@@ -2186,7 +3254,7 @@ COPY public.provider_orders (id, tenant_id, provider_name, account_id, payment_p
 -- Data for Name: providers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.providers (id, tenant_id, provider_name, provider_type, encrypted_config, is_valid, last_used, quota_type, quota_limit, quota_used, created_at, updated_at) FROM stdin;
+COPY public.providers (id, tenant_id, provider_name, provider_type, is_valid, last_used, quota_type, quota_limit, quota_used, created_at, updated_at, credential_id) FROM stdin;
 \.
 
 
@@ -2211,6 +3279,14 @@ COPY public.recommended_apps (id, app_id, description, copyright, privacy_policy
 --
 
 COPY public.saved_messages (id, app_id, message_id, created_by, created_at, created_by_role) FROM stdin;
+\.
+
+
+--
+-- Data for Name: segment_attachment_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.segment_attachment_bindings (id, tenant_id, dataset_id, document_id, segment_id, attachment_id, created_at) FROM stdin;
 \.
 
 
@@ -2247,10 +3323,26 @@ COPY public.tenant_account_joins (id, tenant_id, account_id, role, invited_by, c
 
 
 --
+-- Data for Name: tenant_credit_pools; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tenant_credit_pools (id, tenant_id, pool_type, quota_limit, quota_used, created_at, updated_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: tenant_default_models; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.tenant_default_models (id, tenant_id, provider_name, model_name, model_type, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: tenant_plugin_auto_upgrade_strategies; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tenant_plugin_auto_upgrade_strategies (id, tenant_id, strategy_setting, upgrade_time_of_day, upgrade_mode, exclude_plugins, include_plugins, created_at, updated_at) FROM stdin;
 \.
 
 
@@ -2290,7 +3382,7 @@ COPY public.tool_api_providers (id, name, schema, schema_type_str, user_id, tena
 -- Data for Name: tool_builtin_providers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tool_builtin_providers (id, tenant_id, user_id, provider, encrypted_credentials, created_at, updated_at) FROM stdin;
+COPY public.tool_builtin_providers (id, tenant_id, user_id, provider, encrypted_credentials, created_at, updated_at, name, is_default, credential_type, expires_at) FROM stdin;
 \.
 
 
@@ -2322,7 +3414,7 @@ COPY public.tool_label_bindings (id, tool_id, tool_type, label_name) FROM stdin;
 -- Data for Name: tool_mcp_providers; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tool_mcp_providers (id, name, server_identifier, server_url, server_url_hash, icon, tenant_id, user_id, encrypted_credentials, authed, tools, created_at, updated_at) FROM stdin;
+COPY public.tool_mcp_providers (id, name, server_identifier, server_url, server_url_hash, icon, tenant_id, user_id, encrypted_credentials, authed, tools, created_at, updated_at, timeout, sse_read_timeout, encrypted_headers) FROM stdin;
 \.
 
 
@@ -2331,6 +3423,22 @@ COPY public.tool_mcp_providers (id, name, server_identifier, server_url, server_
 --
 
 COPY public.tool_model_invokes (id, user_id, tenant_id, provider, tool_type, tool_name, model_parameters, prompt_messages, model_response, prompt_tokens, answer_tokens, answer_unit_price, answer_price_unit, provider_response_latency, total_price, currency, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: tool_oauth_system_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tool_oauth_system_clients (id, plugin_id, provider, encrypted_oauth_params) FROM stdin;
+\.
+
+
+--
+-- Data for Name: tool_oauth_tenant_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tool_oauth_tenant_clients (id, tenant_id, plugin_id, provider, enabled, encrypted_oauth_params) FROM stdin;
 \.
 
 
@@ -2359,6 +3467,38 @@ COPY public.trace_app_config (id, app_id, tracing_provider, tracing_config, crea
 
 
 --
+-- Data for Name: trial_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trial_apps (id, app_id, tenant_id, created_at, trial_limit) FROM stdin;
+\.
+
+
+--
+-- Data for Name: trigger_oauth_system_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trigger_oauth_system_clients (id, plugin_id, provider, encrypted_oauth_params, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: trigger_oauth_tenant_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trigger_oauth_tenant_clients (id, tenant_id, plugin_id, provider, enabled, encrypted_oauth_params, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: trigger_subscriptions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.trigger_subscriptions (id, name, tenant_id, user_id, provider_id, endpoint_id, parameters, properties, credentials, credential_type, credential_expires_at, expires_at, created_at, updated_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: upload_files; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -2383,6 +3523,14 @@ COPY public.workflow_app_logs (id, tenant_id, app_id, workflow_id, workflow_run_
 
 
 --
+-- Data for Name: workflow_archive_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_archive_logs (id, log_id, tenant_id, app_id, workflow_id, workflow_run_id, created_by_role, created_by, log_created_at, log_created_from, run_version, run_status, run_triggered_from, run_error, run_elapsed_time, run_total_tokens, run_total_steps, run_created_at, run_finished_at, run_exceptions_count, trigger_metadata, archived_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: workflow_conversation_variables; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -2391,10 +3539,26 @@ COPY public.workflow_conversation_variables (id, conversation_id, app_id, data, 
 
 
 --
+-- Data for Name: workflow_draft_variable_files; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_draft_variable_files (id, created_at, tenant_id, app_id, user_id, upload_file_id, size, length, value_type) FROM stdin;
+\.
+
+
+--
 -- Data for Name: workflow_draft_variables; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.workflow_draft_variables (id, created_at, updated_at, app_id, last_edited_at, node_id, name, description, selector, value_type, value, visible, editable, node_execution_id) FROM stdin;
+COPY public.workflow_draft_variables (id, created_at, updated_at, app_id, last_edited_at, node_id, name, description, selector, value_type, value, visible, editable, node_execution_id, file_id, is_default_value, user_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_node_execution_offload; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_node_execution_offload (id, created_at, tenant_id, app_id, node_execution_id, type, file_id) FROM stdin;
 \.
 
 
@@ -2407,6 +3571,30 @@ COPY public.workflow_node_executions (id, tenant_id, app_id, workflow_id, trigge
 
 
 --
+-- Data for Name: workflow_pause_reasons; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_pause_reasons (id, created_at, updated_at, pause_id, type_, form_id, node_id, message) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_pauses; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_pauses (workflow_id, workflow_run_id, resumed_at, state_object_key, id, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_plugin_triggers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_plugin_triggers (id, app_id, node_id, tenant_id, provider_id, event_name, subscription_id, created_at, updated_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: workflow_runs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -2415,10 +3603,34 @@ COPY public.workflow_runs (id, tenant_id, app_id, workflow_id, type, triggered_f
 
 
 --
+-- Data for Name: workflow_schedule_plans; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_schedule_plans (id, app_id, node_id, tenant_id, cron_expression, timezone, next_run_at, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_trigger_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_trigger_logs (id, tenant_id, app_id, workflow_id, workflow_run_id, root_node_id, trigger_metadata, trigger_type, trigger_data, inputs, outputs, status, error, queue_name, celery_task_id, retry_count, elapsed_time, total_tokens, created_at, created_by_role, created_by, triggered_at, finished_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_webhook_triggers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_webhook_triggers (id, app_id, node_id, tenant_id, webhook_id, created_by, created_at, updated_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: workflows; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.workflows (id, tenant_id, app_id, type, version, graph, features, created_by, created_at, updated_by, updated_at, environment_variables, conversation_variables, marked_name, marked_comment) FROM stdin;
+COPY public.workflows (id, tenant_id, app_id, type, version, graph, features, created_by, created_at, updated_by, updated_at, environment_variables, conversation_variables, marked_name, marked_comment, rag_pipeline_variables) FROM stdin;
 \.
 
 
@@ -2545,6 +3757,14 @@ ALTER TABLE ONLY public.app_model_configs
 
 ALTER TABLE ONLY public.apps
     ADD CONSTRAINT app_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: app_triggers app_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.app_triggers
+    ADD CONSTRAINT app_trigger_pkey PRIMARY KEY (id);
 
 
 --
@@ -2692,11 +3912,67 @@ ALTER TABLE ONLY public.dataset_retriever_resources
 
 
 --
+-- Name: datasource_oauth_params datasource_oauth_config_datasource_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datasource_oauth_params
+    ADD CONSTRAINT datasource_oauth_config_datasource_id_provider_idx UNIQUE (plugin_id, provider);
+
+
+--
+-- Name: datasource_oauth_params datasource_oauth_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datasource_oauth_params
+    ADD CONSTRAINT datasource_oauth_config_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: datasource_oauth_tenant_params datasource_oauth_tenant_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datasource_oauth_tenant_params
+    ADD CONSTRAINT datasource_oauth_tenant_config_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: datasource_oauth_tenant_params datasource_oauth_tenant_config_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datasource_oauth_tenant_params
+    ADD CONSTRAINT datasource_oauth_tenant_config_unique UNIQUE (tenant_id, plugin_id, provider);
+
+
+--
+-- Name: datasource_providers datasource_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datasource_providers
+    ADD CONSTRAINT datasource_provider_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: datasource_providers datasource_provider_unique_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.datasource_providers
+    ADD CONSTRAINT datasource_provider_unique_name UNIQUE (tenant_id, plugin_id, provider, name);
+
+
+--
 -- Name: dify_setups dify_setup_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.dify_setups
     ADD CONSTRAINT dify_setup_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: document_pipeline_execution_logs document_pipeline_execution_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.document_pipeline_execution_logs
+    ADD CONSTRAINT document_pipeline_execution_log_pkey PRIMARY KEY (id);
 
 
 --
@@ -2713,6 +3989,14 @@ ALTER TABLE ONLY public.documents
 
 ALTER TABLE ONLY public.document_segments
     ADD CONSTRAINT document_segment_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: document_segment_summaries document_segment_summaries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.document_segment_summaries
+    ADD CONSTRAINT document_segment_summaries_pkey PRIMARY KEY (id);
 
 
 --
@@ -2740,6 +4024,22 @@ ALTER TABLE ONLY public.end_users
 
 
 --
+-- Name: execution_extra_contents execution_extra_contents_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.execution_extra_contents
+    ADD CONSTRAINT execution_extra_contents_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: exporle_banners exporler_banner_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.exporle_banners
+    ADD CONSTRAINT exporler_banner_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: external_knowledge_apis external_knowledge_apis_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2753,6 +4053,38 @@ ALTER TABLE ONLY public.external_knowledge_apis
 
 ALTER TABLE ONLY public.external_knowledge_bindings
     ADD CONSTRAINT external_knowledge_bindings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: human_input_form_deliveries human_input_form_deliveries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.human_input_form_deliveries
+    ADD CONSTRAINT human_input_form_deliveries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: human_input_form_recipients human_input_form_recipients_access_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.human_input_form_recipients
+    ADD CONSTRAINT human_input_form_recipients_access_token_key UNIQUE (access_token);
+
+
+--
+-- Name: human_input_form_recipients human_input_form_recipients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.human_input_form_recipients
+    ADD CONSTRAINT human_input_form_recipients_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: human_input_forms human_input_forms_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.human_input_forms
+    ADD CONSTRAINT human_input_forms_pkey PRIMARY KEY (id);
 
 
 --
@@ -2828,6 +4160,14 @@ ALTER TABLE ONLY public.messages
 
 
 --
+-- Name: oauth_provider_apps oauth_provider_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.oauth_provider_apps
+    ADD CONSTRAINT oauth_provider_app_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: operation_logs operation_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2841,6 +4181,54 @@ ALTER TABLE ONLY public.operation_logs
 
 ALTER TABLE ONLY public.pinned_conversations
     ADD CONSTRAINT pinned_conversation_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pipeline_built_in_templates pipeline_built_in_template_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pipeline_built_in_templates
+    ADD CONSTRAINT pipeline_built_in_template_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pipeline_customized_templates pipeline_customized_template_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pipeline_customized_templates
+    ADD CONSTRAINT pipeline_customized_template_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pipelines pipeline_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pipelines
+    ADD CONSTRAINT pipeline_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pipeline_recommended_plugins pipeline_recommended_plugin_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pipeline_recommended_plugins
+    ADD CONSTRAINT pipeline_recommended_plugin_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: provider_credentials provider_credential_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.provider_credentials
+    ADD CONSTRAINT provider_credential_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: provider_model_credentials provider_model_credential_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.provider_model_credentials
+    ADD CONSTRAINT provider_model_credential_pkey PRIMARY KEY (id);
 
 
 --
@@ -2908,6 +4296,14 @@ ALTER TABLE ONLY public.saved_messages
 
 
 --
+-- Name: segment_attachment_bindings segment_attachment_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.segment_attachment_bindings
+    ADD CONSTRAINT segment_attachment_binding_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sites site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2948,6 +4344,14 @@ ALTER TABLE ONLY public.tenant_account_joins
 
 
 --
+-- Name: tenant_credit_pools tenant_credit_pool_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tenant_credit_pools
+    ADD CONSTRAINT tenant_credit_pool_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: tenant_default_models tenant_default_model_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2961,6 +4365,14 @@ ALTER TABLE ONLY public.tenant_default_models
 
 ALTER TABLE ONLY public.tenants
     ADD CONSTRAINT tenant_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tenant_plugin_auto_upgrade_strategies tenant_plugin_auto_upgrade_strategy_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tenant_plugin_auto_upgrade_strategies
+    ADD CONSTRAINT tenant_plugin_auto_upgrade_strategy_pkey PRIMARY KEY (id);
 
 
 --
@@ -3036,6 +4448,30 @@ ALTER TABLE ONLY public.tool_model_invokes
 
 
 --
+-- Name: tool_oauth_system_clients tool_oauth_system_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tool_oauth_system_clients
+    ADD CONSTRAINT tool_oauth_system_client_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tool_oauth_system_clients tool_oauth_system_client_plugin_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tool_oauth_system_clients
+    ADD CONSTRAINT tool_oauth_system_client_plugin_id_provider_idx UNIQUE (plugin_id, provider);
+
+
+--
+-- Name: tool_oauth_tenant_clients tool_oauth_tenant_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tool_oauth_tenant_clients
+    ADD CONSTRAINT tool_oauth_tenant_client_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: tool_workflow_providers tool_workflow_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3052,11 +4488,91 @@ ALTER TABLE ONLY public.trace_app_config
 
 
 --
+-- Name: trial_apps trial_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trial_apps
+    ADD CONSTRAINT trial_app_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trigger_oauth_system_clients trigger_oauth_system_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_oauth_system_clients
+    ADD CONSTRAINT trigger_oauth_system_client_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trigger_oauth_system_clients trigger_oauth_system_client_plugin_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_oauth_system_clients
+    ADD CONSTRAINT trigger_oauth_system_client_plugin_id_provider_idx UNIQUE (plugin_id, provider);
+
+
+--
+-- Name: trigger_oauth_tenant_clients trigger_oauth_tenant_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_oauth_tenant_clients
+    ADD CONSTRAINT trigger_oauth_tenant_client_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trigger_subscriptions trigger_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_subscriptions
+    ADD CONSTRAINT trigger_provider_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_schedule_plans uniq_app_node; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_schedule_plans
+    ADD CONSTRAINT uniq_app_node UNIQUE (app_id, node_id);
+
+
+--
+-- Name: workflow_plugin_triggers uniq_app_node_subscription; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_plugin_triggers
+    ADD CONSTRAINT uniq_app_node_subscription UNIQUE (app_id, node_id);
+
+
+--
+-- Name: workflow_webhook_triggers uniq_node; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_webhook_triggers
+    ADD CONSTRAINT uniq_node UNIQUE (app_id, node_id);
+
+
+--
+-- Name: workflow_webhook_triggers uniq_webhook_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_webhook_triggers
+    ADD CONSTRAINT uniq_webhook_id UNIQUE (webhook_id);
+
+
+--
 -- Name: account_integrates unique_account_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.account_integrates
     ADD CONSTRAINT unique_account_provider UNIQUE (account_id, provider);
+
+
+--
+-- Name: account_trial_app_records unique_account_trial_app_record; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.account_trial_app_records
+    ADD CONSTRAINT unique_account_trial_app_record UNIQUE (account_id, app_id);
 
 
 --
@@ -3088,7 +4604,7 @@ ALTER TABLE ONLY public.app_mcp_servers
 --
 
 ALTER TABLE ONLY public.tool_builtin_providers
-    ADD CONSTRAINT unique_builtin_tool_provider UNIQUE (tenant_id, provider);
+    ADD CONSTRAINT unique_builtin_tool_provider UNIQUE (tenant_id, provider, name);
 
 
 --
@@ -3164,6 +4680,14 @@ ALTER TABLE ONLY public.installed_apps
 
 
 --
+-- Name: tenant_default_models unique_tenant_default_model_type; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tenant_default_models
+    ADD CONSTRAINT unique_tenant_default_model_type UNIQUE (tenant_id, model_type);
+
+
+--
 -- Name: account_plugin_permissions unique_tenant_plugin; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3172,11 +4696,51 @@ ALTER TABLE ONLY public.account_plugin_permissions
 
 
 --
+-- Name: tenant_plugin_auto_upgrade_strategies unique_tenant_plugin_auto_upgrade_strategy; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tenant_plugin_auto_upgrade_strategies
+    ADD CONSTRAINT unique_tenant_plugin_auto_upgrade_strategy UNIQUE (tenant_id);
+
+
+--
 -- Name: tool_label_bindings unique_tool_label_bind; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.tool_label_bindings
     ADD CONSTRAINT unique_tool_label_bind UNIQUE (tool_id, label_name);
+
+
+--
+-- Name: tool_oauth_tenant_clients unique_tool_oauth_tenant_client; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tool_oauth_tenant_clients
+    ADD CONSTRAINT unique_tool_oauth_tenant_client UNIQUE (tenant_id, plugin_id, provider);
+
+
+--
+-- Name: trial_apps unique_trail_app_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trial_apps
+    ADD CONSTRAINT unique_trail_app_id UNIQUE (app_id);
+
+
+--
+-- Name: trigger_oauth_tenant_clients unique_trigger_oauth_tenant_client; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_oauth_tenant_clients
+    ADD CONSTRAINT unique_trigger_oauth_tenant_client UNIQUE (tenant_id, plugin_id, provider);
+
+
+--
+-- Name: trigger_subscriptions unique_trigger_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.trigger_subscriptions
+    ADD CONSTRAINT unique_trigger_provider UNIQUE (tenant_id, provider_id, name);
 
 
 --
@@ -3204,6 +4768,14 @@ ALTER TABLE ONLY public.upload_files
 
 
 --
+-- Name: account_trial_app_records user_trial_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.account_trial_app_records
+    ADD CONSTRAINT user_trial_app_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: whitelists whitelists_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3228,11 +4800,19 @@ ALTER TABLE ONLY public.workflow_app_logs
 
 
 --
--- Name: workflow_draft_variables workflow_draft_variables_app_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_archive_logs workflow_archive_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.workflow_draft_variables
-    ADD CONSTRAINT workflow_draft_variables_app_id_key UNIQUE (app_id, node_id, name);
+ALTER TABLE ONLY public.workflow_archive_logs
+    ADD CONSTRAINT workflow_archive_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_draft_variable_files workflow_draft_variable_files_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_draft_variable_files
+    ADD CONSTRAINT workflow_draft_variable_files_pkey PRIMARY KEY (id);
 
 
 --
@@ -3244,11 +4824,51 @@ ALTER TABLE ONLY public.workflow_draft_variables
 
 
 --
+-- Name: workflow_node_execution_offload workflow_node_execution_offload_node_execution_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_node_execution_offload
+    ADD CONSTRAINT workflow_node_execution_offload_node_execution_id_key UNIQUE (node_execution_id, type);
+
+
+--
+-- Name: workflow_node_execution_offload workflow_node_execution_offload_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_node_execution_offload
+    ADD CONSTRAINT workflow_node_execution_offload_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: workflow_node_executions workflow_node_execution_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.workflow_node_executions
     ADD CONSTRAINT workflow_node_execution_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_pause_reasons workflow_pause_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_pause_reasons
+    ADD CONSTRAINT workflow_pause_reasons_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_pauses workflow_pauses_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_pauses
+    ADD CONSTRAINT workflow_pauses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_pauses workflow_pauses_workflow_run_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_pauses
+    ADD CONSTRAINT workflow_pauses_workflow_run_id_key UNIQUE (workflow_run_id);
 
 
 --
@@ -3260,6 +4880,14 @@ ALTER TABLE ONLY public.workflows
 
 
 --
+-- Name: workflow_plugin_triggers workflow_plugin_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_plugin_triggers
+    ADD CONSTRAINT workflow_plugin_trigger_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: workflow_runs workflow_run_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3268,10 +4896,48 @@ ALTER TABLE ONLY public.workflow_runs
 
 
 --
+-- Name: workflow_schedule_plans workflow_schedule_plan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_schedule_plans
+    ADD CONSTRAINT workflow_schedule_plan_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_trigger_logs workflow_trigger_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_trigger_logs
+    ADD CONSTRAINT workflow_trigger_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_webhook_triggers workflow_webhook_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_webhook_triggers
+    ADD CONSTRAINT workflow_webhook_trigger_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: account_email_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX account_email_idx ON public.accounts USING btree (email);
+
+
+--
+-- Name: account_trial_app_record_account_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX account_trial_app_record_account_id_idx ON public.account_trial_app_records USING btree (account_id);
+
+
+--
+-- Name: account_trial_app_record_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX account_trial_app_record_app_id_idx ON public.account_trial_app_records USING btree (app_id);
 
 
 --
@@ -3366,6 +5032,13 @@ CREATE INDEX app_tenant_id_idx ON public.apps USING btree (tenant_id);
 
 
 --
+-- Name: app_trigger_tenant_app_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX app_trigger_tenant_app_idx ON public.app_triggers USING btree (tenant_id, app_id);
+
+
+--
 -- Name: child_chunk_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3387,10 +5060,24 @@ CREATE INDEX child_chunks_segment_idx ON public.child_chunks USING btree (segmen
 
 
 --
+-- Name: conversation_app_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX conversation_app_created_at_idx ON public.conversations USING btree (app_id, created_at DESC) WHERE (is_deleted IS FALSE);
+
+
+--
 -- Name: conversation_app_from_user_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX conversation_app_from_user_idx ON public.conversations USING btree (app_id, from_source, from_end_user_id);
+
+
+--
+-- Name: conversation_app_updated_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX conversation_app_updated_at_idx ON public.conversations USING btree (app_id, updated_at DESC) WHERE (is_deleted IS FALSE);
 
 
 --
@@ -3520,6 +5207,13 @@ CREATE INDEX dataset_tenant_idx ON public.datasets USING btree (tenant_id);
 
 
 --
+-- Name: datasource_provider_auth_type_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX datasource_provider_auth_type_provider_idx ON public.datasource_providers USING btree (tenant_id, plugin_id, provider);
+
+
+--
 -- Name: document_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3541,6 +5235,13 @@ CREATE INDEX document_metadata_idx ON public.documents USING gin (doc_metadata);
 
 
 --
+-- Name: document_pipeline_execution_logs_document_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX document_pipeline_execution_logs_document_id_idx ON public.document_pipeline_execution_logs USING btree (document_id);
+
+
+--
 -- Name: document_segment_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3559,6 +5260,34 @@ CREATE INDEX document_segment_document_id_idx ON public.document_segments USING 
 --
 
 CREATE INDEX document_segment_node_dataset_idx ON public.document_segments USING btree (index_node_id, dataset_id);
+
+
+--
+-- Name: document_segment_summaries_chunk_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX document_segment_summaries_chunk_id_idx ON public.document_segment_summaries USING btree (chunk_id);
+
+
+--
+-- Name: document_segment_summaries_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX document_segment_summaries_dataset_id_idx ON public.document_segment_summaries USING btree (dataset_id);
+
+
+--
+-- Name: document_segment_summaries_document_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX document_segment_summaries_document_id_idx ON public.document_segment_summaries USING btree (document_id);
+
+
+--
+-- Name: document_segment_summaries_status_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX document_segment_summaries_status_idx ON public.document_segment_summaries USING btree (status);
 
 
 --
@@ -3604,6 +5333,20 @@ CREATE INDEX end_user_tenant_session_id_idx ON public.end_users USING btree (ten
 
 
 --
+-- Name: execution_extra_contents_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX execution_extra_contents_message_id_idx ON public.execution_extra_contents USING btree (message_id);
+
+
+--
+-- Name: execution_extra_contents_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX execution_extra_contents_workflow_run_id_idx ON public.execution_extra_contents USING btree (workflow_run_id);
+
+
+--
 -- Name: external_knowledge_apis_name_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3646,6 +5389,48 @@ CREATE INDEX external_knowledge_bindings_tenant_idx ON public.external_knowledge
 
 
 --
+-- Name: human_input_form_deliveries_form_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX human_input_form_deliveries_form_id_idx ON public.human_input_form_deliveries USING btree (form_id);
+
+
+--
+-- Name: human_input_form_recipients_delivery_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX human_input_form_recipients_delivery_id_idx ON public.human_input_form_recipients USING btree (delivery_id);
+
+
+--
+-- Name: human_input_form_recipients_form_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX human_input_form_recipients_form_id_idx ON public.human_input_form_recipients USING btree (form_id);
+
+
+--
+-- Name: human_input_forms_status_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX human_input_forms_status_created_at_idx ON public.human_input_forms USING btree (status, created_at);
+
+
+--
+-- Name: human_input_forms_status_expiration_time_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX human_input_forms_status_expiration_time_idx ON public.human_input_forms USING btree (status, expiration_time);
+
+
+--
+-- Name: human_input_forms_workflow_run_id_node_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX human_input_forms_workflow_run_id_node_id_idx ON public.human_input_forms USING btree (workflow_run_id, node_id);
+
+
+--
 -- Name: idx_dataset_permissions_account_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3664,6 +5449,27 @@ CREATE INDEX idx_dataset_permissions_dataset_id ON public.dataset_permissions US
 --
 
 CREATE INDEX idx_dataset_permissions_tenant_id ON public.dataset_permissions USING btree (tenant_id);
+
+
+--
+-- Name: idx_trigger_providers_endpoint; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX idx_trigger_providers_endpoint ON public.trigger_subscriptions USING btree (endpoint_id);
+
+
+--
+-- Name: idx_trigger_providers_tenant_endpoint; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_trigger_providers_tenant_endpoint ON public.trigger_subscriptions USING btree (tenant_id, endpoint_id);
+
+
+--
+-- Name: idx_trigger_providers_tenant_provider; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX idx_trigger_providers_tenant_provider ON public.trigger_subscriptions USING btree (tenant_id, provider_id);
 
 
 --
@@ -3751,6 +5557,13 @@ CREATE INDEX message_app_id_idx ON public.messages USING btree (app_id, created_
 
 
 --
+-- Name: message_app_mode_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX message_app_mode_idx ON public.messages USING btree (app_mode);
+
+
+--
 -- Name: message_chain_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3765,10 +5578,10 @@ CREATE INDEX message_conversation_id_idx ON public.messages USING btree (convers
 
 
 --
--- Name: message_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_created_at_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX message_created_at_idx ON public.messages USING btree (created_at);
+CREATE INDEX message_created_at_id_idx ON public.messages USING btree (created_at, id);
 
 
 --
@@ -3821,6 +5634,13 @@ CREATE INDEX message_workflow_run_id_idx ON public.messages USING btree (convers
 
 
 --
+-- Name: oauth_provider_app_client_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX oauth_provider_app_client_id_idx ON public.oauth_provider_apps USING btree (client_id);
+
+
+--
 -- Name: operation_log_account_action_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -3832,6 +5652,27 @@ CREATE INDEX operation_log_account_action_idx ON public.operation_logs USING btr
 --
 
 CREATE INDEX pinned_conversation_conversation_idx ON public.pinned_conversations USING btree (app_id, conversation_id, created_by_role, created_by);
+
+
+--
+-- Name: pipeline_customized_template_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX pipeline_customized_template_tenant_idx ON public.pipeline_customized_templates USING btree (tenant_id);
+
+
+--
+-- Name: provider_credential_tenant_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX provider_credential_tenant_provider_idx ON public.provider_credentials USING btree (tenant_id, provider_name);
+
+
+--
+-- Name: provider_model_credential_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX provider_model_credential_tenant_provider_model_idx ON public.provider_model_credentials USING btree (tenant_id, provider_name, model_name, model_type);
 
 
 --
@@ -3905,10 +5746,31 @@ CREATE INDEX retrieval_model_idx ON public.datasets USING gin (retrieval_model);
 
 
 --
+-- Name: saved_message_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX saved_message_message_id_idx ON public.saved_messages USING btree (message_id);
+
+
+--
 -- Name: saved_message_message_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX saved_message_message_idx ON public.saved_messages USING btree (app_id, message_id, created_by_role, created_by);
+
+
+--
+-- Name: segment_attachment_binding_attachment_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX segment_attachment_binding_attachment_idx ON public.segment_attachment_bindings USING btree (attachment_id);
+
+
+--
+-- Name: segment_attachment_binding_tenant_dataset_document_segment_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX segment_attachment_binding_tenant_dataset_document_segment_idx ON public.segment_attachment_bindings USING btree (tenant_id, dataset_id, document_id, segment_id);
 
 
 --
@@ -3982,6 +5844,20 @@ CREATE INDEX tenant_account_join_tenant_id_idx ON public.tenant_account_joins US
 
 
 --
+-- Name: tenant_credit_pool_pool_type_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX tenant_credit_pool_pool_type_idx ON public.tenant_credit_pools USING btree (pool_type);
+
+
+--
+-- Name: tenant_credit_pool_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX tenant_credit_pool_tenant_id_idx ON public.tenant_credit_pools USING btree (tenant_id);
+
+
+--
 -- Name: tenant_default_model_tenant_id_provider_type_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -4038,6 +5914,20 @@ CREATE INDEX trace_app_config_app_id_idx ON public.trace_app_config USING btree 
 
 
 --
+-- Name: trial_app_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX trial_app_app_id_idx ON public.trial_apps USING btree (app_id);
+
+
+--
+-- Name: trial_app_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX trial_app_tenant_id_idx ON public.trial_apps USING btree (tenant_id);
+
+
+--
 -- Name: upload_file_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -4066,6 +5956,34 @@ CREATE INDEX workflow_app_log_app_idx ON public.workflow_app_logs USING btree (t
 
 
 --
+-- Name: workflow_app_log_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_app_log_workflow_run_id_idx ON public.workflow_app_logs USING btree (workflow_run_id);
+
+
+--
+-- Name: workflow_archive_log_app_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_archive_log_app_idx ON public.workflow_archive_logs USING btree (tenant_id, app_id);
+
+
+--
+-- Name: workflow_archive_log_run_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_archive_log_run_created_at_idx ON public.workflow_archive_logs USING btree (run_created_at);
+
+
+--
+-- Name: workflow_archive_log_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_archive_log_workflow_run_id_idx ON public.workflow_archive_logs USING btree (workflow_run_id);
+
+
+--
 -- Name: workflow_conversation_variables_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -4087,6 +6005,20 @@ CREATE INDEX workflow_conversation_variables_created_at_idx ON public.workflow_c
 
 
 --
+-- Name: workflow_draft_variable_file_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_draft_variable_file_id_idx ON public.workflow_draft_variables USING btree (file_id);
+
+
+--
+-- Name: workflow_draft_variables_app_id_user_id_key; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX workflow_draft_variables_app_id_user_id_key ON public.workflow_draft_variables USING btree (app_id, user_id, node_id, name);
+
+
+--
 -- Name: workflow_node_execution_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -4101,10 +6033,10 @@ CREATE INDEX workflow_node_execution_node_run_idx ON public.workflow_node_execut
 
 
 --
--- Name: workflow_node_execution_workflow_run_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE INDEX workflow_node_execution_workflow_run_idx ON public.workflow_node_executions USING btree (tenant_id, app_id, workflow_id, triggered_from, workflow_run_id);
+CREATE INDEX workflow_node_execution_workflow_run_id_idx ON public.workflow_node_executions USING btree (workflow_run_id);
 
 
 --
@@ -4115,6 +6047,27 @@ CREATE INDEX workflow_node_executions_tenant_id_idx ON public.workflow_node_exec
 
 
 --
+-- Name: workflow_pause_reasons_pause_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_pause_reasons_pause_id_idx ON public.workflow_pause_reasons USING btree (pause_id);
+
+
+--
+-- Name: workflow_plugin_trigger_tenant_subscription_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_plugin_trigger_tenant_subscription_idx ON public.workflow_plugin_triggers USING btree (tenant_id, subscription_id, event_name);
+
+
+--
+-- Name: workflow_run_created_at_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_run_created_at_id_idx ON public.workflow_runs USING btree (created_at, id);
+
+
+--
 -- Name: workflow_run_triggerd_from_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -4122,10 +6075,59 @@ CREATE INDEX workflow_run_triggerd_from_idx ON public.workflow_runs USING btree 
 
 
 --
+-- Name: workflow_schedule_plan_next_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_schedule_plan_next_idx ON public.workflow_schedule_plans USING btree (next_run_at);
+
+
+--
+-- Name: workflow_trigger_log_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_trigger_log_created_at_idx ON public.workflow_trigger_logs USING btree (created_at);
+
+
+--
+-- Name: workflow_trigger_log_status_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_trigger_log_status_idx ON public.workflow_trigger_logs USING btree (status);
+
+
+--
+-- Name: workflow_trigger_log_tenant_app_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_trigger_log_tenant_app_idx ON public.workflow_trigger_logs USING btree (tenant_id, app_id);
+
+
+--
+-- Name: workflow_trigger_log_workflow_id_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_trigger_log_workflow_id_idx ON public.workflow_trigger_logs USING btree (workflow_id);
+
+
+--
+-- Name: workflow_trigger_log_workflow_run_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_trigger_log_workflow_run_idx ON public.workflow_trigger_logs USING btree (workflow_run_id);
+
+
+--
 -- Name: workflow_version_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX workflow_version_idx ON public.workflows USING btree (tenant_id, app_id, version);
+
+
+--
+-- Name: workflow_webhook_trigger_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_webhook_trigger_tenant_idx ON public.workflow_webhook_triggers USING btree (tenant_id);
 
 
 --
@@ -4140,5 +6142,5 @@ ALTER TABLE ONLY public.tool_published_apps
 -- PostgreSQL database dump complete
 --
 
-\unrestrict GosiRzAaXS6mo8uIEaaM18fxO6S4HRYdo6lLh7ov3JWEUWdJpUkJUBN2zC7UlAZ
+\unrestrict 5zgOvXV5ENvOBBCutAbQ7UzIICAD23MwMgq5PkbdReKQWLPvlqVa3DsKiUOEkNE
 

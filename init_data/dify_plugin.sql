@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict HaIKOtymJGo4cYFkmbQLU7iTGbH5JdUCe58pfiduCvneMEwfcdflMqfhKaRGuNS
+\restrict XhBCY7si1bAwrg5gKn2qd7AVZrR1jiAqWztFWukckWHG8gYbmn5dJei1pi8sC7c
 
--- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
--- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
+-- Dumped from database version 15.17
+-- Dumped by pg_dump version 15.17
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -741,5 +741,5 @@ CREATE INDEX idx_trigger_installations_tenant_id ON public.trigger_installations
 -- PostgreSQL database dump complete
 --
 
-\unrestrict HaIKOtymJGo4cYFkmbQLU7iTGbH5JdUCe58pfiduCvneMEwfcdflMqfhKaRGuNS
+\unrestrict XhBCY7si1bAwrg5gKn2qd7AVZrR1jiAqWztFWukckWHG8gYbmn5dJei1pi8sC7c
 

@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
-\restrict 5zgOvXV5ENvOBBCutAbQ7UzIICAD23MwMgq5PkbdReKQWLPvlqVa3DsKiUOEkNE
+\restrict dAi6pgqX9UM0Nn3yQ2n1rCI0T1xPnoDEqSg21tLBv9b0TAbPpTNiWFl4UtbKDTq
 
--- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
--- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
+-- Dumped from database version 15.17
+-- Dumped by pg_dump version 15.17
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -404,7 +404,7 @@ CREATE SEQUENCE public.task_id_sequence
     CACHE 1;
 
 
-ALTER SEQUENCE public.task_id_sequence OWNER TO postgres;
+ALTER TABLE public.task_id_sequence OWNER TO postgres;
 
 --
 -- Name: celery_taskmeta; Type: TABLE; Schema: public; Owner: postgres
@@ -440,7 +440,7 @@ CREATE SEQUENCE public.taskset_id_sequence
     CACHE 1;
 
 
-ALTER SEQUENCE public.taskset_id_sequence OWNER TO postgres;
+ALTER TABLE public.taskset_id_sequence OWNER TO postgres;
 
 --
 -- Name: celery_tasksetmeta; Type: TABLE; Schema: public; Owner: postgres
@@ -1167,7 +1167,7 @@ CREATE SEQUENCE public.invitation_codes_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.invitation_codes_id_seq OWNER TO postgres;
+ALTER TABLE public.invitation_codes_id_seq OWNER TO postgres;
 
 --
 -- Name: invitation_codes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
@@ -1869,7 +1869,8 @@ CREATE TABLE public.tidb_auth_bindings (
     status character varying(255) DEFAULT 'CREATING'::character varying NOT NULL,
     account character varying(255) NOT NULL,
     password character varying(255) NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP(0) NOT NULL,
+    qdrant_endpoint character varying(512)
 );
 
 
@@ -2343,6 +2344,58 @@ CREATE TABLE public.workflow_archive_logs (
 ALTER TABLE public.workflow_archive_logs OWNER TO postgres;
 
 --
+-- Name: workflow_comment_mentions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_comment_mentions (
+    id uuid NOT NULL,
+    comment_id uuid NOT NULL,
+    reply_id uuid,
+    mentioned_user_id uuid NOT NULL
+);
+
+
+ALTER TABLE public.workflow_comment_mentions OWNER TO postgres;
+
+--
+-- Name: workflow_comment_replies; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_comment_replies (
+    id uuid NOT NULL,
+    comment_id uuid NOT NULL,
+    content text NOT NULL,
+    created_by uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+ALTER TABLE public.workflow_comment_replies OWNER TO postgres;
+
+--
+-- Name: workflow_comments; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workflow_comments (
+    id uuid NOT NULL,
+    tenant_id uuid NOT NULL,
+    app_id uuid NOT NULL,
+    position_x double precision NOT NULL,
+    position_y double precision NOT NULL,
+    content text NOT NULL,
+    created_by uuid NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    resolved boolean DEFAULT false NOT NULL,
+    resolved_at timestamp without time zone,
+    resolved_by uuid
+);
+
+
+ALTER TABLE public.workflow_comments OWNER TO postgres;
+
+--
 -- Name: workflow_conversation_variables; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2734,7 +2787,7 @@ COPY public.accounts (id, name, email, password, password_salt, avatar, interfac
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-6b5f9f8b1a2c
+227822d22895
 \.
 
 
@@ -3366,7 +3419,7 @@ COPY public.tenants (id, name, encrypt_public_key, plan, status, created_at, upd
 -- Data for Name: tidb_auth_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.tidb_auth_bindings (id, tenant_id, cluster_id, cluster_name, active, status, account, password, created_at) FROM stdin;
+COPY public.tidb_auth_bindings (id, tenant_id, cluster_id, cluster_name, active, status, account, password, created_at, qdrant_endpoint) FROM stdin;
 \.
 
 
@@ -3527,6 +3580,30 @@ COPY public.workflow_app_logs (id, tenant_id, app_id, workflow_id, workflow_run_
 --
 
 COPY public.workflow_archive_logs (id, log_id, tenant_id, app_id, workflow_id, workflow_run_id, created_by_role, created_by, log_created_at, log_created_from, run_version, run_status, run_triggered_from, run_error, run_elapsed_time, run_total_tokens, run_total_steps, run_created_at, run_finished_at, run_exceptions_count, trigger_metadata, archived_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_comment_mentions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_comment_mentions (id, comment_id, reply_id, mentioned_user_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_comment_replies; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_comment_replies (id, comment_id, content, created_by, created_at, updated_at) FROM stdin;
+\.
+
+
+--
+-- Data for Name: workflow_comments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workflow_comments (id, tenant_id, app_id, position_x, position_y, content, created_by, created_at, updated_at, resolved, resolved_at, resolved_by) FROM stdin;
 \.
 
 
@@ -4808,6 +4885,30 @@ ALTER TABLE ONLY public.workflow_archive_logs
 
 
 --
+-- Name: workflow_comment_mentions workflow_comment_mentions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_comment_mentions
+    ADD CONSTRAINT workflow_comment_mentions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_comment_replies workflow_comment_replies_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_comment_replies
+    ADD CONSTRAINT workflow_comment_replies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: workflow_comments workflow_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_comments
+    ADD CONSTRAINT workflow_comments_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: workflow_draft_variable_files workflow_draft_variable_files_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5057,6 +5158,41 @@ CREATE INDEX child_chunks_node_idx ON public.child_chunks USING btree (index_nod
 --
 
 CREATE INDEX child_chunks_segment_idx ON public.child_chunks USING btree (segment_id);
+
+
+--
+-- Name: comment_mentions_comment_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX comment_mentions_comment_idx ON public.workflow_comment_mentions USING btree (comment_id);
+
+
+--
+-- Name: comment_mentions_reply_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX comment_mentions_reply_idx ON public.workflow_comment_mentions USING btree (reply_id);
+
+
+--
+-- Name: comment_mentions_user_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX comment_mentions_user_idx ON public.workflow_comment_mentions USING btree (mentioned_user_id);
+
+
+--
+-- Name: comment_replies_comment_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX comment_replies_comment_idx ON public.workflow_comment_replies USING btree (comment_id);
+
+
+--
+-- Name: comment_replies_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX comment_replies_created_at_idx ON public.workflow_comment_replies USING btree (created_at);
 
 
 --
@@ -5984,6 +6120,20 @@ CREATE INDEX workflow_archive_log_workflow_run_id_idx ON public.workflow_archive
 
 
 --
+-- Name: workflow_comments_app_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_comments_app_idx ON public.workflow_comments USING btree (tenant_id, app_id);
+
+
+--
+-- Name: workflow_comments_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX workflow_comments_created_at_idx ON public.workflow_comments USING btree (created_at);
+
+
+--
 -- Name: workflow_conversation_variables_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -6139,8 +6289,32 @@ ALTER TABLE ONLY public.tool_published_apps
 
 
 --
+-- Name: workflow_comment_mentions workflow_comment_mentions_comment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_comment_mentions
+    ADD CONSTRAINT workflow_comment_mentions_comment_id_fkey FOREIGN KEY (comment_id) REFERENCES public.workflow_comments(id) ON DELETE CASCADE;
+
+
+--
+-- Name: workflow_comment_mentions workflow_comment_mentions_reply_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_comment_mentions
+    ADD CONSTRAINT workflow_comment_mentions_reply_id_fkey FOREIGN KEY (reply_id) REFERENCES public.workflow_comment_replies(id) ON DELETE CASCADE;
+
+
+--
+-- Name: workflow_comment_replies workflow_comment_replies_comment_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workflow_comment_replies
+    ADD CONSTRAINT workflow_comment_replies_comment_id_fkey FOREIGN KEY (comment_id) REFERENCES public.workflow_comments(id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 5zgOvXV5ENvOBBCutAbQ7UzIICAD23MwMgq5PkbdReKQWLPvlqVa3DsKiUOEkNE
+\unrestrict dAi6pgqX9UM0Nn3yQ2n1rCI0T1xPnoDEqSg21tLBv9b0TAbPpTNiWFl4UtbKDTq
 

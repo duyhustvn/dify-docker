@@ -101,6 +101,7 @@ services:
   api:
     <<: *shared-api-worker-config
     image: langgenius/dify-api:1.14.0
+    container_name: dify-api
     environment:
       MODE: api
       SENTRY_DSN: ${API_SENTRY_DSN:-}
@@ -134,6 +135,7 @@ services:
   worker:
     <<: *shared-worker-config
     image: langgenius/dify-api:1.14.0
+    container_name: dify-worker
     environment:
       MODE: worker
       SENTRY_DSN: ${API_SENTRY_DSN:-}
@@ -165,6 +167,7 @@ services:
   worker_beat:
     <<: *shared-worker-beat-config
     image: langgenius/dify-api:1.14.0
+    container_name: dify-worker-beat
     environment:
       MODE: beat
     depends_on:
@@ -188,6 +191,7 @@ services:
   # Frontend web application.
   web:
     image: langgenius/dify-web:1.14.0
+    container_name: dify-web
     restart: always
     env_file:
       - path: ./envs/core-services/web.env
@@ -224,7 +228,8 @@ services:
 
   # The PostgreSQL database.
   db_postgres:
-    image: postgres:15-alpine
+    image: postgres:16
+    container_name: postgresql
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME:-postgres}
@@ -240,7 +245,7 @@ services:
                -c 'statement_timeout=${POSTGRES_STATEMENT_TIMEOUT:-0}'
                -c 'idle_in_transaction_session_timeout=${POSTGRES_IDLE_IN_TRANSACTION_SESSION_TIMEOUT:-0}'
     volumes:
-      - ./volumes/db/data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
@@ -259,12 +264,13 @@ services:
 
   # The redis cache.
   redis:
-    image: redis:6-alpine
+    image: redis:8
+    container_name: redis
     restart: always
     environment:
       REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
     volumes:
-      - ./volumes/redis/data:/data
+      - redis_data:/data
     command: redis-server --requirepass ${REDIS_PASSWORD:-difyai123456}
     healthcheck:
       test:
@@ -276,6 +282,7 @@ services:
   # The DifySandbox
   sandbox:
     image: langgenius/dify-sandbox:0.2.15
+    container_name: sandbox
     restart: always
     env_file:
       - path: ./envs/core-services/sandbox.env
@@ -303,6 +310,7 @@ services:
   # Plugin daemon
   plugin_daemon:
     image: langgenius/dify-plugin-daemon:0.6.0-local
+    container_name: plugin-daemon
     restart: always
     env_file:
       - path: ./envs/core-services/shared.env
@@ -380,6 +388,7 @@ services:
   # https://docs.dify.ai/learn-more/faq/install-faq#18-why-is-ssrf-proxy-needed%3F
   ssrf_proxy:
     image: ubuntu/squid:latest
+    container_name: ssrf-proxy
     restart: always
     volumes:
       - ./ssrf_proxy/squid.conf.template:/etc/squid/squid.conf.template
@@ -403,6 +412,7 @@ services:
   # The nginx reverse proxy.
   nginx:
     image: nginx:latest
+    container_name: nginx
     restart: always
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/nginx.conf.template
@@ -411,9 +421,6 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/docker-entrypoint.sh:/docker-entrypoint-mount.sh
       - ./nginx/ssl:/etc/ssl
-      - ./volumes/certbot/conf/live:/etc/letsencrypt/live
-      - ./volumes/certbot/conf:/etc/letsencrypt
-      - ./volumes/certbot/www:/var/www/html
     entrypoint:
       [
         "sh",
@@ -433,8 +440,6 @@ services:
       NGINX_KEEPALIVE_TIMEOUT: ${NGINX_KEEPALIVE_TIMEOUT:-65}
       NGINX_PROXY_READ_TIMEOUT: ${NGINX_PROXY_READ_TIMEOUT:-3600s}
       NGINX_PROXY_SEND_TIMEOUT: ${NGINX_PROXY_SEND_TIMEOUT:-3600s}
-      NGINX_ENABLE_CERTBOT_CHALLENGE: ${NGINX_ENABLE_CERTBOT_CHALLENGE:-false}
-      CERTBOT_DOMAIN: ${CERTBOT_DOMAIN:-}
     depends_on:
       - api
       - web
@@ -444,10 +449,11 @@ services:
 
   # The Weaviate vector store.
   weaviate:
-    image: semitechnologies/weaviate:1.27.0
+    image: semitechnologies/weaviate:1.37.0
+    container_name: weaviate
     restart: always
     volumes:
-      - ./volumes/weaviate:/var/lib/weaviate
+      - weaviate_data:/var/lib/weaviate
     environment:
       PERSISTENCE_DATA_PATH: ${WEAVIATE_PERSISTENCE_DATA_PATH:-/var/lib/weaviate}
       QUERY_DEFAULTS_LIMIT: ${WEAVIATE_QUERY_DEFAULTS_LIMIT:-25}
@@ -468,3 +474,11 @@ networks:
   ssrf_proxy_network:
     driver: bridge
     internal: true
+
+volumes:
+  redis_data:
+    name: redis_data
+  weaviate_data:
+    name: weaviate_data
+  pg_data:
+    name: pg_data

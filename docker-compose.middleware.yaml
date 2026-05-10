@@ -95,7 +95,17 @@ services:
     container_name: plugin_daemon
     restart: always
     env_file:
-      - ./middleware.env
+      - path: ./envs/core-services/shared.env
+        required: false
+      - path: ./envs/core-services/plugin-daemon.env
+        required: false
+      - path: ./envs/security.env
+        required: false
+      - path: ./envs/databases/db-postgres.env
+        required: false
+      - path: ./envs/databases/redis.env
+        required: false
+      - ./.env
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:

@@ -231,6 +231,8 @@ services:
     image: postgres:16
     container_name: postgresql
     restart: always
+    ports:
+      - 5432:5432
     environment:
       POSTGRES_USER: ${DB_USERNAME:-dify}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-difyai123456}

@@ -32,7 +32,7 @@ services:
           "-h",
           "db_postgres",
           "-U",
-          "${DB_USERNAME:-postgres}",
+          "${DB_USERNAME:-dify}",
           "-d",
           "${DB_DATABASE:-dify}",
         ]

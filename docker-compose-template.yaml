@@ -73,23 +73,23 @@ x-shared-worker-beat-config: &shared-worker-beat-config
 
 services:
   # Init container to fix permissions
-  init_permissions:
-    image: busybox:latest
-    command:
-      - sh
-      - -c
-      - |
-        FLAG_FILE="/app/api/storage/.init_permissions"
-        if [ -f "$${FLAG_FILE}" ]; then
-          echo "Permissions already initialized. Exiting."
-          exit 0
-        fi
-        echo "Initializing permissions for /app/api/storage"
-        chown -R 1001:1001 /app/api/storage && touch "$${FLAG_FILE}"
-        echo "Permissions initialized. Exiting."
-    volumes:
-      - ./volumes/app/storage:/app/api/storage
-    restart: "no"
+  # init_permissions:
+  #   image: busybox:latest
+  #   command:
+  #     - sh
+  #     - -c
+  #     - |
+  #       FLAG_FILE="/app/api/storage/.init_permissions"
+  #       if [ -f "$${FLAG_FILE}" ]; then
+  #         echo "Permissions already initialized. Exiting."
+  #         exit 0
+  #       fi
+  #       echo "Initializing permissions for /app/api/storage"
+  #       chown -R 1001:1001 /app/api/storage && touch "$${FLAG_FILE}"
+  #       echo "Permissions initialized. Exiting."
+  #   volumes:
+  #     - ./volumes/app/storage:/app/api/storage
+  #   restart: "no"
 
   # API service
   api:
@@ -107,14 +107,14 @@ services:
       PLUGIN_DAEMON_TIMEOUT: ${PLUGIN_DAEMON_TIMEOUT:-600.0}
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
     depends_on:
-      init_permissions:
-        condition: service_completed_successfully
+      # init_permissions:
+      #   condition: service_completed_successfully
       db_postgres:
         condition: service_healthy
       redis:
         condition: service_started
-    volumes:
-      - ./volumes/app/storage:/app/api/storage
+    # volumes:
+    #   - ./volumes/app/storage:/app/api/storage
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
       interval: 30s
@@ -138,14 +138,14 @@ services:
       PLUGIN_MAX_PACKAGE_SIZE: ${PLUGIN_MAX_PACKAGE_SIZE:-52428800}
       INNER_API_KEY_FOR_PLUGIN: ${PLUGIN_DIFY_INNER_API_KEY:-QaHbTe77CtuXmsfyhR7+vRjI/+XbV1AaFy691iy+kGDv2Jvy0/eAh8Y1}
     depends_on:
-      init_permissions:
-        condition: service_completed_successfully
+      # init_permissions:
+      #   condition: service_completed_successfully
       db_postgres:
         condition: service_healthy
       redis:
         condition: service_started
-    volumes:
-      - ./volumes/app/storage:/app/api/storage
+    # volumes:
+    #   - ./volumes/app/storage:/app/api/storage
     healthcheck:
       test: ["CMD-SHELL", "celery -A celery_healthcheck.celery inspect ping"]
       interval: ${COMPOSE_WORKER_HEALTHCHECK_INTERVAL:-30s}
@@ -165,8 +165,8 @@ services:
     environment:
       MODE: beat
     depends_on:
-      init_permissions:
-        condition: service_completed_successfully
+      # init_permissions:
+      #   condition: service_completed_successfully
       db_postgres:
         condition: service_healthy
       redis:
@@ -340,10 +340,13 @@ services:
       PIP_MIRROR_URL: ${PIP_MIRROR_URL:-}
       SENTRY_ENABLED: ${PLUGIN_SENTRY_ENABLED:-false}
       SENTRY_DSN: ${PLUGIN_SENTRY_DSN:-}
+      HTTP_PROXY: ${HTTP_PROXY:-}
+      HTTPS_PROXY: ${HTTPS_PROXY:-}
+      NO_PROXY: ${NO_PROXY:-}
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
-    volumes:
-      - ./volumes/plugin_daemon:/app/storage
+    # volumes:
+    #   - ./volumes/plugin_daemon:/app/storage
     depends_on:
       db_postgres:
         condition: service_healthy

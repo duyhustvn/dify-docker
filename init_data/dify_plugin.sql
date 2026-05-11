@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict HaIKOtymJGo4cYFkmbQLU7iTGbH5JdUCe58pfiduCvneMEwfcdflMqfhKaRGuNS
+\restrict xiFyqfG1LFu7NPcCtRZDW20xOQBooEbrngKSFoQtyurpFg3AkDhdeTEhBnqjpPh
 
 -- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
 -- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
@@ -23,7 +23,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: agent_strategy_installations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: agent_strategy_installations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.agent_strategy_installations (
@@ -37,10 +37,10 @@ CREATE TABLE public.agent_strategy_installations (
 );
 
 
-ALTER TABLE public.agent_strategy_installations OWNER TO postgres;
+ALTER TABLE public.agent_strategy_installations OWNER TO dify;
 
 --
--- Name: ai_model_installations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: ai_model_installations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.ai_model_installations (
@@ -54,10 +54,10 @@ CREATE TABLE public.ai_model_installations (
 );
 
 
-ALTER TABLE public.ai_model_installations OWNER TO postgres;
+ALTER TABLE public.ai_model_installations OWNER TO dify;
 
 --
--- Name: datasource_installations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: datasource_installations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.datasource_installations (
@@ -71,10 +71,10 @@ CREATE TABLE public.datasource_installations (
 );
 
 
-ALTER TABLE public.datasource_installations OWNER TO postgres;
+ALTER TABLE public.datasource_installations OWNER TO dify;
 
 --
--- Name: endpoints; Type: TABLE; Schema: public; Owner: postgres
+-- Name: endpoints; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.endpoints (
@@ -92,17 +92,17 @@ CREATE TABLE public.endpoints (
 );
 
 
-ALTER TABLE public.endpoints OWNER TO postgres;
+ALTER TABLE public.endpoints OWNER TO dify;
 
 --
--- Name: install_tasks; Type: TABLE; Schema: public; Owner: postgres
+-- Name: install_tasks; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.install_tasks (
     id uuid NOT NULL,
     created_at timestamp with time zone,
     updated_at timestamp with time zone,
-    status character varying(50) NOT NULL,
+    status text NOT NULL,
     tenant_id uuid NOT NULL,
     total_plugins bigint NOT NULL,
     completed_plugins bigint NOT NULL,
@@ -110,10 +110,10 @@ CREATE TABLE public.install_tasks (
 );
 
 
-ALTER TABLE public.install_tasks OWNER TO postgres;
+ALTER TABLE public.install_tasks OWNER TO dify;
 
 --
--- Name: plugin_declarations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plugin_declarations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.plugin_declarations (
@@ -126,10 +126,10 @@ CREATE TABLE public.plugin_declarations (
 );
 
 
-ALTER TABLE public.plugin_declarations OWNER TO postgres;
+ALTER TABLE public.plugin_declarations OWNER TO dify;
 
 --
--- Name: plugin_installations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plugin_installations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.plugin_installations (
@@ -147,10 +147,10 @@ CREATE TABLE public.plugin_installations (
 );
 
 
-ALTER TABLE public.plugin_installations OWNER TO postgres;
+ALTER TABLE public.plugin_installations OWNER TO dify;
 
 --
--- Name: plugin_readme_records; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plugin_readme_records; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.plugin_readme_records (
@@ -163,10 +163,10 @@ CREATE TABLE public.plugin_readme_records (
 );
 
 
-ALTER TABLE public.plugin_readme_records OWNER TO postgres;
+ALTER TABLE public.plugin_readme_records OWNER TO dify;
 
 --
--- Name: plugins; Type: TABLE; Schema: public; Owner: postgres
+-- Name: plugins; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.plugins (
@@ -183,10 +183,10 @@ CREATE TABLE public.plugins (
 );
 
 
-ALTER TABLE public.plugins OWNER TO postgres;
+ALTER TABLE public.plugins OWNER TO dify;
 
 --
--- Name: serverless_runtimes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: serverless_runtimes; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.serverless_runtimes (
@@ -201,10 +201,10 @@ CREATE TABLE public.serverless_runtimes (
 );
 
 
-ALTER TABLE public.serverless_runtimes OWNER TO postgres;
+ALTER TABLE public.serverless_runtimes OWNER TO dify;
 
 --
--- Name: tenant_storages; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenant_storages; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenant_storages (
@@ -217,10 +217,10 @@ CREATE TABLE public.tenant_storages (
 );
 
 
-ALTER TABLE public.tenant_storages OWNER TO postgres;
+ALTER TABLE public.tenant_storages OWNER TO dify;
 
 --
--- Name: tool_installations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_installations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_installations (
@@ -234,10 +234,10 @@ CREATE TABLE public.tool_installations (
 );
 
 
-ALTER TABLE public.tool_installations OWNER TO postgres;
+ALTER TABLE public.tool_installations OWNER TO dify;
 
 --
--- Name: trigger_installations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: trigger_installations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.trigger_installations (
@@ -251,10 +251,10 @@ CREATE TABLE public.trigger_installations (
 );
 
 
-ALTER TABLE public.trigger_installations OWNER TO postgres;
+ALTER TABLE public.trigger_installations OWNER TO dify;
 
 --
--- Data for Name: agent_strategy_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: agent_strategy_installations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.agent_strategy_installations (id, created_at, updated_at, tenant_id, provider, plugin_unique_identifier, plugin_id) FROM stdin;
@@ -262,7 +262,7 @@ COPY public.agent_strategy_installations (id, created_at, updated_at, tenant_id,
 
 
 --
--- Data for Name: ai_model_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: ai_model_installations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.ai_model_installations (id, created_at, updated_at, provider, tenant_id, plugin_unique_identifier, plugin_id) FROM stdin;
@@ -270,7 +270,7 @@ COPY public.ai_model_installations (id, created_at, updated_at, provider, tenant
 
 
 --
--- Data for Name: datasource_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: datasource_installations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.datasource_installations (id, created_at, updated_at, tenant_id, provider, plugin_unique_identifier, plugin_id) FROM stdin;
@@ -278,7 +278,7 @@ COPY public.datasource_installations (id, created_at, updated_at, tenant_id, pro
 
 
 --
--- Data for Name: endpoints; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: endpoints; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.endpoints (id, created_at, updated_at, name, hook_id, tenant_id, user_id, plugin_id, expired_at, enabled, settings) FROM stdin;
@@ -286,7 +286,7 @@ COPY public.endpoints (id, created_at, updated_at, name, hook_id, tenant_id, use
 
 
 --
--- Data for Name: install_tasks; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: install_tasks; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.install_tasks (id, created_at, updated_at, status, tenant_id, total_plugins, completed_plugins, plugins) FROM stdin;
@@ -294,7 +294,7 @@ COPY public.install_tasks (id, created_at, updated_at, status, tenant_id, total_
 
 
 --
--- Data for Name: plugin_declarations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: plugin_declarations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.plugin_declarations (id, created_at, updated_at, plugin_unique_identifier, plugin_id, declaration) FROM stdin;
@@ -302,7 +302,7 @@ COPY public.plugin_declarations (id, created_at, updated_at, plugin_unique_ident
 
 
 --
--- Data for Name: plugin_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: plugin_installations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.plugin_installations (id, created_at, updated_at, tenant_id, plugin_id, plugin_unique_identifier, runtime_type, endpoints_setups, endpoints_active, source, meta) FROM stdin;
@@ -310,7 +310,7 @@ COPY public.plugin_installations (id, created_at, updated_at, tenant_id, plugin_
 
 
 --
--- Data for Name: plugin_readme_records; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: plugin_readme_records; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.plugin_readme_records (id, created_at, updated_at, plugin_unique_identifier, language, content) FROM stdin;
@@ -318,7 +318,7 @@ COPY public.plugin_readme_records (id, created_at, updated_at, plugin_unique_ide
 
 
 --
--- Data for Name: plugins; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: plugins; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.plugins (id, created_at, updated_at, plugin_unique_identifier, plugin_id, refers, install_type, manifest_type, remote_declaration, source) FROM stdin;
@@ -326,7 +326,7 @@ COPY public.plugins (id, created_at, updated_at, plugin_unique_identifier, plugi
 
 
 --
--- Data for Name: serverless_runtimes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: serverless_runtimes; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.serverless_runtimes (id, created_at, updated_at, plugin_unique_identifier, function_url, function_name, type, checksum) FROM stdin;
@@ -334,7 +334,7 @@ COPY public.serverless_runtimes (id, created_at, updated_at, plugin_unique_ident
 
 
 --
--- Data for Name: tenant_storages; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenant_storages; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenant_storages (id, created_at, updated_at, tenant_id, plugin_id, size) FROM stdin;
@@ -342,7 +342,7 @@ COPY public.tenant_storages (id, created_at, updated_at, tenant_id, plugin_id, s
 
 
 --
--- Data for Name: tool_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_installations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_installations (id, created_at, updated_at, tenant_id, provider, plugin_unique_identifier, plugin_id) FROM stdin;
@@ -350,7 +350,7 @@ COPY public.tool_installations (id, created_at, updated_at, tenant_id, provider,
 
 
 --
--- Data for Name: trigger_installations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: trigger_installations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.trigger_installations (id, created_at, updated_at, tenant_id, provider, plugin_unique_identifier, plugin_id) FROM stdin;
@@ -358,7 +358,7 @@ COPY public.trigger_installations (id, created_at, updated_at, tenant_id, provid
 
 
 --
--- Name: agent_strategy_installations agent_strategy_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: agent_strategy_installations agent_strategy_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.agent_strategy_installations
@@ -366,7 +366,7 @@ ALTER TABLE ONLY public.agent_strategy_installations
 
 
 --
--- Name: ai_model_installations ai_model_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: ai_model_installations ai_model_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.ai_model_installations
@@ -374,7 +374,7 @@ ALTER TABLE ONLY public.ai_model_installations
 
 
 --
--- Name: datasource_installations datasource_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_installations datasource_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_installations
@@ -382,7 +382,7 @@ ALTER TABLE ONLY public.datasource_installations
 
 
 --
--- Name: endpoints endpoints_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: endpoints endpoints_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.endpoints
@@ -390,7 +390,7 @@ ALTER TABLE ONLY public.endpoints
 
 
 --
--- Name: install_tasks install_tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: install_tasks install_tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.install_tasks
@@ -398,7 +398,7 @@ ALTER TABLE ONLY public.install_tasks
 
 
 --
--- Name: plugin_declarations plugin_declarations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: plugin_declarations plugin_declarations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.plugin_declarations
@@ -406,7 +406,7 @@ ALTER TABLE ONLY public.plugin_declarations
 
 
 --
--- Name: plugin_installations plugin_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: plugin_installations plugin_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.plugin_installations
@@ -414,7 +414,7 @@ ALTER TABLE ONLY public.plugin_installations
 
 
 --
--- Name: plugin_readme_records plugin_readme_records_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: plugin_readme_records plugin_readme_records_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.plugin_readme_records
@@ -422,7 +422,7 @@ ALTER TABLE ONLY public.plugin_readme_records
 
 
 --
--- Name: plugins plugins_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: plugins plugins_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.plugins
@@ -430,7 +430,7 @@ ALTER TABLE ONLY public.plugins
 
 
 --
--- Name: serverless_runtimes serverless_runtimes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: serverless_runtimes serverless_runtimes_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.serverless_runtimes
@@ -438,7 +438,7 @@ ALTER TABLE ONLY public.serverless_runtimes
 
 
 --
--- Name: tenant_storages tenant_storages_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_storages tenant_storages_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_storages
@@ -446,7 +446,7 @@ ALTER TABLE ONLY public.tenant_storages
 
 
 --
--- Name: tool_installations tool_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_installations tool_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_installations
@@ -454,7 +454,7 @@ ALTER TABLE ONLY public.tool_installations
 
 
 --
--- Name: trigger_installations trigger_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_installations trigger_installations_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_installations
@@ -462,7 +462,7 @@ ALTER TABLE ONLY public.trigger_installations
 
 
 --
--- Name: endpoints uni_endpoints_hook_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: endpoints uni_endpoints_hook_id; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.endpoints
@@ -470,7 +470,7 @@ ALTER TABLE ONLY public.endpoints
 
 
 --
--- Name: plugin_declarations uni_plugin_declarations_plugin_unique_identifier; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: plugin_declarations uni_plugin_declarations_plugin_unique_identifier; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.plugin_declarations
@@ -478,7 +478,7 @@ ALTER TABLE ONLY public.plugin_declarations
 
 
 --
--- Name: serverless_runtimes uni_serverless_runtimes_plugin_unique_identifier; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: serverless_runtimes uni_serverless_runtimes_plugin_unique_identifier; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.serverless_runtimes
@@ -486,252 +486,245 @@ ALTER TABLE ONLY public.serverless_runtimes
 
 
 --
--- Name: idx_agent_strategy_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_agent_strategy_installations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_agent_strategy_installations_plugin_id ON public.agent_strategy_installations USING btree (plugin_id);
 
 
 --
--- Name: idx_agent_strategy_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_agent_strategy_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_agent_strategy_installations_plugin_unique_identifier ON public.agent_strategy_installations USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_agent_strategy_installations_provider; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_agent_strategy_installations_provider; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_agent_strategy_installations_provider ON public.agent_strategy_installations USING btree (provider);
 
 
 --
--- Name: idx_agent_strategy_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_agent_strategy_installations_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_agent_strategy_installations_tenant_id ON public.agent_strategy_installations USING btree (tenant_id);
 
 
 --
--- Name: idx_ai_model_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_ai_model_installations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_ai_model_installations_plugin_id ON public.ai_model_installations USING btree (plugin_id);
 
 
 --
--- Name: idx_ai_model_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_ai_model_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_ai_model_installations_plugin_unique_identifier ON public.ai_model_installations USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_ai_model_installations_provider; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_ai_model_installations_provider; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_ai_model_installations_provider ON public.ai_model_installations USING btree (provider);
 
 
 --
--- Name: idx_ai_model_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_ai_model_installations_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_ai_model_installations_tenant_id ON public.ai_model_installations USING btree (tenant_id);
 
 
 --
--- Name: idx_datasource_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_datasource_installations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_datasource_installations_plugin_id ON public.datasource_installations USING btree (plugin_id);
 
 
 --
--- Name: idx_datasource_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_datasource_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_datasource_installations_plugin_unique_identifier ON public.datasource_installations USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_datasource_installations_provider; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_datasource_installations_provider; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_datasource_installations_provider ON public.datasource_installations USING btree (provider);
 
 
 --
--- Name: idx_datasource_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_datasource_installations_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_datasource_installations_tenant_id ON public.datasource_installations USING btree (tenant_id);
 
 
 --
--- Name: idx_endpoints_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_endpoints_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_endpoints_plugin_id ON public.endpoints USING btree (plugin_id);
 
 
 --
--- Name: idx_endpoints_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_endpoints_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_endpoints_tenant_id ON public.endpoints USING btree (tenant_id);
 
 
 --
--- Name: idx_endpoints_user_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_endpoints_user_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_endpoints_user_id ON public.endpoints USING btree (user_id);
 
 
 --
--- Name: idx_install_tasks_status; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX idx_install_tasks_status ON public.install_tasks USING btree (status);
-
-
---
--- Name: idx_plugin_declarations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugin_declarations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugin_declarations_plugin_id ON public.plugin_declarations USING btree (plugin_id);
 
 
 --
--- Name: idx_plugin_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugin_installations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugin_installations_plugin_id ON public.plugin_installations USING btree (plugin_id);
 
 
 --
--- Name: idx_plugin_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugin_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugin_installations_plugin_unique_identifier ON public.plugin_installations USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_plugin_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugin_installations_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugin_installations_tenant_id ON public.plugin_installations USING btree (tenant_id);
 
 
 --
--- Name: idx_plugin_readme_records_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugin_readme_records_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugin_readme_records_plugin_unique_identifier ON public.plugin_readme_records USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX idx_plugin_unique_identifier ON public.plugins USING btree (plugin_unique_identifier);
-
-
---
--- Name: idx_plugins_install_type; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugins_install_type; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugins_install_type ON public.plugins USING btree (install_type);
 
 
 --
--- Name: idx_plugins_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugins_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_plugins_plugin_id ON public.plugins USING btree (plugin_id);
 
 
 --
--- Name: idx_serverless_runtimes_checksum; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_plugins_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
+--
+
+CREATE INDEX idx_plugins_plugin_unique_identifier ON public.plugins USING btree (plugin_unique_identifier);
+
+
+--
+-- Name: idx_serverless_runtimes_checksum; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_serverless_runtimes_checksum ON public.serverless_runtimes USING btree (checksum);
 
 
 --
--- Name: idx_tenant_plugin; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tenant_plugin; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE UNIQUE INDEX idx_tenant_plugin ON public.plugin_installations USING btree (tenant_id, plugin_id);
 
 
 --
--- Name: idx_tenant_storages_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tenant_storages_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_tenant_storages_plugin_id ON public.tenant_storages USING btree (plugin_id);
 
 
 --
--- Name: idx_tenant_storages_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tenant_storages_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_tenant_storages_tenant_id ON public.tenant_storages USING btree (tenant_id);
 
 
 --
--- Name: idx_tool_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tool_installations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_tool_installations_plugin_id ON public.tool_installations USING btree (plugin_id);
 
 
 --
--- Name: idx_tool_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tool_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_tool_installations_plugin_unique_identifier ON public.tool_installations USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_tool_installations_provider; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tool_installations_provider; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_tool_installations_provider ON public.tool_installations USING btree (provider);
 
 
 --
--- Name: idx_tool_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_tool_installations_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_tool_installations_tenant_id ON public.tool_installations USING btree (tenant_id);
 
 
 --
--- Name: idx_trigger_installations_plugin_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_installations_plugin_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_trigger_installations_plugin_id ON public.trigger_installations USING btree (plugin_id);
 
 
 --
--- Name: idx_trigger_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_installations_plugin_unique_identifier; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_trigger_installations_plugin_unique_identifier ON public.trigger_installations USING btree (plugin_unique_identifier);
 
 
 --
--- Name: idx_trigger_installations_provider; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_installations_provider; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_trigger_installations_provider ON public.trigger_installations USING btree (provider);
 
 
 --
--- Name: idx_trigger_installations_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_installations_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_trigger_installations_tenant_id ON public.trigger_installations USING btree (tenant_id);
@@ -741,5 +734,5 @@ CREATE INDEX idx_trigger_installations_tenant_id ON public.trigger_installations
 -- PostgreSQL database dump complete
 --
 
-\unrestrict HaIKOtymJGo4cYFkmbQLU7iTGbH5JdUCe58pfiduCvneMEwfcdflMqfhKaRGuNS
+\unrestrict xiFyqfG1LFu7NPcCtRZDW20xOQBooEbrngKSFoQtyurpFg3AkDhdeTEhBnqjpPh
 

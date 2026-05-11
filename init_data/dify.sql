@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict 5zgOvXV5ENvOBBCutAbQ7UzIICAD23MwMgq5PkbdReKQWLPvlqVa3DsKiUOEkNE
+\restrict 3gp3jXtMcDjNbcCz6VSqCgv9Mbc7MWVBC6J93LkbG5IrgPeQvoNNgg56AfJQFg6
 
 -- Dumped from database version 16.13 (Debian 16.13-1.pgdg13+1)
 -- Dumped by pg_dump version 16.13 (Debian 16.13-1.pgdg13+1)
@@ -33,7 +33,7 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 
 --
--- Name: uuidv7(); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: uuidv7(); Type: FUNCTION; Schema: public; Owner: dify
 --
 
 CREATE FUNCTION public.uuidv7() RETURNS uuid
@@ -54,17 +54,17 @@ SELECT encode(
 $$;
 
 
-ALTER FUNCTION public.uuidv7() OWNER TO postgres;
+ALTER FUNCTION public.uuidv7() OWNER TO dify;
 
 --
--- Name: FUNCTION uuidv7(); Type: COMMENT; Schema: public; Owner: postgres
+-- Name: FUNCTION uuidv7(); Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON FUNCTION public.uuidv7() IS 'Generate a uuid-v7 value with a 48-bit timestamp (millisecond precision) and 74 bits of randomness';
 
 
 --
--- Name: uuidv7_boundary(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: postgres
+-- Name: uuidv7_boundary(timestamp with time zone); Type: FUNCTION; Schema: public; Owner: dify
 --
 
 CREATE FUNCTION public.uuidv7_boundary(timestamp with time zone) RETURNS uuid
@@ -79,10 +79,10 @@ SELECT encode(
 $_$;
 
 
-ALTER FUNCTION public.uuidv7_boundary(timestamp with time zone) OWNER TO postgres;
+ALTER FUNCTION public.uuidv7_boundary(timestamp with time zone) OWNER TO dify;
 
 --
--- Name: FUNCTION uuidv7_boundary(timestamp with time zone); Type: COMMENT; Schema: public; Owner: postgres
+-- Name: FUNCTION uuidv7_boundary(timestamp with time zone); Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON FUNCTION public.uuidv7_boundary(timestamp with time zone) IS 'Generate a non-random uuidv7 with the given timestamp (first 48 bits) and all random bits to 0. As the smallest possible uuidv7 for that timestamp, it may be used as a boundary for partitions.';
@@ -93,7 +93,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: account_integrates; Type: TABLE; Schema: public; Owner: postgres
+-- Name: account_integrates; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.account_integrates (
@@ -107,10 +107,10 @@ CREATE TABLE public.account_integrates (
 );
 
 
-ALTER TABLE public.account_integrates OWNER TO postgres;
+ALTER TABLE public.account_integrates OWNER TO dify;
 
 --
--- Name: account_plugin_permissions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: account_plugin_permissions; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.account_plugin_permissions (
@@ -121,14 +121,14 @@ CREATE TABLE public.account_plugin_permissions (
 );
 
 
-ALTER TABLE public.account_plugin_permissions OWNER TO postgres;
+ALTER TABLE public.account_plugin_permissions OWNER TO dify;
 
 --
--- Name: account_trial_app_records; Type: TABLE; Schema: public; Owner: postgres
+-- Name: account_trial_app_records; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.account_trial_app_records (
-    id uuid NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     account_id uuid NOT NULL,
     app_id uuid NOT NULL,
     count integer NOT NULL,
@@ -136,10 +136,10 @@ CREATE TABLE public.account_trial_app_records (
 );
 
 
-ALTER TABLE public.account_trial_app_records OWNER TO postgres;
+ALTER TABLE public.account_trial_app_records OWNER TO dify;
 
 --
--- Name: accounts; Type: TABLE; Schema: public; Owner: postgres
+-- Name: accounts; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.accounts (
@@ -162,10 +162,10 @@ CREATE TABLE public.accounts (
 );
 
 
-ALTER TABLE public.accounts OWNER TO postgres;
+ALTER TABLE public.accounts OWNER TO dify;
 
 --
--- Name: alembic_version; Type: TABLE; Schema: public; Owner: postgres
+-- Name: alembic_version; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.alembic_version (
@@ -173,10 +173,10 @@ CREATE TABLE public.alembic_version (
 );
 
 
-ALTER TABLE public.alembic_version OWNER TO postgres;
+ALTER TABLE public.alembic_version OWNER TO dify;
 
 --
--- Name: api_based_extensions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: api_based_extensions; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.api_based_extensions (
@@ -189,10 +189,10 @@ CREATE TABLE public.api_based_extensions (
 );
 
 
-ALTER TABLE public.api_based_extensions OWNER TO postgres;
+ALTER TABLE public.api_based_extensions OWNER TO dify;
 
 --
--- Name: api_requests; Type: TABLE; Schema: public; Owner: postgres
+-- Name: api_requests; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.api_requests (
@@ -207,10 +207,10 @@ CREATE TABLE public.api_requests (
 );
 
 
-ALTER TABLE public.api_requests OWNER TO postgres;
+ALTER TABLE public.api_requests OWNER TO dify;
 
 --
--- Name: api_tokens; Type: TABLE; Schema: public; Owner: postgres
+-- Name: api_tokens; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.api_tokens (
@@ -224,10 +224,10 @@ CREATE TABLE public.api_tokens (
 );
 
 
-ALTER TABLE public.api_tokens OWNER TO postgres;
+ALTER TABLE public.api_tokens OWNER TO dify;
 
 --
--- Name: app_annotation_hit_histories; Type: TABLE; Schema: public; Owner: postgres
+-- Name: app_annotation_hit_histories; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.app_annotation_hit_histories (
@@ -245,10 +245,10 @@ CREATE TABLE public.app_annotation_hit_histories (
 );
 
 
-ALTER TABLE public.app_annotation_hit_histories OWNER TO postgres;
+ALTER TABLE public.app_annotation_hit_histories OWNER TO dify;
 
 --
--- Name: app_annotation_settings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: app_annotation_settings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.app_annotation_settings (
@@ -263,10 +263,10 @@ CREATE TABLE public.app_annotation_settings (
 );
 
 
-ALTER TABLE public.app_annotation_settings OWNER TO postgres;
+ALTER TABLE public.app_annotation_settings OWNER TO dify;
 
 --
--- Name: app_dataset_joins; Type: TABLE; Schema: public; Owner: postgres
+-- Name: app_dataset_joins; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.app_dataset_joins (
@@ -277,10 +277,10 @@ CREATE TABLE public.app_dataset_joins (
 );
 
 
-ALTER TABLE public.app_dataset_joins OWNER TO postgres;
+ALTER TABLE public.app_dataset_joins OWNER TO dify;
 
 --
--- Name: app_mcp_servers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: app_mcp_servers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.app_mcp_servers (
@@ -297,10 +297,10 @@ CREATE TABLE public.app_mcp_servers (
 );
 
 
-ALTER TABLE public.app_mcp_servers OWNER TO postgres;
+ALTER TABLE public.app_mcp_servers OWNER TO dify;
 
 --
--- Name: app_model_configs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: app_model_configs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.app_model_configs (
@@ -335,10 +335,10 @@ CREATE TABLE public.app_model_configs (
 );
 
 
-ALTER TABLE public.app_model_configs OWNER TO postgres;
+ALTER TABLE public.app_model_configs OWNER TO dify;
 
 --
--- Name: app_triggers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: app_triggers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.app_triggers (
@@ -355,10 +355,10 @@ CREATE TABLE public.app_triggers (
 );
 
 
-ALTER TABLE public.app_triggers OWNER TO postgres;
+ALTER TABLE public.app_triggers OWNER TO dify;
 
 --
--- Name: apps; Type: TABLE; Schema: public; Owner: postgres
+-- Name: apps; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.apps (
@@ -390,10 +390,10 @@ CREATE TABLE public.apps (
 );
 
 
-ALTER TABLE public.apps OWNER TO postgres;
+ALTER TABLE public.apps OWNER TO dify;
 
 --
--- Name: task_id_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: task_id_sequence; Type: SEQUENCE; Schema: public; Owner: dify
 --
 
 CREATE SEQUENCE public.task_id_sequence
@@ -404,10 +404,10 @@ CREATE SEQUENCE public.task_id_sequence
     CACHE 1;
 
 
-ALTER SEQUENCE public.task_id_sequence OWNER TO postgres;
+ALTER SEQUENCE public.task_id_sequence OWNER TO dify;
 
 --
--- Name: celery_taskmeta; Type: TABLE; Schema: public; Owner: postgres
+-- Name: celery_taskmeta; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.celery_taskmeta (
@@ -426,10 +426,10 @@ CREATE TABLE public.celery_taskmeta (
 );
 
 
-ALTER TABLE public.celery_taskmeta OWNER TO postgres;
+ALTER TABLE public.celery_taskmeta OWNER TO dify;
 
 --
--- Name: taskset_id_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: taskset_id_sequence; Type: SEQUENCE; Schema: public; Owner: dify
 --
 
 CREATE SEQUENCE public.taskset_id_sequence
@@ -440,10 +440,10 @@ CREATE SEQUENCE public.taskset_id_sequence
     CACHE 1;
 
 
-ALTER SEQUENCE public.taskset_id_sequence OWNER TO postgres;
+ALTER SEQUENCE public.taskset_id_sequence OWNER TO dify;
 
 --
--- Name: celery_tasksetmeta; Type: TABLE; Schema: public; Owner: postgres
+-- Name: celery_tasksetmeta; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.celery_tasksetmeta (
@@ -454,10 +454,10 @@ CREATE TABLE public.celery_tasksetmeta (
 );
 
 
-ALTER TABLE public.celery_tasksetmeta OWNER TO postgres;
+ALTER TABLE public.celery_tasksetmeta OWNER TO dify;
 
 --
--- Name: child_chunks; Type: TABLE; Schema: public; Owner: postgres
+-- Name: child_chunks; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.child_chunks (
@@ -482,10 +482,10 @@ CREATE TABLE public.child_chunks (
 );
 
 
-ALTER TABLE public.child_chunks OWNER TO postgres;
+ALTER TABLE public.child_chunks OWNER TO dify;
 
 --
--- Name: conversations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: conversations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.conversations (
@@ -516,10 +516,10 @@ CREATE TABLE public.conversations (
 );
 
 
-ALTER TABLE public.conversations OWNER TO postgres;
+ALTER TABLE public.conversations OWNER TO dify;
 
 --
--- Name: data_source_api_key_auth_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: data_source_api_key_auth_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.data_source_api_key_auth_bindings (
@@ -534,10 +534,10 @@ CREATE TABLE public.data_source_api_key_auth_bindings (
 );
 
 
-ALTER TABLE public.data_source_api_key_auth_bindings OWNER TO postgres;
+ALTER TABLE public.data_source_api_key_auth_bindings OWNER TO dify;
 
 --
--- Name: data_source_oauth_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: data_source_oauth_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.data_source_oauth_bindings (
@@ -552,10 +552,10 @@ CREATE TABLE public.data_source_oauth_bindings (
 );
 
 
-ALTER TABLE public.data_source_oauth_bindings OWNER TO postgres;
+ALTER TABLE public.data_source_oauth_bindings OWNER TO dify;
 
 --
--- Name: dataset_auto_disable_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_auto_disable_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_auto_disable_logs (
@@ -568,10 +568,10 @@ CREATE TABLE public.dataset_auto_disable_logs (
 );
 
 
-ALTER TABLE public.dataset_auto_disable_logs OWNER TO postgres;
+ALTER TABLE public.dataset_auto_disable_logs OWNER TO dify;
 
 --
--- Name: dataset_collection_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_collection_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_collection_bindings (
@@ -584,10 +584,10 @@ CREATE TABLE public.dataset_collection_bindings (
 );
 
 
-ALTER TABLE public.dataset_collection_bindings OWNER TO postgres;
+ALTER TABLE public.dataset_collection_bindings OWNER TO dify;
 
 --
--- Name: dataset_keyword_tables; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_keyword_tables; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_keyword_tables (
@@ -598,10 +598,10 @@ CREATE TABLE public.dataset_keyword_tables (
 );
 
 
-ALTER TABLE public.dataset_keyword_tables OWNER TO postgres;
+ALTER TABLE public.dataset_keyword_tables OWNER TO dify;
 
 --
--- Name: dataset_metadata_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_metadata_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_metadata_bindings (
@@ -615,10 +615,10 @@ CREATE TABLE public.dataset_metadata_bindings (
 );
 
 
-ALTER TABLE public.dataset_metadata_bindings OWNER TO postgres;
+ALTER TABLE public.dataset_metadata_bindings OWNER TO dify;
 
 --
--- Name: dataset_metadatas; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_metadatas; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_metadatas (
@@ -634,10 +634,10 @@ CREATE TABLE public.dataset_metadatas (
 );
 
 
-ALTER TABLE public.dataset_metadatas OWNER TO postgres;
+ALTER TABLE public.dataset_metadatas OWNER TO dify;
 
 --
--- Name: dataset_permissions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_permissions; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_permissions (
@@ -650,10 +650,10 @@ CREATE TABLE public.dataset_permissions (
 );
 
 
-ALTER TABLE public.dataset_permissions OWNER TO postgres;
+ALTER TABLE public.dataset_permissions OWNER TO dify;
 
 --
--- Name: dataset_process_rules; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_process_rules; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_process_rules (
@@ -666,10 +666,10 @@ CREATE TABLE public.dataset_process_rules (
 );
 
 
-ALTER TABLE public.dataset_process_rules OWNER TO postgres;
+ALTER TABLE public.dataset_process_rules OWNER TO dify;
 
 --
--- Name: dataset_queries; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_queries; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_queries (
@@ -684,10 +684,10 @@ CREATE TABLE public.dataset_queries (
 );
 
 
-ALTER TABLE public.dataset_queries OWNER TO postgres;
+ALTER TABLE public.dataset_queries OWNER TO dify;
 
 --
--- Name: dataset_retriever_resources; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dataset_retriever_resources; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dataset_retriever_resources (
@@ -712,10 +712,10 @@ CREATE TABLE public.dataset_retriever_resources (
 );
 
 
-ALTER TABLE public.dataset_retriever_resources OWNER TO postgres;
+ALTER TABLE public.dataset_retriever_resources OWNER TO dify;
 
 --
--- Name: datasets; Type: TABLE; Schema: public; Owner: postgres
+-- Name: datasets; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.datasets (
@@ -748,10 +748,10 @@ CREATE TABLE public.datasets (
 );
 
 
-ALTER TABLE public.datasets OWNER TO postgres;
+ALTER TABLE public.datasets OWNER TO dify;
 
 --
--- Name: datasource_oauth_params; Type: TABLE; Schema: public; Owner: postgres
+-- Name: datasource_oauth_params; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.datasource_oauth_params (
@@ -762,10 +762,10 @@ CREATE TABLE public.datasource_oauth_params (
 );
 
 
-ALTER TABLE public.datasource_oauth_params OWNER TO postgres;
+ALTER TABLE public.datasource_oauth_params OWNER TO dify;
 
 --
--- Name: datasource_oauth_tenant_params; Type: TABLE; Schema: public; Owner: postgres
+-- Name: datasource_oauth_tenant_params; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.datasource_oauth_tenant_params (
@@ -780,10 +780,10 @@ CREATE TABLE public.datasource_oauth_tenant_params (
 );
 
 
-ALTER TABLE public.datasource_oauth_tenant_params OWNER TO postgres;
+ALTER TABLE public.datasource_oauth_tenant_params OWNER TO dify;
 
 --
--- Name: datasource_providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: datasource_providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.datasource_providers (
@@ -802,10 +802,10 @@ CREATE TABLE public.datasource_providers (
 );
 
 
-ALTER TABLE public.datasource_providers OWNER TO postgres;
+ALTER TABLE public.datasource_providers OWNER TO dify;
 
 --
--- Name: dify_setups; Type: TABLE; Schema: public; Owner: postgres
+-- Name: dify_setups; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.dify_setups (
@@ -814,10 +814,10 @@ CREATE TABLE public.dify_setups (
 );
 
 
-ALTER TABLE public.dify_setups OWNER TO postgres;
+ALTER TABLE public.dify_setups OWNER TO dify;
 
 --
--- Name: document_pipeline_execution_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: document_pipeline_execution_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.document_pipeline_execution_logs (
@@ -833,10 +833,10 @@ CREATE TABLE public.document_pipeline_execution_logs (
 );
 
 
-ALTER TABLE public.document_pipeline_execution_logs OWNER TO postgres;
+ALTER TABLE public.document_pipeline_execution_logs OWNER TO dify;
 
 --
--- Name: document_segment_summaries; Type: TABLE; Schema: public; Owner: postgres
+-- Name: document_segment_summaries; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.document_segment_summaries (
@@ -858,10 +858,10 @@ CREATE TABLE public.document_segment_summaries (
 );
 
 
-ALTER TABLE public.document_segment_summaries OWNER TO postgres;
+ALTER TABLE public.document_segment_summaries OWNER TO dify;
 
 --
--- Name: document_segments; Type: TABLE; Schema: public; Owner: postgres
+-- Name: document_segments; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.document_segments (
@@ -893,10 +893,10 @@ CREATE TABLE public.document_segments (
 );
 
 
-ALTER TABLE public.document_segments OWNER TO postgres;
+ALTER TABLE public.document_segments OWNER TO dify;
 
 --
--- Name: documents; Type: TABLE; Schema: public; Owner: postgres
+-- Name: documents; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.documents (
@@ -944,10 +944,10 @@ CREATE TABLE public.documents (
 );
 
 
-ALTER TABLE public.documents OWNER TO postgres;
+ALTER TABLE public.documents OWNER TO dify;
 
 --
--- Name: embeddings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: embeddings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.embeddings (
@@ -960,10 +960,10 @@ CREATE TABLE public.embeddings (
 );
 
 
-ALTER TABLE public.embeddings OWNER TO postgres;
+ALTER TABLE public.embeddings OWNER TO dify;
 
 --
--- Name: end_users; Type: TABLE; Schema: public; Owner: postgres
+-- Name: end_users; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.end_users (
@@ -980,31 +980,14 @@ CREATE TABLE public.end_users (
 );
 
 
-ALTER TABLE public.end_users OWNER TO postgres;
+ALTER TABLE public.end_users OWNER TO dify;
 
 --
--- Name: execution_extra_contents; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.execution_extra_contents (
-    id uuid NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    type character varying(30) NOT NULL,
-    workflow_run_id uuid NOT NULL,
-    message_id uuid,
-    form_id uuid
-);
-
-
-ALTER TABLE public.execution_extra_contents OWNER TO postgres;
-
---
--- Name: exporle_banners; Type: TABLE; Schema: public; Owner: postgres
+-- Name: exporle_banners; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.exporle_banners (
-    id uuid NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     content json NOT NULL,
     link character varying(255) NOT NULL,
     sort integer NOT NULL,
@@ -1014,10 +997,10 @@ CREATE TABLE public.exporle_banners (
 );
 
 
-ALTER TABLE public.exporle_banners OWNER TO postgres;
+ALTER TABLE public.exporle_banners OWNER TO dify;
 
 --
--- Name: external_knowledge_apis; Type: TABLE; Schema: public; Owner: postgres
+-- Name: external_knowledge_apis; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.external_knowledge_apis (
@@ -1033,10 +1016,10 @@ CREATE TABLE public.external_knowledge_apis (
 );
 
 
-ALTER TABLE public.external_knowledge_apis OWNER TO postgres;
+ALTER TABLE public.external_knowledge_apis OWNER TO dify;
 
 --
--- Name: external_knowledge_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: external_knowledge_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.external_knowledge_bindings (
@@ -1052,73 +1035,10 @@ CREATE TABLE public.external_knowledge_bindings (
 );
 
 
-ALTER TABLE public.external_knowledge_bindings OWNER TO postgres;
+ALTER TABLE public.external_knowledge_bindings OWNER TO dify;
 
 --
--- Name: human_input_form_deliveries; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.human_input_form_deliveries (
-    id uuid NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    form_id uuid NOT NULL,
-    delivery_method_type character varying(20) NOT NULL,
-    delivery_config_id uuid,
-    channel_payload text NOT NULL
-);
-
-
-ALTER TABLE public.human_input_form_deliveries OWNER TO postgres;
-
---
--- Name: human_input_form_recipients; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.human_input_form_recipients (
-    id uuid NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    form_id uuid NOT NULL,
-    delivery_id uuid NOT NULL,
-    recipient_type character varying(20) NOT NULL,
-    recipient_payload text NOT NULL,
-    access_token character varying(32) NOT NULL
-);
-
-
-ALTER TABLE public.human_input_form_recipients OWNER TO postgres;
-
---
--- Name: human_input_forms; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.human_input_forms (
-    id uuid NOT NULL,
-    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    tenant_id uuid NOT NULL,
-    app_id uuid NOT NULL,
-    workflow_run_id uuid,
-    form_kind character varying(20) NOT NULL,
-    node_id character varying(60) NOT NULL,
-    form_definition text NOT NULL,
-    rendered_content text NOT NULL,
-    status character varying(20) NOT NULL,
-    expiration_time timestamp without time zone NOT NULL,
-    selected_action_id character varying(200),
-    submitted_data text,
-    submitted_at timestamp without time zone,
-    submission_user_id uuid,
-    submission_end_user_id uuid,
-    completed_by_recipient_id uuid
-);
-
-
-ALTER TABLE public.human_input_forms OWNER TO postgres;
-
---
--- Name: installed_apps; Type: TABLE; Schema: public; Owner: postgres
+-- Name: installed_apps; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.installed_apps (
@@ -1133,10 +1053,10 @@ CREATE TABLE public.installed_apps (
 );
 
 
-ALTER TABLE public.installed_apps OWNER TO postgres;
+ALTER TABLE public.installed_apps OWNER TO dify;
 
 --
--- Name: invitation_codes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: invitation_codes; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.invitation_codes (
@@ -1152,10 +1072,10 @@ CREATE TABLE public.invitation_codes (
 );
 
 
-ALTER TABLE public.invitation_codes OWNER TO postgres;
+ALTER TABLE public.invitation_codes OWNER TO dify;
 
 --
--- Name: invitation_codes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+-- Name: invitation_codes_id_seq; Type: SEQUENCE; Schema: public; Owner: dify
 --
 
 CREATE SEQUENCE public.invitation_codes_id_seq
@@ -1167,17 +1087,17 @@ CREATE SEQUENCE public.invitation_codes_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.invitation_codes_id_seq OWNER TO postgres;
+ALTER SEQUENCE public.invitation_codes_id_seq OWNER TO dify;
 
 --
--- Name: invitation_codes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: invitation_codes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: dify
 --
 
 ALTER SEQUENCE public.invitation_codes_id_seq OWNED BY public.invitation_codes.id;
 
 
 --
--- Name: load_balancing_model_configs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: load_balancing_model_configs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.load_balancing_model_configs (
@@ -1196,10 +1116,10 @@ CREATE TABLE public.load_balancing_model_configs (
 );
 
 
-ALTER TABLE public.load_balancing_model_configs OWNER TO postgres;
+ALTER TABLE public.load_balancing_model_configs OWNER TO dify;
 
 --
--- Name: message_agent_thoughts; Type: TABLE; Schema: public; Owner: postgres
+-- Name: message_agent_thoughts; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.message_agent_thoughts (
@@ -1233,10 +1153,10 @@ CREATE TABLE public.message_agent_thoughts (
 );
 
 
-ALTER TABLE public.message_agent_thoughts OWNER TO postgres;
+ALTER TABLE public.message_agent_thoughts OWNER TO dify;
 
 --
--- Name: message_annotations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: message_annotations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.message_annotations (
@@ -1253,10 +1173,10 @@ CREATE TABLE public.message_annotations (
 );
 
 
-ALTER TABLE public.message_annotations OWNER TO postgres;
+ALTER TABLE public.message_annotations OWNER TO dify;
 
 --
--- Name: message_chains; Type: TABLE; Schema: public; Owner: postgres
+-- Name: message_chains; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.message_chains (
@@ -1269,10 +1189,10 @@ CREATE TABLE public.message_chains (
 );
 
 
-ALTER TABLE public.message_chains OWNER TO postgres;
+ALTER TABLE public.message_chains OWNER TO dify;
 
 --
--- Name: message_feedbacks; Type: TABLE; Schema: public; Owner: postgres
+-- Name: message_feedbacks; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.message_feedbacks (
@@ -1290,10 +1210,10 @@ CREATE TABLE public.message_feedbacks (
 );
 
 
-ALTER TABLE public.message_feedbacks OWNER TO postgres;
+ALTER TABLE public.message_feedbacks OWNER TO dify;
 
 --
--- Name: message_files; Type: TABLE; Schema: public; Owner: postgres
+-- Name: message_files; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.message_files (
@@ -1310,10 +1230,10 @@ CREATE TABLE public.message_files (
 );
 
 
-ALTER TABLE public.message_files OWNER TO postgres;
+ALTER TABLE public.message_files OWNER TO dify;
 
 --
--- Name: messages; Type: TABLE; Schema: public; Owner: postgres
+-- Name: messages; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.messages (
@@ -1352,10 +1272,10 @@ CREATE TABLE public.messages (
 );
 
 
-ALTER TABLE public.messages OWNER TO postgres;
+ALTER TABLE public.messages OWNER TO dify;
 
 --
--- Name: oauth_provider_apps; Type: TABLE; Schema: public; Owner: postgres
+-- Name: oauth_provider_apps; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.oauth_provider_apps (
@@ -1370,10 +1290,10 @@ CREATE TABLE public.oauth_provider_apps (
 );
 
 
-ALTER TABLE public.oauth_provider_apps OWNER TO postgres;
+ALTER TABLE public.oauth_provider_apps OWNER TO dify;
 
 --
--- Name: operation_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: operation_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.operation_logs (
@@ -1388,10 +1308,10 @@ CREATE TABLE public.operation_logs (
 );
 
 
-ALTER TABLE public.operation_logs OWNER TO postgres;
+ALTER TABLE public.operation_logs OWNER TO dify;
 
 --
--- Name: pinned_conversations; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pinned_conversations; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.pinned_conversations (
@@ -1404,10 +1324,10 @@ CREATE TABLE public.pinned_conversations (
 );
 
 
-ALTER TABLE public.pinned_conversations OWNER TO postgres;
+ALTER TABLE public.pinned_conversations OWNER TO dify;
 
 --
--- Name: pipeline_built_in_templates; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pipeline_built_in_templates; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.pipeline_built_in_templates (
@@ -1427,10 +1347,10 @@ CREATE TABLE public.pipeline_built_in_templates (
 );
 
 
-ALTER TABLE public.pipeline_built_in_templates OWNER TO postgres;
+ALTER TABLE public.pipeline_built_in_templates OWNER TO dify;
 
 --
--- Name: pipeline_customized_templates; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pipeline_customized_templates; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.pipeline_customized_templates (
@@ -1451,10 +1371,10 @@ CREATE TABLE public.pipeline_customized_templates (
 );
 
 
-ALTER TABLE public.pipeline_customized_templates OWNER TO postgres;
+ALTER TABLE public.pipeline_customized_templates OWNER TO dify;
 
 --
--- Name: pipeline_recommended_plugins; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pipeline_recommended_plugins; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.pipeline_recommended_plugins (
@@ -1469,10 +1389,10 @@ CREATE TABLE public.pipeline_recommended_plugins (
 );
 
 
-ALTER TABLE public.pipeline_recommended_plugins OWNER TO postgres;
+ALTER TABLE public.pipeline_recommended_plugins OWNER TO dify;
 
 --
--- Name: pipelines; Type: TABLE; Schema: public; Owner: postgres
+-- Name: pipelines; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.pipelines (
@@ -1490,10 +1410,10 @@ CREATE TABLE public.pipelines (
 );
 
 
-ALTER TABLE public.pipelines OWNER TO postgres;
+ALTER TABLE public.pipelines OWNER TO dify;
 
 --
--- Name: provider_credentials; Type: TABLE; Schema: public; Owner: postgres
+-- Name: provider_credentials; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.provider_credentials (
@@ -1507,10 +1427,10 @@ CREATE TABLE public.provider_credentials (
 );
 
 
-ALTER TABLE public.provider_credentials OWNER TO postgres;
+ALTER TABLE public.provider_credentials OWNER TO dify;
 
 --
--- Name: provider_model_credentials; Type: TABLE; Schema: public; Owner: postgres
+-- Name: provider_model_credentials; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.provider_model_credentials (
@@ -1526,10 +1446,10 @@ CREATE TABLE public.provider_model_credentials (
 );
 
 
-ALTER TABLE public.provider_model_credentials OWNER TO postgres;
+ALTER TABLE public.provider_model_credentials OWNER TO dify;
 
 --
--- Name: provider_model_settings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: provider_model_settings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.provider_model_settings (
@@ -1545,10 +1465,10 @@ CREATE TABLE public.provider_model_settings (
 );
 
 
-ALTER TABLE public.provider_model_settings OWNER TO postgres;
+ALTER TABLE public.provider_model_settings OWNER TO dify;
 
 --
--- Name: provider_models; Type: TABLE; Schema: public; Owner: postgres
+-- Name: provider_models; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.provider_models (
@@ -1564,10 +1484,10 @@ CREATE TABLE public.provider_models (
 );
 
 
-ALTER TABLE public.provider_models OWNER TO postgres;
+ALTER TABLE public.provider_models OWNER TO dify;
 
 --
--- Name: provider_orders; Type: TABLE; Schema: public; Owner: postgres
+-- Name: provider_orders; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.provider_orders (
@@ -1590,10 +1510,10 @@ CREATE TABLE public.provider_orders (
 );
 
 
-ALTER TABLE public.provider_orders OWNER TO postgres;
+ALTER TABLE public.provider_orders OWNER TO dify;
 
 --
--- Name: providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.providers (
@@ -1612,10 +1532,10 @@ CREATE TABLE public.providers (
 );
 
 
-ALTER TABLE public.providers OWNER TO postgres;
+ALTER TABLE public.providers OWNER TO dify;
 
 --
--- Name: rate_limit_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: rate_limit_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.rate_limit_logs (
@@ -1627,10 +1547,10 @@ CREATE TABLE public.rate_limit_logs (
 );
 
 
-ALTER TABLE public.rate_limit_logs OWNER TO postgres;
+ALTER TABLE public.rate_limit_logs OWNER TO dify;
 
 --
--- Name: recommended_apps; Type: TABLE; Schema: public; Owner: postgres
+-- Name: recommended_apps; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.recommended_apps (
@@ -1650,10 +1570,10 @@ CREATE TABLE public.recommended_apps (
 );
 
 
-ALTER TABLE public.recommended_apps OWNER TO postgres;
+ALTER TABLE public.recommended_apps OWNER TO dify;
 
 --
--- Name: saved_messages; Type: TABLE; Schema: public; Owner: postgres
+-- Name: saved_messages; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.saved_messages (
@@ -1666,10 +1586,10 @@ CREATE TABLE public.saved_messages (
 );
 
 
-ALTER TABLE public.saved_messages OWNER TO postgres;
+ALTER TABLE public.saved_messages OWNER TO dify;
 
 --
--- Name: segment_attachment_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: segment_attachment_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.segment_attachment_bindings (
@@ -1683,10 +1603,10 @@ CREATE TABLE public.segment_attachment_bindings (
 );
 
 
-ALTER TABLE public.segment_attachment_bindings OWNER TO postgres;
+ALTER TABLE public.segment_attachment_bindings OWNER TO dify;
 
 --
--- Name: sites; Type: TABLE; Schema: public; Owner: postgres
+-- Name: sites; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.sites (
@@ -1717,10 +1637,10 @@ CREATE TABLE public.sites (
 );
 
 
-ALTER TABLE public.sites OWNER TO postgres;
+ALTER TABLE public.sites OWNER TO dify;
 
 --
--- Name: tag_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tag_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tag_bindings (
@@ -1733,10 +1653,10 @@ CREATE TABLE public.tag_bindings (
 );
 
 
-ALTER TABLE public.tag_bindings OWNER TO postgres;
+ALTER TABLE public.tag_bindings OWNER TO dify;
 
 --
--- Name: tags; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tags; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tags (
@@ -1749,10 +1669,10 @@ CREATE TABLE public.tags (
 );
 
 
-ALTER TABLE public.tags OWNER TO postgres;
+ALTER TABLE public.tags OWNER TO dify;
 
 --
--- Name: tenant_account_joins; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenant_account_joins; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenant_account_joins (
@@ -1767,10 +1687,10 @@ CREATE TABLE public.tenant_account_joins (
 );
 
 
-ALTER TABLE public.tenant_account_joins OWNER TO postgres;
+ALTER TABLE public.tenant_account_joins OWNER TO dify;
 
 --
--- Name: tenant_credit_pools; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenant_credit_pools; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenant_credit_pools (
@@ -1784,10 +1704,10 @@ CREATE TABLE public.tenant_credit_pools (
 );
 
 
-ALTER TABLE public.tenant_credit_pools OWNER TO postgres;
+ALTER TABLE public.tenant_credit_pools OWNER TO dify;
 
 --
--- Name: tenant_default_models; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenant_default_models; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenant_default_models (
@@ -1801,10 +1721,10 @@ CREATE TABLE public.tenant_default_models (
 );
 
 
-ALTER TABLE public.tenant_default_models OWNER TO postgres;
+ALTER TABLE public.tenant_default_models OWNER TO dify;
 
 --
--- Name: tenant_plugin_auto_upgrade_strategies; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenant_plugin_auto_upgrade_strategies; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenant_plugin_auto_upgrade_strategies (
@@ -1820,10 +1740,10 @@ CREATE TABLE public.tenant_plugin_auto_upgrade_strategies (
 );
 
 
-ALTER TABLE public.tenant_plugin_auto_upgrade_strategies OWNER TO postgres;
+ALTER TABLE public.tenant_plugin_auto_upgrade_strategies OWNER TO dify;
 
 --
--- Name: tenant_preferred_model_providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenant_preferred_model_providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenant_preferred_model_providers (
@@ -1836,10 +1756,10 @@ CREATE TABLE public.tenant_preferred_model_providers (
 );
 
 
-ALTER TABLE public.tenant_preferred_model_providers OWNER TO postgres;
+ALTER TABLE public.tenant_preferred_model_providers OWNER TO dify;
 
 --
--- Name: tenants; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tenants; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tenants (
@@ -1854,10 +1774,10 @@ CREATE TABLE public.tenants (
 );
 
 
-ALTER TABLE public.tenants OWNER TO postgres;
+ALTER TABLE public.tenants OWNER TO dify;
 
 --
--- Name: tidb_auth_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tidb_auth_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tidb_auth_bindings (
@@ -1873,10 +1793,10 @@ CREATE TABLE public.tidb_auth_bindings (
 );
 
 
-ALTER TABLE public.tidb_auth_bindings OWNER TO postgres;
+ALTER TABLE public.tidb_auth_bindings OWNER TO dify;
 
 --
--- Name: tool_api_providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_api_providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_api_providers (
@@ -1897,10 +1817,10 @@ CREATE TABLE public.tool_api_providers (
 );
 
 
-ALTER TABLE public.tool_api_providers OWNER TO postgres;
+ALTER TABLE public.tool_api_providers OWNER TO dify;
 
 --
--- Name: tool_builtin_providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_builtin_providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_builtin_providers (
@@ -1918,10 +1838,10 @@ CREATE TABLE public.tool_builtin_providers (
 );
 
 
-ALTER TABLE public.tool_builtin_providers OWNER TO postgres;
+ALTER TABLE public.tool_builtin_providers OWNER TO dify;
 
 --
--- Name: tool_conversation_variables; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_conversation_variables; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_conversation_variables (
@@ -1935,10 +1855,10 @@ CREATE TABLE public.tool_conversation_variables (
 );
 
 
-ALTER TABLE public.tool_conversation_variables OWNER TO postgres;
+ALTER TABLE public.tool_conversation_variables OWNER TO dify;
 
 --
--- Name: tool_files; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_files; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_files (
@@ -1954,10 +1874,10 @@ CREATE TABLE public.tool_files (
 );
 
 
-ALTER TABLE public.tool_files OWNER TO postgres;
+ALTER TABLE public.tool_files OWNER TO dify;
 
 --
--- Name: tool_label_bindings; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_label_bindings; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_label_bindings (
@@ -1968,10 +1888,10 @@ CREATE TABLE public.tool_label_bindings (
 );
 
 
-ALTER TABLE public.tool_label_bindings OWNER TO postgres;
+ALTER TABLE public.tool_label_bindings OWNER TO dify;
 
 --
--- Name: tool_mcp_providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_mcp_providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_mcp_providers (
@@ -1994,10 +1914,10 @@ CREATE TABLE public.tool_mcp_providers (
 );
 
 
-ALTER TABLE public.tool_mcp_providers OWNER TO postgres;
+ALTER TABLE public.tool_mcp_providers OWNER TO dify;
 
 --
--- Name: tool_model_invokes; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_model_invokes; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_model_invokes (
@@ -2022,10 +1942,10 @@ CREATE TABLE public.tool_model_invokes (
 );
 
 
-ALTER TABLE public.tool_model_invokes OWNER TO postgres;
+ALTER TABLE public.tool_model_invokes OWNER TO dify;
 
 --
--- Name: tool_oauth_system_clients; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_oauth_system_clients; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_oauth_system_clients (
@@ -2036,10 +1956,10 @@ CREATE TABLE public.tool_oauth_system_clients (
 );
 
 
-ALTER TABLE public.tool_oauth_system_clients OWNER TO postgres;
+ALTER TABLE public.tool_oauth_system_clients OWNER TO dify;
 
 --
--- Name: tool_oauth_tenant_clients; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_oauth_tenant_clients; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_oauth_tenant_clients (
@@ -2052,10 +1972,10 @@ CREATE TABLE public.tool_oauth_tenant_clients (
 );
 
 
-ALTER TABLE public.tool_oauth_tenant_clients OWNER TO postgres;
+ALTER TABLE public.tool_oauth_tenant_clients OWNER TO dify;
 
 --
--- Name: tool_published_apps; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_published_apps; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_published_apps (
@@ -2073,10 +1993,10 @@ CREATE TABLE public.tool_published_apps (
 );
 
 
-ALTER TABLE public.tool_published_apps OWNER TO postgres;
+ALTER TABLE public.tool_published_apps OWNER TO dify;
 
 --
--- Name: tool_workflow_providers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: tool_workflow_providers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.tool_workflow_providers (
@@ -2096,10 +2016,10 @@ CREATE TABLE public.tool_workflow_providers (
 );
 
 
-ALTER TABLE public.tool_workflow_providers OWNER TO postgres;
+ALTER TABLE public.tool_workflow_providers OWNER TO dify;
 
 --
--- Name: trace_app_config; Type: TABLE; Schema: public; Owner: postgres
+-- Name: trace_app_config; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.trace_app_config (
@@ -2113,14 +2033,14 @@ CREATE TABLE public.trace_app_config (
 );
 
 
-ALTER TABLE public.trace_app_config OWNER TO postgres;
+ALTER TABLE public.trace_app_config OWNER TO dify;
 
 --
--- Name: trial_apps; Type: TABLE; Schema: public; Owner: postgres
+-- Name: trial_apps; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.trial_apps (
-    id uuid NOT NULL,
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     app_id uuid NOT NULL,
     tenant_id uuid NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -2128,10 +2048,10 @@ CREATE TABLE public.trial_apps (
 );
 
 
-ALTER TABLE public.trial_apps OWNER TO postgres;
+ALTER TABLE public.trial_apps OWNER TO dify;
 
 --
--- Name: trigger_oauth_system_clients; Type: TABLE; Schema: public; Owner: postgres
+-- Name: trigger_oauth_system_clients; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.trigger_oauth_system_clients (
@@ -2144,10 +2064,10 @@ CREATE TABLE public.trigger_oauth_system_clients (
 );
 
 
-ALTER TABLE public.trigger_oauth_system_clients OWNER TO postgres;
+ALTER TABLE public.trigger_oauth_system_clients OWNER TO dify;
 
 --
--- Name: trigger_oauth_tenant_clients; Type: TABLE; Schema: public; Owner: postgres
+-- Name: trigger_oauth_tenant_clients; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.trigger_oauth_tenant_clients (
@@ -2162,10 +2082,10 @@ CREATE TABLE public.trigger_oauth_tenant_clients (
 );
 
 
-ALTER TABLE public.trigger_oauth_tenant_clients OWNER TO postgres;
+ALTER TABLE public.trigger_oauth_tenant_clients OWNER TO dify;
 
 --
--- Name: trigger_subscriptions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: trigger_subscriptions; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.trigger_subscriptions (
@@ -2186,73 +2106,73 @@ CREATE TABLE public.trigger_subscriptions (
 );
 
 
-ALTER TABLE public.trigger_subscriptions OWNER TO postgres;
+ALTER TABLE public.trigger_subscriptions OWNER TO dify;
 
 --
--- Name: COLUMN trigger_subscriptions.name; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.name; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.name IS 'Subscription instance name';
 
 
 --
--- Name: COLUMN trigger_subscriptions.provider_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.provider_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.provider_id IS 'Provider identifier (e.g., plugin_id/provider_name)';
 
 
 --
--- Name: COLUMN trigger_subscriptions.endpoint_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.endpoint_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.endpoint_id IS 'Subscription endpoint';
 
 
 --
--- Name: COLUMN trigger_subscriptions.parameters; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.parameters; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.parameters IS 'Subscription parameters JSON';
 
 
 --
--- Name: COLUMN trigger_subscriptions.properties; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.properties; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.properties IS 'Subscription properties JSON';
 
 
 --
--- Name: COLUMN trigger_subscriptions.credentials; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.credentials; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.credentials IS 'Subscription credentials JSON';
 
 
 --
--- Name: COLUMN trigger_subscriptions.credential_type; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.credential_type; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.credential_type IS 'oauth or api_key';
 
 
 --
--- Name: COLUMN trigger_subscriptions.credential_expires_at; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.credential_expires_at; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.credential_expires_at IS 'OAuth token expiration timestamp, -1 for never';
 
 
 --
--- Name: COLUMN trigger_subscriptions.expires_at; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN trigger_subscriptions.expires_at; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.trigger_subscriptions.expires_at IS 'Subscription instance expiration timestamp, -1 for never';
 
 
 --
--- Name: upload_files; Type: TABLE; Schema: public; Owner: postgres
+-- Name: upload_files; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.upload_files (
@@ -2275,10 +2195,10 @@ CREATE TABLE public.upload_files (
 );
 
 
-ALTER TABLE public.upload_files OWNER TO postgres;
+ALTER TABLE public.upload_files OWNER TO dify;
 
 --
--- Name: whitelists; Type: TABLE; Schema: public; Owner: postgres
+-- Name: whitelists; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.whitelists (
@@ -2289,10 +2209,10 @@ CREATE TABLE public.whitelists (
 );
 
 
-ALTER TABLE public.whitelists OWNER TO postgres;
+ALTER TABLE public.whitelists OWNER TO dify;
 
 --
--- Name: workflow_app_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_app_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_app_logs (
@@ -2308,10 +2228,10 @@ CREATE TABLE public.workflow_app_logs (
 );
 
 
-ALTER TABLE public.workflow_app_logs OWNER TO postgres;
+ALTER TABLE public.workflow_app_logs OWNER TO dify;
 
 --
--- Name: workflow_archive_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_archive_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_archive_logs (
@@ -2340,10 +2260,10 @@ CREATE TABLE public.workflow_archive_logs (
 );
 
 
-ALTER TABLE public.workflow_archive_logs OWNER TO postgres;
+ALTER TABLE public.workflow_archive_logs OWNER TO dify;
 
 --
--- Name: workflow_conversation_variables; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_conversation_variables; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_conversation_variables (
@@ -2356,10 +2276,10 @@ CREATE TABLE public.workflow_conversation_variables (
 );
 
 
-ALTER TABLE public.workflow_conversation_variables OWNER TO postgres;
+ALTER TABLE public.workflow_conversation_variables OWNER TO dify;
 
 --
--- Name: workflow_draft_variable_files; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_draft_variable_files; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_draft_variable_files (
@@ -2375,52 +2295,52 @@ CREATE TABLE public.workflow_draft_variable_files (
 );
 
 
-ALTER TABLE public.workflow_draft_variable_files OWNER TO postgres;
+ALTER TABLE public.workflow_draft_variable_files OWNER TO dify;
 
 --
--- Name: COLUMN workflow_draft_variable_files.tenant_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variable_files.tenant_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variable_files.tenant_id IS 'The tenant to which the WorkflowDraftVariableFile belongs, referencing Tenant.id';
 
 
 --
--- Name: COLUMN workflow_draft_variable_files.app_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variable_files.app_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variable_files.app_id IS 'The application to which the WorkflowDraftVariableFile belongs, referencing App.id';
 
 
 --
--- Name: COLUMN workflow_draft_variable_files.user_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variable_files.user_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variable_files.user_id IS 'The owner to of the WorkflowDraftVariableFile, referencing Account.id';
 
 
 --
--- Name: COLUMN workflow_draft_variable_files.upload_file_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variable_files.upload_file_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variable_files.upload_file_id IS 'Reference to UploadFile containing the large variable data';
 
 
 --
--- Name: COLUMN workflow_draft_variable_files.size; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variable_files.size; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variable_files.size IS 'Size of the original variable content in bytes';
 
 
 --
--- Name: COLUMN workflow_draft_variable_files.length; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variable_files.length; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variable_files.length IS 'Length of the original variable content. For array and array-like types, this represents the number of elements. For object types, it indicates the number of keys. For other types, the value is NULL.';
 
 
 --
--- Name: workflow_draft_variables; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_draft_variables; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_draft_variables (
@@ -2439,29 +2359,28 @@ CREATE TABLE public.workflow_draft_variables (
     editable boolean NOT NULL,
     node_execution_id uuid,
     file_id uuid,
-    is_default_value boolean DEFAULT false NOT NULL,
-    user_id uuid
+    is_default_value boolean DEFAULT false NOT NULL
 );
 
 
-ALTER TABLE public.workflow_draft_variables OWNER TO postgres;
+ALTER TABLE public.workflow_draft_variables OWNER TO dify;
 
 --
--- Name: COLUMN workflow_draft_variables.file_id; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variables.file_id; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variables.file_id IS 'Reference to WorkflowDraftVariableFile if variable is offloaded to external storage';
 
 
 --
--- Name: COLUMN workflow_draft_variables.is_default_value; Type: COMMENT; Schema: public; Owner: postgres
+-- Name: COLUMN workflow_draft_variables.is_default_value; Type: COMMENT; Schema: public; Owner: dify
 --
 
 COMMENT ON COLUMN public.workflow_draft_variables.is_default_value IS 'Indicates whether the current value is the default for a conversation variable. Always `FALSE` for other types of variables.';
 
 
 --
--- Name: workflow_node_execution_offload; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_offload; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_node_execution_offload (
@@ -2475,10 +2394,10 @@ CREATE TABLE public.workflow_node_execution_offload (
 );
 
 
-ALTER TABLE public.workflow_node_execution_offload OWNER TO postgres;
+ALTER TABLE public.workflow_node_execution_offload OWNER TO dify;
 
 --
--- Name: workflow_node_executions; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_node_executions; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_node_executions (
@@ -2508,10 +2427,10 @@ CREATE TABLE public.workflow_node_executions (
 );
 
 
-ALTER TABLE public.workflow_node_executions OWNER TO postgres;
+ALTER TABLE public.workflow_node_executions OWNER TO dify;
 
 --
--- Name: workflow_pause_reasons; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_pause_reasons; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_pause_reasons (
@@ -2526,10 +2445,10 @@ CREATE TABLE public.workflow_pause_reasons (
 );
 
 
-ALTER TABLE public.workflow_pause_reasons OWNER TO postgres;
+ALTER TABLE public.workflow_pause_reasons OWNER TO dify;
 
 --
--- Name: workflow_pauses; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_pauses; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_pauses (
@@ -2543,10 +2462,10 @@ CREATE TABLE public.workflow_pauses (
 );
 
 
-ALTER TABLE public.workflow_pauses OWNER TO postgres;
+ALTER TABLE public.workflow_pauses OWNER TO dify;
 
 --
--- Name: workflow_plugin_triggers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_plugin_triggers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_plugin_triggers (
@@ -2562,10 +2481,10 @@ CREATE TABLE public.workflow_plugin_triggers (
 );
 
 
-ALTER TABLE public.workflow_plugin_triggers OWNER TO postgres;
+ALTER TABLE public.workflow_plugin_triggers OWNER TO dify;
 
 --
--- Name: workflow_runs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_runs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_runs (
@@ -2592,10 +2511,10 @@ CREATE TABLE public.workflow_runs (
 );
 
 
-ALTER TABLE public.workflow_runs OWNER TO postgres;
+ALTER TABLE public.workflow_runs OWNER TO dify;
 
 --
--- Name: workflow_schedule_plans; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_schedule_plans; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_schedule_plans (
@@ -2611,10 +2530,10 @@ CREATE TABLE public.workflow_schedule_plans (
 );
 
 
-ALTER TABLE public.workflow_schedule_plans OWNER TO postgres;
+ALTER TABLE public.workflow_schedule_plans OWNER TO dify;
 
 --
--- Name: workflow_trigger_logs; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_trigger_logs; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_trigger_logs (
@@ -2644,10 +2563,10 @@ CREATE TABLE public.workflow_trigger_logs (
 );
 
 
-ALTER TABLE public.workflow_trigger_logs OWNER TO postgres;
+ALTER TABLE public.workflow_trigger_logs OWNER TO dify;
 
 --
--- Name: workflow_webhook_triggers; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_webhook_triggers; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflow_webhook_triggers (
@@ -2662,10 +2581,10 @@ CREATE TABLE public.workflow_webhook_triggers (
 );
 
 
-ALTER TABLE public.workflow_webhook_triggers OWNER TO postgres;
+ALTER TABLE public.workflow_webhook_triggers OWNER TO dify;
 
 --
--- Name: workflows; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflows; Type: TABLE; Schema: public; Owner: dify
 --
 
 CREATE TABLE public.workflows (
@@ -2688,17 +2607,17 @@ CREATE TABLE public.workflows (
 );
 
 
-ALTER TABLE public.workflows OWNER TO postgres;
+ALTER TABLE public.workflows OWNER TO dify;
 
 --
--- Name: invitation_codes id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: invitation_codes id; Type: DEFAULT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.invitation_codes ALTER COLUMN id SET DEFAULT nextval('public.invitation_codes_id_seq'::regclass);
 
 
 --
--- Data for Name: account_integrates; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: account_integrates; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.account_integrates (id, account_id, provider, open_id, encrypted_token, created_at, updated_at) FROM stdin;
@@ -2706,7 +2625,7 @@ COPY public.account_integrates (id, account_id, provider, open_id, encrypted_tok
 
 
 --
--- Data for Name: account_plugin_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: account_plugin_permissions; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.account_plugin_permissions (id, tenant_id, install_permission, debug_permission) FROM stdin;
@@ -2714,7 +2633,7 @@ COPY public.account_plugin_permissions (id, tenant_id, install_permission, debug
 
 
 --
--- Data for Name: account_trial_app_records; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: account_trial_app_records; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.account_trial_app_records (id, account_id, app_id, count, created_at) FROM stdin;
@@ -2722,7 +2641,7 @@ COPY public.account_trial_app_records (id, account_id, app_id, count, created_at
 
 
 --
--- Data for Name: accounts; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: accounts; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.accounts (id, name, email, password, password_salt, avatar, interface_language, interface_theme, timezone, last_login_at, last_login_ip, status, initialized_at, created_at, updated_at, last_active_at) FROM stdin;
@@ -2730,16 +2649,16 @@ COPY public.accounts (id, name, email, password, password_salt, avatar, interfac
 
 
 --
--- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: alembic_version; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.alembic_version (version_num) FROM stdin;
-6b5f9f8b1a2c
+788d3099ae3a
 \.
 
 
 --
--- Data for Name: api_based_extensions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: api_based_extensions; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.api_based_extensions (id, tenant_id, name, api_endpoint, api_key, created_at) FROM stdin;
@@ -2747,7 +2666,7 @@ COPY public.api_based_extensions (id, tenant_id, name, api_endpoint, api_key, cr
 
 
 --
--- Data for Name: api_requests; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: api_requests; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.api_requests (id, tenant_id, api_token_id, path, request, response, ip, created_at) FROM stdin;
@@ -2755,7 +2674,7 @@ COPY public.api_requests (id, tenant_id, api_token_id, path, request, response, 
 
 
 --
--- Data for Name: api_tokens; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: api_tokens; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.api_tokens (id, app_id, type, token, last_used_at, created_at, tenant_id) FROM stdin;
@@ -2763,7 +2682,7 @@ COPY public.api_tokens (id, app_id, type, token, last_used_at, created_at, tenan
 
 
 --
--- Data for Name: app_annotation_hit_histories; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: app_annotation_hit_histories; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.app_annotation_hit_histories (id, app_id, annotation_id, source, question, account_id, created_at, score, message_id, annotation_question, annotation_content) FROM stdin;
@@ -2771,7 +2690,7 @@ COPY public.app_annotation_hit_histories (id, app_id, annotation_id, source, que
 
 
 --
--- Data for Name: app_annotation_settings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: app_annotation_settings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.app_annotation_settings (id, app_id, score_threshold, collection_binding_id, created_user_id, created_at, updated_user_id, updated_at) FROM stdin;
@@ -2779,7 +2698,7 @@ COPY public.app_annotation_settings (id, app_id, score_threshold, collection_bin
 
 
 --
--- Data for Name: app_dataset_joins; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: app_dataset_joins; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.app_dataset_joins (id, app_id, dataset_id, created_at) FROM stdin;
@@ -2787,7 +2706,7 @@ COPY public.app_dataset_joins (id, app_id, dataset_id, created_at) FROM stdin;
 
 
 --
--- Data for Name: app_mcp_servers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: app_mcp_servers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.app_mcp_servers (id, tenant_id, app_id, name, description, server_code, status, parameters, created_at, updated_at) FROM stdin;
@@ -2795,7 +2714,7 @@ COPY public.app_mcp_servers (id, tenant_id, app_id, name, description, server_co
 
 
 --
--- Data for Name: app_model_configs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: app_model_configs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.app_model_configs (id, app_id, provider, model_id, configs, created_at, updated_at, opening_statement, suggested_questions, suggested_questions_after_answer, more_like_this, model, user_input_form, pre_prompt, agent_mode, speech_to_text, sensitive_word_avoidance, retriever_resource, dataset_query_variable, prompt_type, chat_prompt_config, completion_prompt_config, dataset_configs, external_data_tools, file_upload, text_to_speech, created_by, updated_by) FROM stdin;
@@ -2803,7 +2722,7 @@ COPY public.app_model_configs (id, app_id, provider, model_id, configs, created_
 
 
 --
--- Data for Name: app_triggers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: app_triggers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.app_triggers (id, tenant_id, app_id, node_id, trigger_type, title, provider_name, status, created_at, updated_at) FROM stdin;
@@ -2811,7 +2730,7 @@ COPY public.app_triggers (id, tenant_id, app_id, node_id, trigger_type, title, p
 
 
 --
--- Data for Name: apps; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: apps; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.apps (id, tenant_id, name, mode, icon, icon_background, app_model_config_id, status, enable_site, enable_api, api_rpm, api_rph, is_demo, is_public, created_at, updated_at, is_universal, workflow_id, description, tracing, max_active_requests, icon_type, created_by, updated_by, use_icon_as_answer_icon) FROM stdin;
@@ -2819,7 +2738,7 @@ COPY public.apps (id, tenant_id, name, mode, icon, icon_background, app_model_co
 
 
 --
--- Data for Name: celery_taskmeta; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: celery_taskmeta; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.celery_taskmeta (id, task_id, status, result, date_done, traceback, name, args, kwargs, worker, retries, queue) FROM stdin;
@@ -2827,7 +2746,7 @@ COPY public.celery_taskmeta (id, task_id, status, result, date_done, traceback, 
 
 
 --
--- Data for Name: celery_tasksetmeta; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: celery_tasksetmeta; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.celery_tasksetmeta (id, taskset_id, result, date_done) FROM stdin;
@@ -2835,7 +2754,7 @@ COPY public.celery_tasksetmeta (id, taskset_id, result, date_done) FROM stdin;
 
 
 --
--- Data for Name: child_chunks; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: child_chunks; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.child_chunks (id, tenant_id, dataset_id, document_id, segment_id, "position", content, word_count, index_node_id, index_node_hash, type, created_by, created_at, updated_by, updated_at, indexing_at, completed_at, error) FROM stdin;
@@ -2843,7 +2762,7 @@ COPY public.child_chunks (id, tenant_id, dataset_id, document_id, segment_id, "p
 
 
 --
--- Data for Name: conversations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: conversations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.conversations (id, app_id, app_model_config_id, model_provider, override_model_configs, model_id, mode, name, summary, inputs, introduction, system_instruction, system_instruction_tokens, status, from_source, from_end_user_id, from_account_id, read_at, read_account_id, created_at, updated_at, is_deleted, invoke_from, dialogue_count) FROM stdin;
@@ -2851,7 +2770,7 @@ COPY public.conversations (id, app_id, app_model_config_id, model_provider, over
 
 
 --
--- Data for Name: data_source_api_key_auth_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: data_source_api_key_auth_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.data_source_api_key_auth_bindings (id, tenant_id, category, provider, credentials, created_at, updated_at, disabled) FROM stdin;
@@ -2859,7 +2778,7 @@ COPY public.data_source_api_key_auth_bindings (id, tenant_id, category, provider
 
 
 --
--- Data for Name: data_source_oauth_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: data_source_oauth_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.data_source_oauth_bindings (id, tenant_id, access_token, provider, source_info, created_at, updated_at, disabled) FROM stdin;
@@ -2867,7 +2786,7 @@ COPY public.data_source_oauth_bindings (id, tenant_id, access_token, provider, s
 
 
 --
--- Data for Name: dataset_auto_disable_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_auto_disable_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_auto_disable_logs (id, tenant_id, dataset_id, document_id, notified, created_at) FROM stdin;
@@ -2875,7 +2794,7 @@ COPY public.dataset_auto_disable_logs (id, tenant_id, dataset_id, document_id, n
 
 
 --
--- Data for Name: dataset_collection_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_collection_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_collection_bindings (id, provider_name, model_name, collection_name, created_at, type) FROM stdin;
@@ -2883,7 +2802,7 @@ COPY public.dataset_collection_bindings (id, provider_name, model_name, collecti
 
 
 --
--- Data for Name: dataset_keyword_tables; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_keyword_tables; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_keyword_tables (id, dataset_id, keyword_table, data_source_type) FROM stdin;
@@ -2891,7 +2810,7 @@ COPY public.dataset_keyword_tables (id, dataset_id, keyword_table, data_source_t
 
 
 --
--- Data for Name: dataset_metadata_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_metadata_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_metadata_bindings (id, tenant_id, dataset_id, metadata_id, document_id, created_at, created_by) FROM stdin;
@@ -2899,7 +2818,7 @@ COPY public.dataset_metadata_bindings (id, tenant_id, dataset_id, metadata_id, d
 
 
 --
--- Data for Name: dataset_metadatas; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_metadatas; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_metadatas (id, tenant_id, dataset_id, type, name, created_at, updated_at, created_by, updated_by) FROM stdin;
@@ -2907,7 +2826,7 @@ COPY public.dataset_metadatas (id, tenant_id, dataset_id, type, name, created_at
 
 
 --
--- Data for Name: dataset_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_permissions; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_permissions (id, dataset_id, account_id, has_permission, created_at, tenant_id) FROM stdin;
@@ -2915,7 +2834,7 @@ COPY public.dataset_permissions (id, dataset_id, account_id, has_permission, cre
 
 
 --
--- Data for Name: dataset_process_rules; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_process_rules; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_process_rules (id, dataset_id, mode, rules, created_by, created_at) FROM stdin;
@@ -2923,7 +2842,7 @@ COPY public.dataset_process_rules (id, dataset_id, mode, rules, created_by, crea
 
 
 --
--- Data for Name: dataset_queries; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_queries; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_queries (id, dataset_id, content, source, source_app_id, created_by_role, created_by, created_at) FROM stdin;
@@ -2931,7 +2850,7 @@ COPY public.dataset_queries (id, dataset_id, content, source, source_app_id, cre
 
 
 --
--- Data for Name: dataset_retriever_resources; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dataset_retriever_resources; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dataset_retriever_resources (id, message_id, "position", dataset_id, dataset_name, document_id, document_name, data_source_type, segment_id, score, content, hit_count, word_count, segment_position, index_node_hash, retriever_from, created_by, created_at) FROM stdin;
@@ -2939,7 +2858,7 @@ COPY public.dataset_retriever_resources (id, message_id, "position", dataset_id,
 
 
 --
--- Data for Name: datasets; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: datasets; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.datasets (id, tenant_id, name, description, provider, permission, data_source_type, indexing_technique, index_struct, created_by, created_at, updated_by, updated_at, embedding_model, embedding_model_provider, collection_binding_id, retrieval_model, built_in_field_enabled, keyword_number, icon_info, runtime_mode, pipeline_id, chunk_structure, enable_api, is_multimodal, summary_index_setting) FROM stdin;
@@ -2947,7 +2866,7 @@ COPY public.datasets (id, tenant_id, name, description, provider, permission, da
 
 
 --
--- Data for Name: datasource_oauth_params; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: datasource_oauth_params; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.datasource_oauth_params (id, plugin_id, provider, system_credentials) FROM stdin;
@@ -2955,7 +2874,7 @@ COPY public.datasource_oauth_params (id, plugin_id, provider, system_credentials
 
 
 --
--- Data for Name: datasource_oauth_tenant_params; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: datasource_oauth_tenant_params; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.datasource_oauth_tenant_params (id, tenant_id, provider, plugin_id, client_params, enabled, created_at, updated_at) FROM stdin;
@@ -2963,7 +2882,7 @@ COPY public.datasource_oauth_tenant_params (id, tenant_id, provider, plugin_id, 
 
 
 --
--- Data for Name: datasource_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: datasource_providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.datasource_providers (id, tenant_id, name, provider, plugin_id, auth_type, encrypted_credentials, avatar_url, is_default, expires_at, created_at, updated_at) FROM stdin;
@@ -2971,7 +2890,7 @@ COPY public.datasource_providers (id, tenant_id, name, provider, plugin_id, auth
 
 
 --
--- Data for Name: dify_setups; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: dify_setups; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.dify_setups (version, setup_at) FROM stdin;
@@ -2979,7 +2898,7 @@ COPY public.dify_setups (version, setup_at) FROM stdin;
 
 
 --
--- Data for Name: document_pipeline_execution_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: document_pipeline_execution_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.document_pipeline_execution_logs (id, pipeline_id, document_id, datasource_type, datasource_info, datasource_node_id, input_data, created_by, created_at) FROM stdin;
@@ -2987,7 +2906,7 @@ COPY public.document_pipeline_execution_logs (id, pipeline_id, document_id, data
 
 
 --
--- Data for Name: document_segment_summaries; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: document_segment_summaries; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.document_segment_summaries (id, dataset_id, document_id, chunk_id, summary_content, summary_index_node_id, summary_index_node_hash, tokens, status, error, enabled, disabled_at, disabled_by, created_at, updated_at) FROM stdin;
@@ -2995,7 +2914,7 @@ COPY public.document_segment_summaries (id, dataset_id, document_id, chunk_id, s
 
 
 --
--- Data for Name: document_segments; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: document_segments; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.document_segments (id, tenant_id, dataset_id, document_id, "position", content, word_count, tokens, keywords, index_node_id, index_node_hash, hit_count, enabled, disabled_at, disabled_by, status, created_by, created_at, indexing_at, completed_at, error, stopped_at, answer, updated_by, updated_at) FROM stdin;
@@ -3003,7 +2922,7 @@ COPY public.document_segments (id, tenant_id, dataset_id, document_id, "position
 
 
 --
--- Data for Name: documents; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: documents; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.documents (id, tenant_id, dataset_id, "position", data_source_type, data_source_info, dataset_process_rule_id, batch, name, created_from, created_by, created_api_request_id, created_at, processing_started_at, file_id, word_count, parsing_completed_at, cleaning_completed_at, splitting_completed_at, tokens, indexing_latency, completed_at, is_paused, paused_by, paused_at, error, stopped_at, indexing_status, enabled, disabled_at, disabled_by, archived, archived_reason, archived_by, archived_at, updated_at, doc_type, doc_metadata, doc_form, doc_language, need_summary) FROM stdin;
@@ -3011,7 +2930,7 @@ COPY public.documents (id, tenant_id, dataset_id, "position", data_source_type, 
 
 
 --
--- Data for Name: embeddings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: embeddings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.embeddings (id, hash, embedding, created_at, model_name, provider_name) FROM stdin;
@@ -3019,7 +2938,7 @@ COPY public.embeddings (id, hash, embedding, created_at, model_name, provider_na
 
 
 --
--- Data for Name: end_users; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: end_users; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.end_users (id, tenant_id, app_id, type, external_user_id, name, is_anonymous, session_id, created_at, updated_at) FROM stdin;
@@ -3027,15 +2946,7 @@ COPY public.end_users (id, tenant_id, app_id, type, external_user_id, name, is_a
 
 
 --
--- Data for Name: execution_extra_contents; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.execution_extra_contents (id, created_at, updated_at, type, workflow_run_id, message_id, form_id) FROM stdin;
-\.
-
-
---
--- Data for Name: exporle_banners; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: exporle_banners; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.exporle_banners (id, content, link, sort, status, created_at, language) FROM stdin;
@@ -3043,7 +2954,7 @@ COPY public.exporle_banners (id, content, link, sort, status, created_at, langua
 
 
 --
--- Data for Name: external_knowledge_apis; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: external_knowledge_apis; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.external_knowledge_apis (id, name, description, tenant_id, settings, created_by, created_at, updated_by, updated_at) FROM stdin;
@@ -3051,7 +2962,7 @@ COPY public.external_knowledge_apis (id, name, description, tenant_id, settings,
 
 
 --
--- Data for Name: external_knowledge_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: external_knowledge_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.external_knowledge_bindings (id, tenant_id, external_knowledge_api_id, dataset_id, external_knowledge_id, created_by, created_at, updated_by, updated_at) FROM stdin;
@@ -3059,31 +2970,7 @@ COPY public.external_knowledge_bindings (id, tenant_id, external_knowledge_api_i
 
 
 --
--- Data for Name: human_input_form_deliveries; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.human_input_form_deliveries (id, created_at, updated_at, form_id, delivery_method_type, delivery_config_id, channel_payload) FROM stdin;
-\.
-
-
---
--- Data for Name: human_input_form_recipients; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.human_input_form_recipients (id, created_at, updated_at, form_id, delivery_id, recipient_type, recipient_payload, access_token) FROM stdin;
-\.
-
-
---
--- Data for Name: human_input_forms; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.human_input_forms (id, created_at, updated_at, tenant_id, app_id, workflow_run_id, form_kind, node_id, form_definition, rendered_content, status, expiration_time, selected_action_id, submitted_data, submitted_at, submission_user_id, submission_end_user_id, completed_by_recipient_id) FROM stdin;
-\.
-
-
---
--- Data for Name: installed_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: installed_apps; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.installed_apps (id, tenant_id, app_id, app_owner_tenant_id, "position", is_pinned, last_used_at, created_at) FROM stdin;
@@ -3091,7 +2978,7 @@ COPY public.installed_apps (id, tenant_id, app_id, app_owner_tenant_id, "positio
 
 
 --
--- Data for Name: invitation_codes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: invitation_codes; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.invitation_codes (id, batch, code, status, used_at, used_by_tenant_id, used_by_account_id, deprecated_at, created_at) FROM stdin;
@@ -3099,7 +2986,7 @@ COPY public.invitation_codes (id, batch, code, status, used_at, used_by_tenant_i
 
 
 --
--- Data for Name: load_balancing_model_configs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: load_balancing_model_configs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.load_balancing_model_configs (id, tenant_id, provider_name, model_name, model_type, name, encrypted_config, enabled, created_at, updated_at, credential_id, credential_source_type) FROM stdin;
@@ -3107,7 +2994,7 @@ COPY public.load_balancing_model_configs (id, tenant_id, provider_name, model_na
 
 
 --
--- Data for Name: message_agent_thoughts; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: message_agent_thoughts; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.message_agent_thoughts (id, message_id, message_chain_id, "position", thought, tool, tool_input, observation, tool_process_data, message, message_token, message_unit_price, answer, answer_token, answer_unit_price, tokens, total_price, currency, latency, created_by_role, created_by, created_at, message_price_unit, answer_price_unit, message_files, tool_labels_str, tool_meta_str) FROM stdin;
@@ -3115,7 +3002,7 @@ COPY public.message_agent_thoughts (id, message_id, message_chain_id, "position"
 
 
 --
--- Data for Name: message_annotations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: message_annotations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.message_annotations (id, app_id, conversation_id, message_id, content, account_id, created_at, updated_at, question, hit_count) FROM stdin;
@@ -3123,7 +3010,7 @@ COPY public.message_annotations (id, app_id, conversation_id, message_id, conten
 
 
 --
--- Data for Name: message_chains; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: message_chains; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.message_chains (id, message_id, type, input, output, created_at) FROM stdin;
@@ -3131,7 +3018,7 @@ COPY public.message_chains (id, message_id, type, input, output, created_at) FRO
 
 
 --
--- Data for Name: message_feedbacks; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: message_feedbacks; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.message_feedbacks (id, app_id, conversation_id, message_id, rating, content, from_source, from_end_user_id, from_account_id, created_at, updated_at) FROM stdin;
@@ -3139,7 +3026,7 @@ COPY public.message_feedbacks (id, app_id, conversation_id, message_id, rating, 
 
 
 --
--- Data for Name: message_files; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: message_files; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.message_files (id, message_id, type, transfer_method, url, upload_file_id, created_by_role, created_by, created_at, belongs_to) FROM stdin;
@@ -3147,7 +3034,7 @@ COPY public.message_files (id, message_id, type, transfer_method, url, upload_fi
 
 
 --
--- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: messages; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.messages (id, app_id, model_provider, model_id, override_model_configs, conversation_id, inputs, query, message, message_tokens, message_unit_price, answer, answer_tokens, answer_unit_price, provider_response_latency, total_price, currency, from_source, from_end_user_id, from_account_id, created_at, updated_at, agent_based, message_price_unit, answer_price_unit, workflow_run_id, status, error, message_metadata, invoke_from, parent_message_id, app_mode) FROM stdin;
@@ -3155,7 +3042,7 @@ COPY public.messages (id, app_id, model_provider, model_id, override_model_confi
 
 
 --
--- Data for Name: oauth_provider_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: oauth_provider_apps; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.oauth_provider_apps (id, app_icon, app_label, client_id, client_secret, redirect_uris, scope, created_at) FROM stdin;
@@ -3163,7 +3050,7 @@ COPY public.oauth_provider_apps (id, app_icon, app_label, client_id, client_secr
 
 
 --
--- Data for Name: operation_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: operation_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.operation_logs (id, tenant_id, account_id, action, content, created_at, created_ip, updated_at) FROM stdin;
@@ -3171,7 +3058,7 @@ COPY public.operation_logs (id, tenant_id, account_id, action, content, created_
 
 
 --
--- Data for Name: pinned_conversations; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: pinned_conversations; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.pinned_conversations (id, app_id, conversation_id, created_by, created_at, created_by_role) FROM stdin;
@@ -3179,7 +3066,7 @@ COPY public.pinned_conversations (id, app_id, conversation_id, created_by, creat
 
 
 --
--- Data for Name: pipeline_built_in_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: pipeline_built_in_templates; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.pipeline_built_in_templates (id, name, description, chunk_structure, icon, yaml_content, copyright, privacy_policy, "position", install_count, language, created_at, updated_at) FROM stdin;
@@ -3187,7 +3074,7 @@ COPY public.pipeline_built_in_templates (id, name, description, chunk_structure,
 
 
 --
--- Data for Name: pipeline_customized_templates; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: pipeline_customized_templates; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.pipeline_customized_templates (id, tenant_id, name, description, chunk_structure, icon, "position", yaml_content, install_count, language, created_by, updated_by, created_at, updated_at) FROM stdin;
@@ -3195,7 +3082,7 @@ COPY public.pipeline_customized_templates (id, tenant_id, name, description, chu
 
 
 --
--- Data for Name: pipeline_recommended_plugins; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: pipeline_recommended_plugins; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.pipeline_recommended_plugins (id, plugin_id, provider_name, "position", active, created_at, updated_at, type) FROM stdin;
@@ -3203,7 +3090,7 @@ COPY public.pipeline_recommended_plugins (id, plugin_id, provider_name, "positio
 
 
 --
--- Data for Name: pipelines; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: pipelines; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.pipelines (id, tenant_id, name, description, workflow_id, is_public, is_published, created_by, created_at, updated_by, updated_at) FROM stdin;
@@ -3211,7 +3098,7 @@ COPY public.pipelines (id, tenant_id, name, description, workflow_id, is_public,
 
 
 --
--- Data for Name: provider_credentials; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: provider_credentials; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.provider_credentials (id, tenant_id, provider_name, credential_name, encrypted_config, created_at, updated_at) FROM stdin;
@@ -3219,7 +3106,7 @@ COPY public.provider_credentials (id, tenant_id, provider_name, credential_name,
 
 
 --
--- Data for Name: provider_model_credentials; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: provider_model_credentials; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.provider_model_credentials (id, tenant_id, provider_name, model_name, model_type, credential_name, encrypted_config, created_at, updated_at) FROM stdin;
@@ -3227,7 +3114,7 @@ COPY public.provider_model_credentials (id, tenant_id, provider_name, model_name
 
 
 --
--- Data for Name: provider_model_settings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: provider_model_settings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.provider_model_settings (id, tenant_id, provider_name, model_name, model_type, enabled, load_balancing_enabled, created_at, updated_at) FROM stdin;
@@ -3235,7 +3122,7 @@ COPY public.provider_model_settings (id, tenant_id, provider_name, model_name, m
 
 
 --
--- Data for Name: provider_models; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: provider_models; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.provider_models (id, tenant_id, provider_name, model_name, model_type, is_valid, created_at, updated_at, credential_id) FROM stdin;
@@ -3243,7 +3130,7 @@ COPY public.provider_models (id, tenant_id, provider_name, model_name, model_typ
 
 
 --
--- Data for Name: provider_orders; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: provider_orders; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.provider_orders (id, tenant_id, provider_name, account_id, payment_product_id, payment_id, transaction_id, quantity, currency, total_amount, payment_status, paid_at, pay_failed_at, refunded_at, created_at, updated_at) FROM stdin;
@@ -3251,7 +3138,7 @@ COPY public.provider_orders (id, tenant_id, provider_name, account_id, payment_p
 
 
 --
--- Data for Name: providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.providers (id, tenant_id, provider_name, provider_type, is_valid, last_used, quota_type, quota_limit, quota_used, created_at, updated_at, credential_id) FROM stdin;
@@ -3259,7 +3146,7 @@ COPY public.providers (id, tenant_id, provider_name, provider_type, is_valid, la
 
 
 --
--- Data for Name: rate_limit_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: rate_limit_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.rate_limit_logs (id, tenant_id, subscription_plan, operation, created_at) FROM stdin;
@@ -3267,7 +3154,7 @@ COPY public.rate_limit_logs (id, tenant_id, subscription_plan, operation, create
 
 
 --
--- Data for Name: recommended_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: recommended_apps; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.recommended_apps (id, app_id, description, copyright, privacy_policy, category, "position", is_listed, install_count, created_at, updated_at, language, custom_disclaimer) FROM stdin;
@@ -3275,7 +3162,7 @@ COPY public.recommended_apps (id, app_id, description, copyright, privacy_policy
 
 
 --
--- Data for Name: saved_messages; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: saved_messages; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.saved_messages (id, app_id, message_id, created_by, created_at, created_by_role) FROM stdin;
@@ -3283,7 +3170,7 @@ COPY public.saved_messages (id, app_id, message_id, created_by, created_at, crea
 
 
 --
--- Data for Name: segment_attachment_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: segment_attachment_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.segment_attachment_bindings (id, tenant_id, dataset_id, document_id, segment_id, attachment_id, created_at) FROM stdin;
@@ -3291,7 +3178,7 @@ COPY public.segment_attachment_bindings (id, tenant_id, dataset_id, document_id,
 
 
 --
--- Data for Name: sites; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: sites; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.sites (id, app_id, title, icon, icon_background, description, default_language, copyright, privacy_policy, customize_domain, customize_token_strategy, prompt_public, status, created_at, updated_at, code, custom_disclaimer, show_workflow_steps, chat_color_theme, chat_color_theme_inverted, icon_type, created_by, updated_by, use_icon_as_answer_icon) FROM stdin;
@@ -3299,7 +3186,7 @@ COPY public.sites (id, app_id, title, icon, icon_background, description, defaul
 
 
 --
--- Data for Name: tag_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tag_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tag_bindings (id, tenant_id, tag_id, target_id, created_by, created_at) FROM stdin;
@@ -3307,7 +3194,7 @@ COPY public.tag_bindings (id, tenant_id, tag_id, target_id, created_by, created_
 
 
 --
--- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tags; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tags (id, tenant_id, type, name, created_by, created_at) FROM stdin;
@@ -3315,7 +3202,7 @@ COPY public.tags (id, tenant_id, type, name, created_by, created_at) FROM stdin;
 
 
 --
--- Data for Name: tenant_account_joins; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenant_account_joins; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenant_account_joins (id, tenant_id, account_id, role, invited_by, created_at, updated_at, current) FROM stdin;
@@ -3323,7 +3210,7 @@ COPY public.tenant_account_joins (id, tenant_id, account_id, role, invited_by, c
 
 
 --
--- Data for Name: tenant_credit_pools; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenant_credit_pools; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenant_credit_pools (id, tenant_id, pool_type, quota_limit, quota_used, created_at, updated_at) FROM stdin;
@@ -3331,7 +3218,7 @@ COPY public.tenant_credit_pools (id, tenant_id, pool_type, quota_limit, quota_us
 
 
 --
--- Data for Name: tenant_default_models; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenant_default_models; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenant_default_models (id, tenant_id, provider_name, model_name, model_type, created_at, updated_at) FROM stdin;
@@ -3339,7 +3226,7 @@ COPY public.tenant_default_models (id, tenant_id, provider_name, model_name, mod
 
 
 --
--- Data for Name: tenant_plugin_auto_upgrade_strategies; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenant_plugin_auto_upgrade_strategies; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenant_plugin_auto_upgrade_strategies (id, tenant_id, strategy_setting, upgrade_time_of_day, upgrade_mode, exclude_plugins, include_plugins, created_at, updated_at) FROM stdin;
@@ -3347,7 +3234,7 @@ COPY public.tenant_plugin_auto_upgrade_strategies (id, tenant_id, strategy_setti
 
 
 --
--- Data for Name: tenant_preferred_model_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenant_preferred_model_providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenant_preferred_model_providers (id, tenant_id, provider_name, preferred_provider_type, created_at, updated_at) FROM stdin;
@@ -3355,7 +3242,7 @@ COPY public.tenant_preferred_model_providers (id, tenant_id, provider_name, pref
 
 
 --
--- Data for Name: tenants; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tenants; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tenants (id, name, encrypt_public_key, plan, status, created_at, updated_at, custom_config) FROM stdin;
@@ -3363,7 +3250,7 @@ COPY public.tenants (id, name, encrypt_public_key, plan, status, created_at, upd
 
 
 --
--- Data for Name: tidb_auth_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tidb_auth_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tidb_auth_bindings (id, tenant_id, cluster_id, cluster_name, active, status, account, password, created_at) FROM stdin;
@@ -3371,7 +3258,7 @@ COPY public.tidb_auth_bindings (id, tenant_id, cluster_id, cluster_name, active,
 
 
 --
--- Data for Name: tool_api_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_api_providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_api_providers (id, name, schema, schema_type_str, user_id, tenant_id, tools_str, icon, credentials_str, description, created_at, updated_at, privacy_policy, custom_disclaimer) FROM stdin;
@@ -3379,7 +3266,7 @@ COPY public.tool_api_providers (id, name, schema, schema_type_str, user_id, tena
 
 
 --
--- Data for Name: tool_builtin_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_builtin_providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_builtin_providers (id, tenant_id, user_id, provider, encrypted_credentials, created_at, updated_at, name, is_default, credential_type, expires_at) FROM stdin;
@@ -3387,7 +3274,7 @@ COPY public.tool_builtin_providers (id, tenant_id, user_id, provider, encrypted_
 
 
 --
--- Data for Name: tool_conversation_variables; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_conversation_variables; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_conversation_variables (id, user_id, tenant_id, conversation_id, variables_str, created_at, updated_at) FROM stdin;
@@ -3395,7 +3282,7 @@ COPY public.tool_conversation_variables (id, user_id, tenant_id, conversation_id
 
 
 --
--- Data for Name: tool_files; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_files; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_files (id, user_id, tenant_id, conversation_id, file_key, mimetype, original_url, name, size) FROM stdin;
@@ -3403,7 +3290,7 @@ COPY public.tool_files (id, user_id, tenant_id, conversation_id, file_key, mimet
 
 
 --
--- Data for Name: tool_label_bindings; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_label_bindings; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_label_bindings (id, tool_id, tool_type, label_name) FROM stdin;
@@ -3411,7 +3298,7 @@ COPY public.tool_label_bindings (id, tool_id, tool_type, label_name) FROM stdin;
 
 
 --
--- Data for Name: tool_mcp_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_mcp_providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_mcp_providers (id, name, server_identifier, server_url, server_url_hash, icon, tenant_id, user_id, encrypted_credentials, authed, tools, created_at, updated_at, timeout, sse_read_timeout, encrypted_headers) FROM stdin;
@@ -3419,7 +3306,7 @@ COPY public.tool_mcp_providers (id, name, server_identifier, server_url, server_
 
 
 --
--- Data for Name: tool_model_invokes; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_model_invokes; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_model_invokes (id, user_id, tenant_id, provider, tool_type, tool_name, model_parameters, prompt_messages, model_response, prompt_tokens, answer_tokens, answer_unit_price, answer_price_unit, provider_response_latency, total_price, currency, created_at, updated_at) FROM stdin;
@@ -3427,7 +3314,7 @@ COPY public.tool_model_invokes (id, user_id, tenant_id, provider, tool_type, too
 
 
 --
--- Data for Name: tool_oauth_system_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_oauth_system_clients; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_oauth_system_clients (id, plugin_id, provider, encrypted_oauth_params) FROM stdin;
@@ -3435,7 +3322,7 @@ COPY public.tool_oauth_system_clients (id, plugin_id, provider, encrypted_oauth_
 
 
 --
--- Data for Name: tool_oauth_tenant_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_oauth_tenant_clients; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_oauth_tenant_clients (id, tenant_id, plugin_id, provider, enabled, encrypted_oauth_params) FROM stdin;
@@ -3443,7 +3330,7 @@ COPY public.tool_oauth_tenant_clients (id, tenant_id, plugin_id, provider, enabl
 
 
 --
--- Data for Name: tool_published_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_published_apps; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_published_apps (id, app_id, user_id, description, llm_description, query_description, query_name, tool_name, author, created_at, updated_at) FROM stdin;
@@ -3451,7 +3338,7 @@ COPY public.tool_published_apps (id, app_id, user_id, description, llm_descripti
 
 
 --
--- Data for Name: tool_workflow_providers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: tool_workflow_providers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.tool_workflow_providers (id, name, icon, app_id, user_id, tenant_id, description, parameter_configuration, created_at, updated_at, privacy_policy, version, label) FROM stdin;
@@ -3459,7 +3346,7 @@ COPY public.tool_workflow_providers (id, name, icon, app_id, user_id, tenant_id,
 
 
 --
--- Data for Name: trace_app_config; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: trace_app_config; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.trace_app_config (id, app_id, tracing_provider, tracing_config, created_at, updated_at, is_active) FROM stdin;
@@ -3467,7 +3354,7 @@ COPY public.trace_app_config (id, app_id, tracing_provider, tracing_config, crea
 
 
 --
--- Data for Name: trial_apps; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: trial_apps; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.trial_apps (id, app_id, tenant_id, created_at, trial_limit) FROM stdin;
@@ -3475,7 +3362,7 @@ COPY public.trial_apps (id, app_id, tenant_id, created_at, trial_limit) FROM std
 
 
 --
--- Data for Name: trigger_oauth_system_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: trigger_oauth_system_clients; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.trigger_oauth_system_clients (id, plugin_id, provider, encrypted_oauth_params, created_at, updated_at) FROM stdin;
@@ -3483,7 +3370,7 @@ COPY public.trigger_oauth_system_clients (id, plugin_id, provider, encrypted_oau
 
 
 --
--- Data for Name: trigger_oauth_tenant_clients; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: trigger_oauth_tenant_clients; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.trigger_oauth_tenant_clients (id, tenant_id, plugin_id, provider, enabled, encrypted_oauth_params, created_at, updated_at) FROM stdin;
@@ -3491,7 +3378,7 @@ COPY public.trigger_oauth_tenant_clients (id, tenant_id, plugin_id, provider, en
 
 
 --
--- Data for Name: trigger_subscriptions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: trigger_subscriptions; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.trigger_subscriptions (id, name, tenant_id, user_id, provider_id, endpoint_id, parameters, properties, credentials, credential_type, credential_expires_at, expires_at, created_at, updated_at) FROM stdin;
@@ -3499,7 +3386,7 @@ COPY public.trigger_subscriptions (id, name, tenant_id, user_id, provider_id, en
 
 
 --
--- Data for Name: upload_files; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: upload_files; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.upload_files (id, tenant_id, storage_type, key, name, size, extension, mime_type, created_by, created_at, used, used_by, used_at, hash, created_by_role, source_url) FROM stdin;
@@ -3507,7 +3394,7 @@ COPY public.upload_files (id, tenant_id, storage_type, key, name, size, extensio
 
 
 --
--- Data for Name: whitelists; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: whitelists; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.whitelists (id, tenant_id, category, created_at) FROM stdin;
@@ -3515,7 +3402,7 @@ COPY public.whitelists (id, tenant_id, category, created_at) FROM stdin;
 
 
 --
--- Data for Name: workflow_app_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_app_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_app_logs (id, tenant_id, app_id, workflow_id, workflow_run_id, created_from, created_by_role, created_by, created_at) FROM stdin;
@@ -3523,7 +3410,7 @@ COPY public.workflow_app_logs (id, tenant_id, app_id, workflow_id, workflow_run_
 
 
 --
--- Data for Name: workflow_archive_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_archive_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_archive_logs (id, log_id, tenant_id, app_id, workflow_id, workflow_run_id, created_by_role, created_by, log_created_at, log_created_from, run_version, run_status, run_triggered_from, run_error, run_elapsed_time, run_total_tokens, run_total_steps, run_created_at, run_finished_at, run_exceptions_count, trigger_metadata, archived_at) FROM stdin;
@@ -3531,7 +3418,7 @@ COPY public.workflow_archive_logs (id, log_id, tenant_id, app_id, workflow_id, w
 
 
 --
--- Data for Name: workflow_conversation_variables; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_conversation_variables; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_conversation_variables (id, conversation_id, app_id, data, created_at, updated_at) FROM stdin;
@@ -3539,7 +3426,7 @@ COPY public.workflow_conversation_variables (id, conversation_id, app_id, data, 
 
 
 --
--- Data for Name: workflow_draft_variable_files; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_draft_variable_files; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_draft_variable_files (id, created_at, tenant_id, app_id, user_id, upload_file_id, size, length, value_type) FROM stdin;
@@ -3547,15 +3434,15 @@ COPY public.workflow_draft_variable_files (id, created_at, tenant_id, app_id, us
 
 
 --
--- Data for Name: workflow_draft_variables; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_draft_variables; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
-COPY public.workflow_draft_variables (id, created_at, updated_at, app_id, last_edited_at, node_id, name, description, selector, value_type, value, visible, editable, node_execution_id, file_id, is_default_value, user_id) FROM stdin;
+COPY public.workflow_draft_variables (id, created_at, updated_at, app_id, last_edited_at, node_id, name, description, selector, value_type, value, visible, editable, node_execution_id, file_id, is_default_value) FROM stdin;
 \.
 
 
 --
--- Data for Name: workflow_node_execution_offload; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_node_execution_offload; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_node_execution_offload (id, created_at, tenant_id, app_id, node_execution_id, type, file_id) FROM stdin;
@@ -3563,7 +3450,7 @@ COPY public.workflow_node_execution_offload (id, created_at, tenant_id, app_id, 
 
 
 --
--- Data for Name: workflow_node_executions; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_node_executions; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_node_executions (id, tenant_id, app_id, workflow_id, triggered_from, workflow_run_id, index, predecessor_node_id, node_id, node_type, title, inputs, process_data, outputs, status, error, elapsed_time, execution_metadata, created_at, created_by_role, created_by, finished_at, node_execution_id) FROM stdin;
@@ -3571,7 +3458,7 @@ COPY public.workflow_node_executions (id, tenant_id, app_id, workflow_id, trigge
 
 
 --
--- Data for Name: workflow_pause_reasons; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_pause_reasons; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_pause_reasons (id, created_at, updated_at, pause_id, type_, form_id, node_id, message) FROM stdin;
@@ -3579,7 +3466,7 @@ COPY public.workflow_pause_reasons (id, created_at, updated_at, pause_id, type_,
 
 
 --
--- Data for Name: workflow_pauses; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_pauses; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_pauses (workflow_id, workflow_run_id, resumed_at, state_object_key, id, created_at, updated_at) FROM stdin;
@@ -3587,7 +3474,7 @@ COPY public.workflow_pauses (workflow_id, workflow_run_id, resumed_at, state_obj
 
 
 --
--- Data for Name: workflow_plugin_triggers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_plugin_triggers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_plugin_triggers (id, app_id, node_id, tenant_id, provider_id, event_name, subscription_id, created_at, updated_at) FROM stdin;
@@ -3595,7 +3482,7 @@ COPY public.workflow_plugin_triggers (id, app_id, node_id, tenant_id, provider_i
 
 
 --
--- Data for Name: workflow_runs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_runs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_runs (id, tenant_id, app_id, workflow_id, type, triggered_from, version, graph, inputs, status, outputs, error, elapsed_time, total_tokens, total_steps, created_by_role, created_by, created_at, finished_at, exceptions_count) FROM stdin;
@@ -3603,7 +3490,7 @@ COPY public.workflow_runs (id, tenant_id, app_id, workflow_id, type, triggered_f
 
 
 --
--- Data for Name: workflow_schedule_plans; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_schedule_plans; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_schedule_plans (id, app_id, node_id, tenant_id, cron_expression, timezone, next_run_at, created_at, updated_at) FROM stdin;
@@ -3611,7 +3498,7 @@ COPY public.workflow_schedule_plans (id, app_id, node_id, tenant_id, cron_expres
 
 
 --
--- Data for Name: workflow_trigger_logs; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_trigger_logs; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_trigger_logs (id, tenant_id, app_id, workflow_id, workflow_run_id, root_node_id, trigger_metadata, trigger_type, trigger_data, inputs, outputs, status, error, queue_name, celery_task_id, retry_count, elapsed_time, total_tokens, created_at, created_by_role, created_by, triggered_at, finished_at) FROM stdin;
@@ -3619,7 +3506,7 @@ COPY public.workflow_trigger_logs (id, tenant_id, app_id, workflow_id, workflow_
 
 
 --
--- Data for Name: workflow_webhook_triggers; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflow_webhook_triggers; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflow_webhook_triggers (id, app_id, node_id, tenant_id, webhook_id, created_by, created_at, updated_at) FROM stdin;
@@ -3627,7 +3514,7 @@ COPY public.workflow_webhook_triggers (id, app_id, node_id, tenant_id, webhook_i
 
 
 --
--- Data for Name: workflows; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: workflows; Type: TABLE DATA; Schema: public; Owner: dify
 --
 
 COPY public.workflows (id, tenant_id, app_id, type, version, graph, features, created_by, created_at, updated_by, updated_at, environment_variables, conversation_variables, marked_name, marked_comment, rag_pipeline_variables) FROM stdin;
@@ -3635,28 +3522,28 @@ COPY public.workflows (id, tenant_id, app_id, type, version, graph, features, cr
 
 
 --
--- Name: invitation_codes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: invitation_codes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: dify
 --
 
 SELECT pg_catalog.setval('public.invitation_codes_id_seq', 1, false);
 
 
 --
--- Name: task_id_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: task_id_sequence; Type: SEQUENCE SET; Schema: public; Owner: dify
 --
 
 SELECT pg_catalog.setval('public.task_id_sequence', 1, false);
 
 
 --
--- Name: taskset_id_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+-- Name: taskset_id_sequence; Type: SEQUENCE SET; Schema: public; Owner: dify
 --
 
 SELECT pg_catalog.setval('public.taskset_id_sequence', 1, false);
 
 
 --
--- Name: account_integrates account_integrate_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_integrates account_integrate_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_integrates
@@ -3664,7 +3551,7 @@ ALTER TABLE ONLY public.account_integrates
 
 
 --
--- Name: accounts account_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: accounts account_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.accounts
@@ -3672,7 +3559,7 @@ ALTER TABLE ONLY public.accounts
 
 
 --
--- Name: account_plugin_permissions account_plugin_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_plugin_permissions account_plugin_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_plugin_permissions
@@ -3680,7 +3567,7 @@ ALTER TABLE ONLY public.account_plugin_permissions
 
 
 --
--- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: alembic_version alembic_version_pkc; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.alembic_version
@@ -3688,7 +3575,7 @@ ALTER TABLE ONLY public.alembic_version
 
 
 --
--- Name: api_based_extensions api_based_extension_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: api_based_extensions api_based_extension_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.api_based_extensions
@@ -3696,7 +3583,7 @@ ALTER TABLE ONLY public.api_based_extensions
 
 
 --
--- Name: api_requests api_request_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: api_requests api_request_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.api_requests
@@ -3704,7 +3591,7 @@ ALTER TABLE ONLY public.api_requests
 
 
 --
--- Name: api_tokens api_token_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: api_tokens api_token_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.api_tokens
@@ -3712,7 +3599,7 @@ ALTER TABLE ONLY public.api_tokens
 
 
 --
--- Name: app_annotation_hit_histories app_annotation_hit_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_annotation_hit_histories app_annotation_hit_histories_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_annotation_hit_histories
@@ -3720,7 +3607,7 @@ ALTER TABLE ONLY public.app_annotation_hit_histories
 
 
 --
--- Name: app_annotation_settings app_annotation_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_annotation_settings app_annotation_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_annotation_settings
@@ -3728,7 +3615,7 @@ ALTER TABLE ONLY public.app_annotation_settings
 
 
 --
--- Name: app_dataset_joins app_dataset_join_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_dataset_joins app_dataset_join_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_dataset_joins
@@ -3736,7 +3623,7 @@ ALTER TABLE ONLY public.app_dataset_joins
 
 
 --
--- Name: app_mcp_servers app_mcp_server_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_mcp_servers app_mcp_server_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_mcp_servers
@@ -3744,7 +3631,7 @@ ALTER TABLE ONLY public.app_mcp_servers
 
 
 --
--- Name: app_model_configs app_model_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_model_configs app_model_config_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_model_configs
@@ -3752,7 +3639,7 @@ ALTER TABLE ONLY public.app_model_configs
 
 
 --
--- Name: apps app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: apps app_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.apps
@@ -3760,7 +3647,7 @@ ALTER TABLE ONLY public.apps
 
 
 --
--- Name: app_triggers app_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_triggers app_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_triggers
@@ -3768,7 +3655,7 @@ ALTER TABLE ONLY public.app_triggers
 
 
 --
--- Name: celery_taskmeta celery_taskmeta_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: celery_taskmeta celery_taskmeta_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.celery_taskmeta
@@ -3776,7 +3663,7 @@ ALTER TABLE ONLY public.celery_taskmeta
 
 
 --
--- Name: celery_taskmeta celery_taskmeta_task_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: celery_taskmeta celery_taskmeta_task_id_key; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.celery_taskmeta
@@ -3784,7 +3671,7 @@ ALTER TABLE ONLY public.celery_taskmeta
 
 
 --
--- Name: celery_tasksetmeta celery_tasksetmeta_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: celery_tasksetmeta celery_tasksetmeta_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.celery_tasksetmeta
@@ -3792,7 +3679,7 @@ ALTER TABLE ONLY public.celery_tasksetmeta
 
 
 --
--- Name: celery_tasksetmeta celery_tasksetmeta_taskset_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: celery_tasksetmeta celery_tasksetmeta_taskset_id_key; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.celery_tasksetmeta
@@ -3800,7 +3687,7 @@ ALTER TABLE ONLY public.celery_tasksetmeta
 
 
 --
--- Name: child_chunks child_chunk_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: child_chunks child_chunk_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.child_chunks
@@ -3808,7 +3695,7 @@ ALTER TABLE ONLY public.child_chunks
 
 
 --
--- Name: conversations conversation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: conversations conversation_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.conversations
@@ -3816,7 +3703,7 @@ ALTER TABLE ONLY public.conversations
 
 
 --
--- Name: data_source_api_key_auth_bindings data_source_api_key_auth_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: data_source_api_key_auth_bindings data_source_api_key_auth_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.data_source_api_key_auth_bindings
@@ -3824,7 +3711,7 @@ ALTER TABLE ONLY public.data_source_api_key_auth_bindings
 
 
 --
--- Name: dataset_auto_disable_logs dataset_auto_disable_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_auto_disable_logs dataset_auto_disable_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_auto_disable_logs
@@ -3832,7 +3719,7 @@ ALTER TABLE ONLY public.dataset_auto_disable_logs
 
 
 --
--- Name: dataset_collection_bindings dataset_collection_bindings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_collection_bindings dataset_collection_bindings_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_collection_bindings
@@ -3840,7 +3727,7 @@ ALTER TABLE ONLY public.dataset_collection_bindings
 
 
 --
--- Name: dataset_keyword_tables dataset_keyword_table_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_keyword_tables dataset_keyword_table_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_keyword_tables
@@ -3848,7 +3735,7 @@ ALTER TABLE ONLY public.dataset_keyword_tables
 
 
 --
--- Name: dataset_keyword_tables dataset_keyword_tables_dataset_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_keyword_tables dataset_keyword_tables_dataset_id_key; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_keyword_tables
@@ -3856,7 +3743,7 @@ ALTER TABLE ONLY public.dataset_keyword_tables
 
 
 --
--- Name: dataset_metadata_bindings dataset_metadata_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_metadata_bindings dataset_metadata_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_metadata_bindings
@@ -3864,7 +3751,7 @@ ALTER TABLE ONLY public.dataset_metadata_bindings
 
 
 --
--- Name: dataset_metadatas dataset_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_metadatas dataset_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_metadatas
@@ -3872,7 +3759,7 @@ ALTER TABLE ONLY public.dataset_metadatas
 
 
 --
--- Name: dataset_permissions dataset_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_permissions dataset_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_permissions
@@ -3880,7 +3767,7 @@ ALTER TABLE ONLY public.dataset_permissions
 
 
 --
--- Name: datasets dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasets dataset_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasets
@@ -3888,7 +3775,7 @@ ALTER TABLE ONLY public.datasets
 
 
 --
--- Name: dataset_process_rules dataset_process_rule_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_process_rules dataset_process_rule_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_process_rules
@@ -3896,7 +3783,7 @@ ALTER TABLE ONLY public.dataset_process_rules
 
 
 --
--- Name: dataset_queries dataset_query_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_queries dataset_query_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_queries
@@ -3904,7 +3791,7 @@ ALTER TABLE ONLY public.dataset_queries
 
 
 --
--- Name: dataset_retriever_resources dataset_retriever_resource_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dataset_retriever_resources dataset_retriever_resource_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dataset_retriever_resources
@@ -3912,7 +3799,7 @@ ALTER TABLE ONLY public.dataset_retriever_resources
 
 
 --
--- Name: datasource_oauth_params datasource_oauth_config_datasource_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_oauth_params datasource_oauth_config_datasource_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_oauth_params
@@ -3920,7 +3807,7 @@ ALTER TABLE ONLY public.datasource_oauth_params
 
 
 --
--- Name: datasource_oauth_params datasource_oauth_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_oauth_params datasource_oauth_config_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_oauth_params
@@ -3928,7 +3815,7 @@ ALTER TABLE ONLY public.datasource_oauth_params
 
 
 --
--- Name: datasource_oauth_tenant_params datasource_oauth_tenant_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_oauth_tenant_params datasource_oauth_tenant_config_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_oauth_tenant_params
@@ -3936,7 +3823,7 @@ ALTER TABLE ONLY public.datasource_oauth_tenant_params
 
 
 --
--- Name: datasource_oauth_tenant_params datasource_oauth_tenant_config_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_oauth_tenant_params datasource_oauth_tenant_config_unique; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_oauth_tenant_params
@@ -3944,7 +3831,7 @@ ALTER TABLE ONLY public.datasource_oauth_tenant_params
 
 
 --
--- Name: datasource_providers datasource_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_providers datasource_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_providers
@@ -3952,7 +3839,7 @@ ALTER TABLE ONLY public.datasource_providers
 
 
 --
--- Name: datasource_providers datasource_provider_unique_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: datasource_providers datasource_provider_unique_name; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.datasource_providers
@@ -3960,7 +3847,7 @@ ALTER TABLE ONLY public.datasource_providers
 
 
 --
--- Name: dify_setups dify_setup_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: dify_setups dify_setup_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.dify_setups
@@ -3968,7 +3855,7 @@ ALTER TABLE ONLY public.dify_setups
 
 
 --
--- Name: document_pipeline_execution_logs document_pipeline_execution_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: document_pipeline_execution_logs document_pipeline_execution_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.document_pipeline_execution_logs
@@ -3976,7 +3863,7 @@ ALTER TABLE ONLY public.document_pipeline_execution_logs
 
 
 --
--- Name: documents document_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: documents document_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.documents
@@ -3984,7 +3871,7 @@ ALTER TABLE ONLY public.documents
 
 
 --
--- Name: document_segments document_segment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: document_segments document_segment_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.document_segments
@@ -3992,7 +3879,7 @@ ALTER TABLE ONLY public.document_segments
 
 
 --
--- Name: document_segment_summaries document_segment_summaries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: document_segment_summaries document_segment_summaries_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.document_segment_summaries
@@ -4000,7 +3887,7 @@ ALTER TABLE ONLY public.document_segment_summaries
 
 
 --
--- Name: embeddings embedding_hash_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: embeddings embedding_hash_idx; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.embeddings
@@ -4008,7 +3895,7 @@ ALTER TABLE ONLY public.embeddings
 
 
 --
--- Name: embeddings embedding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: embeddings embedding_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.embeddings
@@ -4016,7 +3903,7 @@ ALTER TABLE ONLY public.embeddings
 
 
 --
--- Name: end_users end_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: end_users end_user_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.end_users
@@ -4024,15 +3911,7 @@ ALTER TABLE ONLY public.end_users
 
 
 --
--- Name: execution_extra_contents execution_extra_contents_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.execution_extra_contents
-    ADD CONSTRAINT execution_extra_contents_pkey PRIMARY KEY (id);
-
-
---
--- Name: exporle_banners exporler_banner_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: exporle_banners exporler_banner_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.exporle_banners
@@ -4040,7 +3919,7 @@ ALTER TABLE ONLY public.exporle_banners
 
 
 --
--- Name: external_knowledge_apis external_knowledge_apis_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: external_knowledge_apis external_knowledge_apis_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.external_knowledge_apis
@@ -4048,7 +3927,7 @@ ALTER TABLE ONLY public.external_knowledge_apis
 
 
 --
--- Name: external_knowledge_bindings external_knowledge_bindings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: external_knowledge_bindings external_knowledge_bindings_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.external_knowledge_bindings
@@ -4056,39 +3935,7 @@ ALTER TABLE ONLY public.external_knowledge_bindings
 
 
 --
--- Name: human_input_form_deliveries human_input_form_deliveries_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.human_input_form_deliveries
-    ADD CONSTRAINT human_input_form_deliveries_pkey PRIMARY KEY (id);
-
-
---
--- Name: human_input_form_recipients human_input_form_recipients_access_token_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.human_input_form_recipients
-    ADD CONSTRAINT human_input_form_recipients_access_token_key UNIQUE (access_token);
-
-
---
--- Name: human_input_form_recipients human_input_form_recipients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.human_input_form_recipients
-    ADD CONSTRAINT human_input_form_recipients_pkey PRIMARY KEY (id);
-
-
---
--- Name: human_input_forms human_input_forms_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.human_input_forms
-    ADD CONSTRAINT human_input_forms_pkey PRIMARY KEY (id);
-
-
---
--- Name: installed_apps installed_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: installed_apps installed_app_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.installed_apps
@@ -4096,7 +3943,7 @@ ALTER TABLE ONLY public.installed_apps
 
 
 --
--- Name: invitation_codes invitation_code_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: invitation_codes invitation_code_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.invitation_codes
@@ -4104,7 +3951,7 @@ ALTER TABLE ONLY public.invitation_codes
 
 
 --
--- Name: load_balancing_model_configs load_balancing_model_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: load_balancing_model_configs load_balancing_model_config_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.load_balancing_model_configs
@@ -4112,7 +3959,7 @@ ALTER TABLE ONLY public.load_balancing_model_configs
 
 
 --
--- Name: message_agent_thoughts message_agent_thought_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: message_agent_thoughts message_agent_thought_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.message_agent_thoughts
@@ -4120,7 +3967,7 @@ ALTER TABLE ONLY public.message_agent_thoughts
 
 
 --
--- Name: message_annotations message_annotation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: message_annotations message_annotation_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.message_annotations
@@ -4128,7 +3975,7 @@ ALTER TABLE ONLY public.message_annotations
 
 
 --
--- Name: message_chains message_chain_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: message_chains message_chain_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.message_chains
@@ -4136,7 +3983,7 @@ ALTER TABLE ONLY public.message_chains
 
 
 --
--- Name: message_feedbacks message_feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: message_feedbacks message_feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.message_feedbacks
@@ -4144,7 +3991,7 @@ ALTER TABLE ONLY public.message_feedbacks
 
 
 --
--- Name: message_files message_file_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: message_files message_file_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.message_files
@@ -4152,7 +3999,7 @@ ALTER TABLE ONLY public.message_files
 
 
 --
--- Name: messages message_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: messages message_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.messages
@@ -4160,7 +4007,7 @@ ALTER TABLE ONLY public.messages
 
 
 --
--- Name: oauth_provider_apps oauth_provider_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: oauth_provider_apps oauth_provider_app_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.oauth_provider_apps
@@ -4168,7 +4015,7 @@ ALTER TABLE ONLY public.oauth_provider_apps
 
 
 --
--- Name: operation_logs operation_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: operation_logs operation_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.operation_logs
@@ -4176,7 +4023,7 @@ ALTER TABLE ONLY public.operation_logs
 
 
 --
--- Name: pinned_conversations pinned_conversation_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: pinned_conversations pinned_conversation_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.pinned_conversations
@@ -4184,7 +4031,7 @@ ALTER TABLE ONLY public.pinned_conversations
 
 
 --
--- Name: pipeline_built_in_templates pipeline_built_in_template_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: pipeline_built_in_templates pipeline_built_in_template_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.pipeline_built_in_templates
@@ -4192,7 +4039,7 @@ ALTER TABLE ONLY public.pipeline_built_in_templates
 
 
 --
--- Name: pipeline_customized_templates pipeline_customized_template_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: pipeline_customized_templates pipeline_customized_template_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.pipeline_customized_templates
@@ -4200,7 +4047,7 @@ ALTER TABLE ONLY public.pipeline_customized_templates
 
 
 --
--- Name: pipelines pipeline_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: pipelines pipeline_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.pipelines
@@ -4208,7 +4055,7 @@ ALTER TABLE ONLY public.pipelines
 
 
 --
--- Name: pipeline_recommended_plugins pipeline_recommended_plugin_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: pipeline_recommended_plugins pipeline_recommended_plugin_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.pipeline_recommended_plugins
@@ -4216,7 +4063,7 @@ ALTER TABLE ONLY public.pipeline_recommended_plugins
 
 
 --
--- Name: provider_credentials provider_credential_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: provider_credentials provider_credential_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.provider_credentials
@@ -4224,7 +4071,7 @@ ALTER TABLE ONLY public.provider_credentials
 
 
 --
--- Name: provider_model_credentials provider_model_credential_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: provider_model_credentials provider_model_credential_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.provider_model_credentials
@@ -4232,7 +4079,7 @@ ALTER TABLE ONLY public.provider_model_credentials
 
 
 --
--- Name: provider_models provider_model_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: provider_models provider_model_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.provider_models
@@ -4240,7 +4087,7 @@ ALTER TABLE ONLY public.provider_models
 
 
 --
--- Name: provider_model_settings provider_model_setting_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: provider_model_settings provider_model_setting_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.provider_model_settings
@@ -4248,7 +4095,7 @@ ALTER TABLE ONLY public.provider_model_settings
 
 
 --
--- Name: provider_orders provider_order_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: provider_orders provider_order_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.provider_orders
@@ -4256,7 +4103,7 @@ ALTER TABLE ONLY public.provider_orders
 
 
 --
--- Name: providers provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: providers provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.providers
@@ -4264,7 +4111,7 @@ ALTER TABLE ONLY public.providers
 
 
 --
--- Name: tool_published_apps published_app_tool_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_published_apps published_app_tool_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_published_apps
@@ -4272,7 +4119,7 @@ ALTER TABLE ONLY public.tool_published_apps
 
 
 --
--- Name: rate_limit_logs rate_limit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: rate_limit_logs rate_limit_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.rate_limit_logs
@@ -4280,7 +4127,7 @@ ALTER TABLE ONLY public.rate_limit_logs
 
 
 --
--- Name: recommended_apps recommended_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: recommended_apps recommended_app_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.recommended_apps
@@ -4288,7 +4135,7 @@ ALTER TABLE ONLY public.recommended_apps
 
 
 --
--- Name: saved_messages saved_message_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: saved_messages saved_message_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.saved_messages
@@ -4296,7 +4143,7 @@ ALTER TABLE ONLY public.saved_messages
 
 
 --
--- Name: segment_attachment_bindings segment_attachment_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: segment_attachment_bindings segment_attachment_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.segment_attachment_bindings
@@ -4304,7 +4151,7 @@ ALTER TABLE ONLY public.segment_attachment_bindings
 
 
 --
--- Name: sites site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: sites site_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.sites
@@ -4312,7 +4159,7 @@ ALTER TABLE ONLY public.sites
 
 
 --
--- Name: data_source_oauth_bindings source_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: data_source_oauth_bindings source_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.data_source_oauth_bindings
@@ -4320,7 +4167,7 @@ ALTER TABLE ONLY public.data_source_oauth_bindings
 
 
 --
--- Name: tag_bindings tag_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tag_bindings tag_binding_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tag_bindings
@@ -4328,7 +4175,7 @@ ALTER TABLE ONLY public.tag_bindings
 
 
 --
--- Name: tags tag_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tags tag_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tags
@@ -4336,7 +4183,7 @@ ALTER TABLE ONLY public.tags
 
 
 --
--- Name: tenant_account_joins tenant_account_join_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_account_joins tenant_account_join_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_account_joins
@@ -4344,7 +4191,7 @@ ALTER TABLE ONLY public.tenant_account_joins
 
 
 --
--- Name: tenant_credit_pools tenant_credit_pool_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_credit_pools tenant_credit_pool_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_credit_pools
@@ -4352,7 +4199,7 @@ ALTER TABLE ONLY public.tenant_credit_pools
 
 
 --
--- Name: tenant_default_models tenant_default_model_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_default_models tenant_default_model_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_default_models
@@ -4360,7 +4207,7 @@ ALTER TABLE ONLY public.tenant_default_models
 
 
 --
--- Name: tenants tenant_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenants tenant_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenants
@@ -4368,7 +4215,7 @@ ALTER TABLE ONLY public.tenants
 
 
 --
--- Name: tenant_plugin_auto_upgrade_strategies tenant_plugin_auto_upgrade_strategy_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_plugin_auto_upgrade_strategies tenant_plugin_auto_upgrade_strategy_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_plugin_auto_upgrade_strategies
@@ -4376,7 +4223,7 @@ ALTER TABLE ONLY public.tenant_plugin_auto_upgrade_strategies
 
 
 --
--- Name: tenant_preferred_model_providers tenant_preferred_model_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_preferred_model_providers tenant_preferred_model_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_preferred_model_providers
@@ -4384,7 +4231,7 @@ ALTER TABLE ONLY public.tenant_preferred_model_providers
 
 
 --
--- Name: tidb_auth_bindings tidb_auth_bindings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tidb_auth_bindings tidb_auth_bindings_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tidb_auth_bindings
@@ -4392,7 +4239,7 @@ ALTER TABLE ONLY public.tidb_auth_bindings
 
 
 --
--- Name: tool_api_providers tool_api_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_api_providers tool_api_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_api_providers
@@ -4400,7 +4247,7 @@ ALTER TABLE ONLY public.tool_api_providers
 
 
 --
--- Name: tool_builtin_providers tool_builtin_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_builtin_providers tool_builtin_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_builtin_providers
@@ -4408,7 +4255,7 @@ ALTER TABLE ONLY public.tool_builtin_providers
 
 
 --
--- Name: tool_conversation_variables tool_conversation_variables_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_conversation_variables tool_conversation_variables_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_conversation_variables
@@ -4416,7 +4263,7 @@ ALTER TABLE ONLY public.tool_conversation_variables
 
 
 --
--- Name: tool_files tool_file_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_files tool_file_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_files
@@ -4424,7 +4271,7 @@ ALTER TABLE ONLY public.tool_files
 
 
 --
--- Name: tool_label_bindings tool_label_bind_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_label_bindings tool_label_bind_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_label_bindings
@@ -4432,7 +4279,7 @@ ALTER TABLE ONLY public.tool_label_bindings
 
 
 --
--- Name: tool_mcp_providers tool_mcp_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_mcp_providers tool_mcp_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_mcp_providers
@@ -4440,7 +4287,7 @@ ALTER TABLE ONLY public.tool_mcp_providers
 
 
 --
--- Name: tool_model_invokes tool_model_invoke_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_model_invokes tool_model_invoke_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_model_invokes
@@ -4448,7 +4295,7 @@ ALTER TABLE ONLY public.tool_model_invokes
 
 
 --
--- Name: tool_oauth_system_clients tool_oauth_system_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_oauth_system_clients tool_oauth_system_client_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_oauth_system_clients
@@ -4456,7 +4303,7 @@ ALTER TABLE ONLY public.tool_oauth_system_clients
 
 
 --
--- Name: tool_oauth_system_clients tool_oauth_system_client_plugin_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_oauth_system_clients tool_oauth_system_client_plugin_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_oauth_system_clients
@@ -4464,7 +4311,7 @@ ALTER TABLE ONLY public.tool_oauth_system_clients
 
 
 --
--- Name: tool_oauth_tenant_clients tool_oauth_tenant_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_oauth_tenant_clients tool_oauth_tenant_client_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_oauth_tenant_clients
@@ -4472,7 +4319,7 @@ ALTER TABLE ONLY public.tool_oauth_tenant_clients
 
 
 --
--- Name: tool_workflow_providers tool_workflow_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_workflow_providers tool_workflow_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_workflow_providers
@@ -4480,7 +4327,7 @@ ALTER TABLE ONLY public.tool_workflow_providers
 
 
 --
--- Name: trace_app_config trace_app_config_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trace_app_config trace_app_config_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trace_app_config
@@ -4488,7 +4335,7 @@ ALTER TABLE ONLY public.trace_app_config
 
 
 --
--- Name: trial_apps trial_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trial_apps trial_app_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trial_apps
@@ -4496,7 +4343,7 @@ ALTER TABLE ONLY public.trial_apps
 
 
 --
--- Name: trigger_oauth_system_clients trigger_oauth_system_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_oauth_system_clients trigger_oauth_system_client_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_oauth_system_clients
@@ -4504,7 +4351,7 @@ ALTER TABLE ONLY public.trigger_oauth_system_clients
 
 
 --
--- Name: trigger_oauth_system_clients trigger_oauth_system_client_plugin_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_oauth_system_clients trigger_oauth_system_client_plugin_id_provider_idx; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_oauth_system_clients
@@ -4512,7 +4359,7 @@ ALTER TABLE ONLY public.trigger_oauth_system_clients
 
 
 --
--- Name: trigger_oauth_tenant_clients trigger_oauth_tenant_client_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_oauth_tenant_clients trigger_oauth_tenant_client_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_oauth_tenant_clients
@@ -4520,7 +4367,7 @@ ALTER TABLE ONLY public.trigger_oauth_tenant_clients
 
 
 --
--- Name: trigger_subscriptions trigger_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_subscriptions trigger_provider_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_subscriptions
@@ -4528,7 +4375,7 @@ ALTER TABLE ONLY public.trigger_subscriptions
 
 
 --
--- Name: workflow_schedule_plans uniq_app_node; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_schedule_plans uniq_app_node; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_schedule_plans
@@ -4536,7 +4383,7 @@ ALTER TABLE ONLY public.workflow_schedule_plans
 
 
 --
--- Name: workflow_plugin_triggers uniq_app_node_subscription; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_plugin_triggers uniq_app_node_subscription; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_plugin_triggers
@@ -4544,7 +4391,7 @@ ALTER TABLE ONLY public.workflow_plugin_triggers
 
 
 --
--- Name: workflow_webhook_triggers uniq_node; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_webhook_triggers uniq_node; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_webhook_triggers
@@ -4552,7 +4399,7 @@ ALTER TABLE ONLY public.workflow_webhook_triggers
 
 
 --
--- Name: workflow_webhook_triggers uniq_webhook_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_webhook_triggers uniq_webhook_id; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_webhook_triggers
@@ -4560,7 +4407,7 @@ ALTER TABLE ONLY public.workflow_webhook_triggers
 
 
 --
--- Name: account_integrates unique_account_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_integrates unique_account_provider; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_integrates
@@ -4568,7 +4415,7 @@ ALTER TABLE ONLY public.account_integrates
 
 
 --
--- Name: account_trial_app_records unique_account_trial_app_record; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_trial_app_records unique_account_trial_app_record; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_trial_app_records
@@ -4576,7 +4423,7 @@ ALTER TABLE ONLY public.account_trial_app_records
 
 
 --
--- Name: tool_api_providers unique_api_tool_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_api_providers unique_api_tool_provider; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_api_providers
@@ -4584,7 +4431,7 @@ ALTER TABLE ONLY public.tool_api_providers
 
 
 --
--- Name: app_mcp_servers unique_app_mcp_server_server_code; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_mcp_servers unique_app_mcp_server_server_code; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_mcp_servers
@@ -4592,7 +4439,7 @@ ALTER TABLE ONLY public.app_mcp_servers
 
 
 --
--- Name: app_mcp_servers unique_app_mcp_server_tenant_app_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: app_mcp_servers unique_app_mcp_server_tenant_app_id; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.app_mcp_servers
@@ -4600,7 +4447,7 @@ ALTER TABLE ONLY public.app_mcp_servers
 
 
 --
--- Name: tool_builtin_providers unique_builtin_tool_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_builtin_providers unique_builtin_tool_provider; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_builtin_providers
@@ -4608,7 +4455,7 @@ ALTER TABLE ONLY public.tool_builtin_providers
 
 
 --
--- Name: tool_mcp_providers unique_mcp_provider_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_mcp_providers unique_mcp_provider_name; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_mcp_providers
@@ -4616,7 +4463,7 @@ ALTER TABLE ONLY public.tool_mcp_providers
 
 
 --
--- Name: tool_mcp_providers unique_mcp_provider_server_identifier; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_mcp_providers unique_mcp_provider_server_identifier; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_mcp_providers
@@ -4624,7 +4471,7 @@ ALTER TABLE ONLY public.tool_mcp_providers
 
 
 --
--- Name: tool_mcp_providers unique_mcp_provider_server_url; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_mcp_providers unique_mcp_provider_server_url; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_mcp_providers
@@ -4632,7 +4479,7 @@ ALTER TABLE ONLY public.tool_mcp_providers
 
 
 --
--- Name: provider_models unique_provider_model_name; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: provider_models unique_provider_model_name; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.provider_models
@@ -4640,7 +4487,7 @@ ALTER TABLE ONLY public.provider_models
 
 
 --
--- Name: providers unique_provider_name_type_quota; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: providers unique_provider_name_type_quota; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.providers
@@ -4648,7 +4495,7 @@ ALTER TABLE ONLY public.providers
 
 
 --
--- Name: account_integrates unique_provider_open_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_integrates unique_provider_open_id; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_integrates
@@ -4656,7 +4503,7 @@ ALTER TABLE ONLY public.account_integrates
 
 
 --
--- Name: tool_published_apps unique_published_app_tool; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_published_apps unique_published_app_tool; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_published_apps
@@ -4664,7 +4511,7 @@ ALTER TABLE ONLY public.tool_published_apps
 
 
 --
--- Name: tenant_account_joins unique_tenant_account_join; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_account_joins unique_tenant_account_join; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_account_joins
@@ -4672,7 +4519,7 @@ ALTER TABLE ONLY public.tenant_account_joins
 
 
 --
--- Name: installed_apps unique_tenant_app; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: installed_apps unique_tenant_app; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.installed_apps
@@ -4680,15 +4527,7 @@ ALTER TABLE ONLY public.installed_apps
 
 
 --
--- Name: tenant_default_models unique_tenant_default_model_type; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.tenant_default_models
-    ADD CONSTRAINT unique_tenant_default_model_type UNIQUE (tenant_id, model_type);
-
-
---
--- Name: account_plugin_permissions unique_tenant_plugin; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_plugin_permissions unique_tenant_plugin; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_plugin_permissions
@@ -4696,7 +4535,7 @@ ALTER TABLE ONLY public.account_plugin_permissions
 
 
 --
--- Name: tenant_plugin_auto_upgrade_strategies unique_tenant_plugin_auto_upgrade_strategy; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tenant_plugin_auto_upgrade_strategies unique_tenant_plugin_auto_upgrade_strategy; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tenant_plugin_auto_upgrade_strategies
@@ -4704,7 +4543,7 @@ ALTER TABLE ONLY public.tenant_plugin_auto_upgrade_strategies
 
 
 --
--- Name: tool_label_bindings unique_tool_label_bind; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_label_bindings unique_tool_label_bind; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_label_bindings
@@ -4712,7 +4551,7 @@ ALTER TABLE ONLY public.tool_label_bindings
 
 
 --
--- Name: tool_oauth_tenant_clients unique_tool_oauth_tenant_client; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_oauth_tenant_clients unique_tool_oauth_tenant_client; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_oauth_tenant_clients
@@ -4720,7 +4559,7 @@ ALTER TABLE ONLY public.tool_oauth_tenant_clients
 
 
 --
--- Name: trial_apps unique_trail_app_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trial_apps unique_trail_app_id; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trial_apps
@@ -4728,7 +4567,7 @@ ALTER TABLE ONLY public.trial_apps
 
 
 --
--- Name: trigger_oauth_tenant_clients unique_trigger_oauth_tenant_client; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_oauth_tenant_clients unique_trigger_oauth_tenant_client; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_oauth_tenant_clients
@@ -4736,7 +4575,7 @@ ALTER TABLE ONLY public.trigger_oauth_tenant_clients
 
 
 --
--- Name: trigger_subscriptions unique_trigger_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: trigger_subscriptions unique_trigger_provider; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.trigger_subscriptions
@@ -4744,7 +4583,7 @@ ALTER TABLE ONLY public.trigger_subscriptions
 
 
 --
--- Name: tool_workflow_providers unique_workflow_tool_provider; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_workflow_providers unique_workflow_tool_provider; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_workflow_providers
@@ -4752,7 +4591,7 @@ ALTER TABLE ONLY public.tool_workflow_providers
 
 
 --
--- Name: tool_workflow_providers unique_workflow_tool_provider_app_id; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_workflow_providers unique_workflow_tool_provider_app_id; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_workflow_providers
@@ -4760,7 +4599,7 @@ ALTER TABLE ONLY public.tool_workflow_providers
 
 
 --
--- Name: upload_files upload_file_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: upload_files upload_file_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.upload_files
@@ -4768,7 +4607,7 @@ ALTER TABLE ONLY public.upload_files
 
 
 --
--- Name: account_trial_app_records user_trial_app_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: account_trial_app_records user_trial_app_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.account_trial_app_records
@@ -4776,7 +4615,7 @@ ALTER TABLE ONLY public.account_trial_app_records
 
 
 --
--- Name: whitelists whitelists_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: whitelists whitelists_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.whitelists
@@ -4784,7 +4623,7 @@ ALTER TABLE ONLY public.whitelists
 
 
 --
--- Name: workflow_conversation_variables workflow__conversation_variables_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_conversation_variables workflow__conversation_variables_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_conversation_variables
@@ -4792,7 +4631,7 @@ ALTER TABLE ONLY public.workflow_conversation_variables
 
 
 --
--- Name: workflow_app_logs workflow_app_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_app_logs workflow_app_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_app_logs
@@ -4800,7 +4639,7 @@ ALTER TABLE ONLY public.workflow_app_logs
 
 
 --
--- Name: workflow_archive_logs workflow_archive_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_archive_logs workflow_archive_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_archive_logs
@@ -4808,7 +4647,7 @@ ALTER TABLE ONLY public.workflow_archive_logs
 
 
 --
--- Name: workflow_draft_variable_files workflow_draft_variable_files_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_draft_variable_files workflow_draft_variable_files_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_draft_variable_files
@@ -4816,7 +4655,15 @@ ALTER TABLE ONLY public.workflow_draft_variable_files
 
 
 --
--- Name: workflow_draft_variables workflow_draft_variables_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_draft_variables workflow_draft_variables_app_id_key; Type: CONSTRAINT; Schema: public; Owner: dify
+--
+
+ALTER TABLE ONLY public.workflow_draft_variables
+    ADD CONSTRAINT workflow_draft_variables_app_id_key UNIQUE (app_id, node_id, name);
+
+
+--
+-- Name: workflow_draft_variables workflow_draft_variables_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_draft_variables
@@ -4824,7 +4671,7 @@ ALTER TABLE ONLY public.workflow_draft_variables
 
 
 --
--- Name: workflow_node_execution_offload workflow_node_execution_offload_node_execution_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_offload workflow_node_execution_offload_node_execution_id_key; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_node_execution_offload
@@ -4832,7 +4679,7 @@ ALTER TABLE ONLY public.workflow_node_execution_offload
 
 
 --
--- Name: workflow_node_execution_offload workflow_node_execution_offload_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_offload workflow_node_execution_offload_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_node_execution_offload
@@ -4840,7 +4687,7 @@ ALTER TABLE ONLY public.workflow_node_execution_offload
 
 
 --
--- Name: workflow_node_executions workflow_node_execution_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_node_executions workflow_node_execution_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_node_executions
@@ -4848,7 +4695,7 @@ ALTER TABLE ONLY public.workflow_node_executions
 
 
 --
--- Name: workflow_pause_reasons workflow_pause_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_pause_reasons workflow_pause_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_pause_reasons
@@ -4856,7 +4703,7 @@ ALTER TABLE ONLY public.workflow_pause_reasons
 
 
 --
--- Name: workflow_pauses workflow_pauses_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_pauses workflow_pauses_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_pauses
@@ -4864,7 +4711,7 @@ ALTER TABLE ONLY public.workflow_pauses
 
 
 --
--- Name: workflow_pauses workflow_pauses_workflow_run_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_pauses workflow_pauses_workflow_run_id_key; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_pauses
@@ -4872,7 +4719,7 @@ ALTER TABLE ONLY public.workflow_pauses
 
 
 --
--- Name: workflows workflow_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflows workflow_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflows
@@ -4880,7 +4727,7 @@ ALTER TABLE ONLY public.workflows
 
 
 --
--- Name: workflow_plugin_triggers workflow_plugin_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_plugin_triggers workflow_plugin_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_plugin_triggers
@@ -4888,7 +4735,7 @@ ALTER TABLE ONLY public.workflow_plugin_triggers
 
 
 --
--- Name: workflow_runs workflow_run_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_runs workflow_run_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_runs
@@ -4896,7 +4743,7 @@ ALTER TABLE ONLY public.workflow_runs
 
 
 --
--- Name: workflow_schedule_plans workflow_schedule_plan_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_schedule_plans workflow_schedule_plan_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_schedule_plans
@@ -4904,7 +4751,7 @@ ALTER TABLE ONLY public.workflow_schedule_plans
 
 
 --
--- Name: workflow_trigger_logs workflow_trigger_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_trigger_logs workflow_trigger_log_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_trigger_logs
@@ -4912,7 +4759,7 @@ ALTER TABLE ONLY public.workflow_trigger_logs
 
 
 --
--- Name: workflow_webhook_triggers workflow_webhook_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: workflow_webhook_triggers workflow_webhook_trigger_pkey; Type: CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.workflow_webhook_triggers
@@ -4920,1218 +4767,1141 @@ ALTER TABLE ONLY public.workflow_webhook_triggers
 
 
 --
--- Name: account_email_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: account_email_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX account_email_idx ON public.accounts USING btree (email);
 
 
 --
--- Name: account_trial_app_record_account_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: account_trial_app_record_account_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX account_trial_app_record_account_id_idx ON public.account_trial_app_records USING btree (account_id);
 
 
 --
--- Name: account_trial_app_record_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: account_trial_app_record_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX account_trial_app_record_app_id_idx ON public.account_trial_app_records USING btree (app_id);
 
 
 --
--- Name: api_based_extension_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: api_based_extension_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX api_based_extension_tenant_idx ON public.api_based_extensions USING btree (tenant_id);
 
 
 --
--- Name: api_request_token_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: api_request_token_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX api_request_token_idx ON public.api_requests USING btree (tenant_id, api_token_id);
 
 
 --
--- Name: api_token_app_id_type_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: api_token_app_id_type_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX api_token_app_id_type_idx ON public.api_tokens USING btree (app_id, type);
 
 
 --
--- Name: api_token_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: api_token_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX api_token_tenant_idx ON public.api_tokens USING btree (tenant_id, type);
 
 
 --
--- Name: api_token_token_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: api_token_token_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX api_token_token_idx ON public.api_tokens USING btree (token, type);
 
 
 --
--- Name: app_annotation_hit_histories_account_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_annotation_hit_histories_account_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_annotation_hit_histories_account_idx ON public.app_annotation_hit_histories USING btree (account_id);
 
 
 --
--- Name: app_annotation_hit_histories_annotation_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_annotation_hit_histories_annotation_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_annotation_hit_histories_annotation_idx ON public.app_annotation_hit_histories USING btree (annotation_id);
 
 
 --
--- Name: app_annotation_hit_histories_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_annotation_hit_histories_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_annotation_hit_histories_app_idx ON public.app_annotation_hit_histories USING btree (app_id);
 
 
 --
--- Name: app_annotation_hit_histories_message_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_annotation_hit_histories_message_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_annotation_hit_histories_message_idx ON public.app_annotation_hit_histories USING btree (message_id);
 
 
 --
--- Name: app_annotation_settings_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_annotation_settings_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_annotation_settings_app_idx ON public.app_annotation_settings USING btree (app_id);
 
 
 --
--- Name: app_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_app_id_idx ON public.app_model_configs USING btree (app_id);
 
 
 --
--- Name: app_dataset_join_app_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_dataset_join_app_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_dataset_join_app_dataset_idx ON public.app_dataset_joins USING btree (dataset_id, app_id);
 
 
 --
--- Name: app_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_tenant_id_idx ON public.apps USING btree (tenant_id);
 
 
 --
--- Name: app_trigger_tenant_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: app_trigger_tenant_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX app_trigger_tenant_app_idx ON public.app_triggers USING btree (tenant_id, app_id);
 
 
 --
--- Name: child_chunk_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: child_chunk_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX child_chunk_dataset_id_idx ON public.child_chunks USING btree (tenant_id, dataset_id, document_id, segment_id, index_node_id);
 
 
 --
--- Name: child_chunks_node_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: child_chunks_node_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX child_chunks_node_idx ON public.child_chunks USING btree (index_node_id, dataset_id);
 
 
 --
--- Name: child_chunks_segment_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: child_chunks_segment_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX child_chunks_segment_idx ON public.child_chunks USING btree (segment_id);
 
 
 --
--- Name: conversation_app_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX conversation_app_created_at_idx ON public.conversations USING btree (app_id, created_at DESC) WHERE (is_deleted IS FALSE);
-
-
---
--- Name: conversation_app_from_user_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: conversation_app_from_user_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX conversation_app_from_user_idx ON public.conversations USING btree (app_id, from_source, from_end_user_id);
 
 
 --
--- Name: conversation_app_updated_at_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX conversation_app_updated_at_idx ON public.conversations USING btree (app_id, updated_at DESC) WHERE (is_deleted IS FALSE);
-
-
---
--- Name: conversation_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: conversation_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX conversation_id_idx ON public.tool_conversation_variables USING btree (conversation_id);
 
 
 --
--- Name: created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: created_at_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX created_at_idx ON public.embeddings USING btree (created_at);
 
 
 --
--- Name: data_source_api_key_auth_binding_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: data_source_api_key_auth_binding_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX data_source_api_key_auth_binding_provider_idx ON public.data_source_api_key_auth_bindings USING btree (provider);
 
 
 --
--- Name: data_source_api_key_auth_binding_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: data_source_api_key_auth_binding_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX data_source_api_key_auth_binding_tenant_id_idx ON public.data_source_api_key_auth_bindings USING btree (tenant_id);
 
 
 --
--- Name: dataset_auto_disable_log_created_atx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_auto_disable_log_created_atx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_auto_disable_log_created_atx ON public.dataset_auto_disable_logs USING btree (created_at);
 
 
 --
--- Name: dataset_auto_disable_log_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_auto_disable_log_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_auto_disable_log_dataset_idx ON public.dataset_auto_disable_logs USING btree (dataset_id);
 
 
 --
--- Name: dataset_auto_disable_log_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_auto_disable_log_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_auto_disable_log_tenant_idx ON public.dataset_auto_disable_logs USING btree (tenant_id);
 
 
 --
--- Name: dataset_keyword_table_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_keyword_table_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_keyword_table_dataset_id_idx ON public.dataset_keyword_tables USING btree (dataset_id);
 
 
 --
--- Name: dataset_metadata_binding_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_metadata_binding_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_metadata_binding_dataset_idx ON public.dataset_metadata_bindings USING btree (dataset_id);
 
 
 --
--- Name: dataset_metadata_binding_document_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_metadata_binding_document_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_metadata_binding_document_idx ON public.dataset_metadata_bindings USING btree (document_id);
 
 
 --
--- Name: dataset_metadata_binding_metadata_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_metadata_binding_metadata_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_metadata_binding_metadata_idx ON public.dataset_metadata_bindings USING btree (metadata_id);
 
 
 --
--- Name: dataset_metadata_binding_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_metadata_binding_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_metadata_binding_tenant_idx ON public.dataset_metadata_bindings USING btree (tenant_id);
 
 
 --
--- Name: dataset_metadata_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_metadata_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_metadata_dataset_idx ON public.dataset_metadatas USING btree (dataset_id);
 
 
 --
--- Name: dataset_metadata_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_metadata_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_metadata_tenant_idx ON public.dataset_metadatas USING btree (tenant_id);
 
 
 --
--- Name: dataset_process_rule_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_process_rule_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_process_rule_dataset_id_idx ON public.dataset_process_rules USING btree (dataset_id);
 
 
 --
--- Name: dataset_query_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_query_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_query_dataset_id_idx ON public.dataset_queries USING btree (dataset_id);
 
 
 --
--- Name: dataset_retriever_resource_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_retriever_resource_message_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_retriever_resource_message_id_idx ON public.dataset_retriever_resources USING btree (message_id);
 
 
 --
--- Name: dataset_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: dataset_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX dataset_tenant_idx ON public.datasets USING btree (tenant_id);
 
 
 --
--- Name: datasource_provider_auth_type_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: datasource_provider_auth_type_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX datasource_provider_auth_type_provider_idx ON public.datasource_providers USING btree (tenant_id, plugin_id, provider);
 
 
 --
--- Name: document_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_dataset_id_idx ON public.documents USING btree (dataset_id);
 
 
 --
--- Name: document_is_paused_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_is_paused_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_is_paused_idx ON public.documents USING btree (is_paused);
 
 
 --
--- Name: document_metadata_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_metadata_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_metadata_idx ON public.documents USING gin (doc_metadata);
 
 
 --
--- Name: document_pipeline_execution_logs_document_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_pipeline_execution_logs_document_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_pipeline_execution_logs_document_id_idx ON public.document_pipeline_execution_logs USING btree (document_id);
 
 
 --
--- Name: document_segment_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_dataset_id_idx ON public.document_segments USING btree (dataset_id);
 
 
 --
--- Name: document_segment_document_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_document_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_document_id_idx ON public.document_segments USING btree (document_id);
 
 
 --
--- Name: document_segment_node_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_node_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_node_dataset_idx ON public.document_segments USING btree (index_node_id, dataset_id);
 
 
 --
--- Name: document_segment_summaries_chunk_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_summaries_chunk_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_summaries_chunk_id_idx ON public.document_segment_summaries USING btree (chunk_id);
 
 
 --
--- Name: document_segment_summaries_dataset_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_summaries_dataset_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_summaries_dataset_id_idx ON public.document_segment_summaries USING btree (dataset_id);
 
 
 --
--- Name: document_segment_summaries_document_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_summaries_document_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_summaries_document_id_idx ON public.document_segment_summaries USING btree (document_id);
 
 
 --
--- Name: document_segment_summaries_status_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_summaries_status_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_summaries_status_idx ON public.document_segment_summaries USING btree (status);
 
 
 --
--- Name: document_segment_tenant_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_tenant_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_tenant_dataset_idx ON public.document_segments USING btree (dataset_id, tenant_id);
 
 
 --
--- Name: document_segment_tenant_document_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_tenant_document_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_tenant_document_idx ON public.document_segments USING btree (document_id, tenant_id);
 
 
 --
--- Name: document_segment_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_segment_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_segment_tenant_idx ON public.document_segments USING btree (tenant_id);
 
 
 --
--- Name: document_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: document_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX document_tenant_idx ON public.documents USING btree (tenant_id);
 
 
 --
--- Name: end_user_session_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: end_user_session_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX end_user_session_id_idx ON public.end_users USING btree (session_id, type);
 
 
 --
--- Name: end_user_tenant_session_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: end_user_tenant_session_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX end_user_tenant_session_id_idx ON public.end_users USING btree (tenant_id, session_id, type);
 
 
 --
--- Name: execution_extra_contents_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX execution_extra_contents_message_id_idx ON public.execution_extra_contents USING btree (message_id);
-
-
---
--- Name: execution_extra_contents_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX execution_extra_contents_workflow_run_id_idx ON public.execution_extra_contents USING btree (workflow_run_id);
-
-
---
--- Name: external_knowledge_apis_name_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: external_knowledge_apis_name_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX external_knowledge_apis_name_idx ON public.external_knowledge_apis USING btree (name);
 
 
 --
--- Name: external_knowledge_apis_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: external_knowledge_apis_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX external_knowledge_apis_tenant_idx ON public.external_knowledge_apis USING btree (tenant_id);
 
 
 --
--- Name: external_knowledge_bindings_dataset_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: external_knowledge_bindings_dataset_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX external_knowledge_bindings_dataset_idx ON public.external_knowledge_bindings USING btree (dataset_id);
 
 
 --
--- Name: external_knowledge_bindings_external_knowledge_api_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: external_knowledge_bindings_external_knowledge_api_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX external_knowledge_bindings_external_knowledge_api_idx ON public.external_knowledge_bindings USING btree (external_knowledge_api_id);
 
 
 --
--- Name: external_knowledge_bindings_external_knowledge_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: external_knowledge_bindings_external_knowledge_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX external_knowledge_bindings_external_knowledge_idx ON public.external_knowledge_bindings USING btree (external_knowledge_id);
 
 
 --
--- Name: external_knowledge_bindings_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: external_knowledge_bindings_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX external_knowledge_bindings_tenant_idx ON public.external_knowledge_bindings USING btree (tenant_id);
 
 
 --
--- Name: human_input_form_deliveries_form_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX human_input_form_deliveries_form_id_idx ON public.human_input_form_deliveries USING btree (form_id);
-
-
---
--- Name: human_input_form_recipients_delivery_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX human_input_form_recipients_delivery_id_idx ON public.human_input_form_recipients USING btree (delivery_id);
-
-
---
--- Name: human_input_form_recipients_form_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX human_input_form_recipients_form_id_idx ON public.human_input_form_recipients USING btree (form_id);
-
-
---
--- Name: human_input_forms_status_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX human_input_forms_status_created_at_idx ON public.human_input_forms USING btree (status, created_at);
-
-
---
--- Name: human_input_forms_status_expiration_time_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX human_input_forms_status_expiration_time_idx ON public.human_input_forms USING btree (status, expiration_time);
-
-
---
--- Name: human_input_forms_workflow_run_id_node_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX human_input_forms_workflow_run_id_node_id_idx ON public.human_input_forms USING btree (workflow_run_id, node_id);
-
-
---
--- Name: idx_dataset_permissions_account_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_dataset_permissions_account_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_dataset_permissions_account_id ON public.dataset_permissions USING btree (account_id);
 
 
 --
--- Name: idx_dataset_permissions_dataset_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_dataset_permissions_dataset_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_dataset_permissions_dataset_id ON public.dataset_permissions USING btree (dataset_id);
 
 
 --
--- Name: idx_dataset_permissions_tenant_id; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_dataset_permissions_tenant_id; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_dataset_permissions_tenant_id ON public.dataset_permissions USING btree (tenant_id);
 
 
 --
--- Name: idx_trigger_providers_endpoint; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_providers_endpoint; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE UNIQUE INDEX idx_trigger_providers_endpoint ON public.trigger_subscriptions USING btree (endpoint_id);
 
 
 --
--- Name: idx_trigger_providers_tenant_endpoint; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_providers_tenant_endpoint; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_trigger_providers_tenant_endpoint ON public.trigger_subscriptions USING btree (tenant_id, endpoint_id);
 
 
 --
--- Name: idx_trigger_providers_tenant_provider; Type: INDEX; Schema: public; Owner: postgres
+-- Name: idx_trigger_providers_tenant_provider; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX idx_trigger_providers_tenant_provider ON public.trigger_subscriptions USING btree (tenant_id, provider_id);
 
 
 --
--- Name: installed_app_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: installed_app_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX installed_app_app_id_idx ON public.installed_apps USING btree (app_id);
 
 
 --
--- Name: installed_app_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: installed_app_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX installed_app_tenant_id_idx ON public.installed_apps USING btree (tenant_id);
 
 
 --
--- Name: invitation_codes_batch_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: invitation_codes_batch_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX invitation_codes_batch_idx ON public.invitation_codes USING btree (batch);
 
 
 --
--- Name: invitation_codes_code_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: invitation_codes_code_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX invitation_codes_code_idx ON public.invitation_codes USING btree (code, status);
 
 
 --
--- Name: load_balancing_model_config_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: load_balancing_model_config_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX load_balancing_model_config_tenant_provider_model_idx ON public.load_balancing_model_configs USING btree (tenant_id, provider_name, model_type);
 
 
 --
--- Name: message_account_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_account_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_account_idx ON public.messages USING btree (app_id, from_source, from_account_id);
 
 
 --
--- Name: message_agent_thought_message_chain_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_agent_thought_message_chain_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_agent_thought_message_chain_id_idx ON public.message_agent_thoughts USING btree (message_chain_id);
 
 
 --
--- Name: message_agent_thought_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_agent_thought_message_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_agent_thought_message_id_idx ON public.message_agent_thoughts USING btree (message_id);
 
 
 --
--- Name: message_annotation_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_annotation_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_annotation_app_idx ON public.message_annotations USING btree (app_id);
 
 
 --
--- Name: message_annotation_conversation_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_annotation_conversation_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_annotation_conversation_idx ON public.message_annotations USING btree (conversation_id);
 
 
 --
--- Name: message_annotation_message_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_annotation_message_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_annotation_message_idx ON public.message_annotations USING btree (message_id);
 
 
 --
--- Name: message_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_app_id_idx ON public.messages USING btree (app_id, created_at);
 
 
 --
--- Name: message_app_mode_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_app_mode_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_app_mode_idx ON public.messages USING btree (app_mode);
 
 
 --
--- Name: message_chain_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_chain_message_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_chain_message_id_idx ON public.message_chains USING btree (message_id);
 
 
 --
--- Name: message_conversation_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_conversation_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_conversation_id_idx ON public.messages USING btree (conversation_id);
 
 
 --
--- Name: message_created_at_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_created_at_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_created_at_id_idx ON public.messages USING btree (created_at, id);
 
 
 --
--- Name: message_end_user_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_created_at_idx; Type: INDEX; Schema: public; Owner: dify
+--
+
+CREATE INDEX message_created_at_idx ON public.messages USING btree (created_at);
+
+
+--
+-- Name: message_end_user_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_end_user_idx ON public.messages USING btree (app_id, from_source, from_end_user_id);
 
 
 --
--- Name: message_feedback_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_feedback_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_feedback_app_idx ON public.message_feedbacks USING btree (app_id);
 
 
 --
--- Name: message_feedback_conversation_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_feedback_conversation_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_feedback_conversation_idx ON public.message_feedbacks USING btree (conversation_id, from_source, rating);
 
 
 --
--- Name: message_feedback_message_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_feedback_message_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_feedback_message_idx ON public.message_feedbacks USING btree (message_id, from_source);
 
 
 --
--- Name: message_file_created_by_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_file_created_by_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_file_created_by_idx ON public.message_files USING btree (created_by);
 
 
 --
--- Name: message_file_message_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_file_message_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_file_message_idx ON public.message_files USING btree (message_id);
 
 
 --
--- Name: message_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: message_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX message_workflow_run_id_idx ON public.messages USING btree (conversation_id, workflow_run_id);
 
 
 --
--- Name: oauth_provider_app_client_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: oauth_provider_app_client_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX oauth_provider_app_client_id_idx ON public.oauth_provider_apps USING btree (client_id);
 
 
 --
--- Name: operation_log_account_action_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: operation_log_account_action_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX operation_log_account_action_idx ON public.operation_logs USING btree (tenant_id, account_id, action);
 
 
 --
--- Name: pinned_conversation_conversation_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: pinned_conversation_conversation_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX pinned_conversation_conversation_idx ON public.pinned_conversations USING btree (app_id, conversation_id, created_by_role, created_by);
 
 
 --
--- Name: pipeline_customized_template_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: pipeline_customized_template_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX pipeline_customized_template_tenant_idx ON public.pipeline_customized_templates USING btree (tenant_id);
 
 
 --
--- Name: provider_credential_tenant_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_credential_tenant_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_credential_tenant_provider_idx ON public.provider_credentials USING btree (tenant_id, provider_name);
 
 
 --
--- Name: provider_model_credential_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_model_credential_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_model_credential_tenant_provider_model_idx ON public.provider_model_credentials USING btree (tenant_id, provider_name, model_name, model_type);
 
 
 --
--- Name: provider_model_name_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_model_name_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_model_name_idx ON public.dataset_collection_bindings USING btree (provider_name, model_name);
 
 
 --
--- Name: provider_model_setting_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_model_setting_tenant_provider_model_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_model_setting_tenant_provider_model_idx ON public.provider_model_settings USING btree (tenant_id, provider_name, model_type);
 
 
 --
--- Name: provider_model_tenant_id_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_model_tenant_id_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_model_tenant_id_provider_idx ON public.provider_models USING btree (tenant_id, provider_name);
 
 
 --
--- Name: provider_order_tenant_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_order_tenant_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_order_tenant_provider_idx ON public.provider_orders USING btree (tenant_id, provider_name);
 
 
 --
--- Name: provider_tenant_id_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: provider_tenant_id_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX provider_tenant_id_provider_idx ON public.providers USING btree (tenant_id, provider_name);
 
 
 --
--- Name: rate_limit_log_operation_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: rate_limit_log_operation_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX rate_limit_log_operation_idx ON public.rate_limit_logs USING btree (operation);
 
 
 --
--- Name: rate_limit_log_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: rate_limit_log_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX rate_limit_log_tenant_idx ON public.rate_limit_logs USING btree (tenant_id);
 
 
 --
--- Name: recommended_app_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: recommended_app_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX recommended_app_app_id_idx ON public.recommended_apps USING btree (app_id);
 
 
 --
--- Name: recommended_app_is_listed_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: recommended_app_is_listed_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX recommended_app_is_listed_idx ON public.recommended_apps USING btree (is_listed, language);
 
 
 --
--- Name: retrieval_model_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: retrieval_model_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX retrieval_model_idx ON public.datasets USING gin (retrieval_model);
 
 
 --
--- Name: saved_message_message_id_idx; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE INDEX saved_message_message_id_idx ON public.saved_messages USING btree (message_id);
-
-
---
--- Name: saved_message_message_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: saved_message_message_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX saved_message_message_idx ON public.saved_messages USING btree (app_id, message_id, created_by_role, created_by);
 
 
 --
--- Name: segment_attachment_binding_attachment_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: segment_attachment_binding_attachment_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX segment_attachment_binding_attachment_idx ON public.segment_attachment_bindings USING btree (attachment_id);
 
 
 --
--- Name: segment_attachment_binding_tenant_dataset_document_segment_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: segment_attachment_binding_tenant_dataset_document_segment_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX segment_attachment_binding_tenant_dataset_document_segment_idx ON public.segment_attachment_bindings USING btree (tenant_id, dataset_id, document_id, segment_id);
 
 
 --
--- Name: site_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: site_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX site_app_id_idx ON public.sites USING btree (app_id);
 
 
 --
--- Name: site_code_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: site_code_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX site_code_idx ON public.sites USING btree (code, status);
 
 
 --
--- Name: source_binding_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: source_binding_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX source_binding_tenant_id_idx ON public.data_source_oauth_bindings USING btree (tenant_id);
 
 
 --
--- Name: source_info_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: source_info_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX source_info_idx ON public.data_source_oauth_bindings USING gin (source_info);
 
 
 --
--- Name: tag_bind_tag_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tag_bind_tag_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tag_bind_tag_id_idx ON public.tag_bindings USING btree (tag_id);
 
 
 --
--- Name: tag_bind_target_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tag_bind_target_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tag_bind_target_id_idx ON public.tag_bindings USING btree (target_id);
 
 
 --
--- Name: tag_name_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tag_name_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tag_name_idx ON public.tags USING btree (name);
 
 
 --
--- Name: tag_type_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tag_type_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tag_type_idx ON public.tags USING btree (type);
 
 
 --
--- Name: tenant_account_join_account_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tenant_account_join_account_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tenant_account_join_account_id_idx ON public.tenant_account_joins USING btree (account_id);
 
 
 --
--- Name: tenant_account_join_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tenant_account_join_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tenant_account_join_tenant_id_idx ON public.tenant_account_joins USING btree (tenant_id);
 
 
 --
--- Name: tenant_credit_pool_pool_type_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tenant_credit_pool_pool_type_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tenant_credit_pool_pool_type_idx ON public.tenant_credit_pools USING btree (pool_type);
 
 
 --
--- Name: tenant_credit_pool_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tenant_credit_pool_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tenant_credit_pool_tenant_id_idx ON public.tenant_credit_pools USING btree (tenant_id);
 
 
 --
--- Name: tenant_default_model_tenant_id_provider_type_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tenant_default_model_tenant_id_provider_type_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tenant_default_model_tenant_id_provider_type_idx ON public.tenant_default_models USING btree (tenant_id, provider_name, model_type);
 
 
 --
--- Name: tenant_preferred_model_provider_tenant_provider_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tenant_preferred_model_provider_tenant_provider_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tenant_preferred_model_provider_tenant_provider_idx ON public.tenant_preferred_model_providers USING btree (tenant_id, provider_name);
 
 
 --
--- Name: tidb_auth_bindings_active_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tidb_auth_bindings_active_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tidb_auth_bindings_active_idx ON public.tidb_auth_bindings USING btree (active);
 
 
 --
--- Name: tidb_auth_bindings_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tidb_auth_bindings_created_at_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tidb_auth_bindings_created_at_idx ON public.tidb_auth_bindings USING btree (created_at);
 
 
 --
--- Name: tidb_auth_bindings_status_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tidb_auth_bindings_status_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tidb_auth_bindings_status_idx ON public.tidb_auth_bindings USING btree (status);
 
 
 --
--- Name: tidb_auth_bindings_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tidb_auth_bindings_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tidb_auth_bindings_tenant_idx ON public.tidb_auth_bindings USING btree (tenant_id);
 
 
 --
--- Name: tool_file_conversation_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: tool_file_conversation_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX tool_file_conversation_id_idx ON public.tool_files USING btree (conversation_id);
 
 
 --
--- Name: trace_app_config_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: trace_app_config_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX trace_app_config_app_id_idx ON public.trace_app_config USING btree (app_id);
 
 
 --
--- Name: trial_app_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: trial_app_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX trial_app_app_id_idx ON public.trial_apps USING btree (app_id);
 
 
 --
--- Name: trial_app_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: trial_app_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX trial_app_tenant_id_idx ON public.trial_apps USING btree (tenant_id);
 
 
 --
--- Name: upload_file_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: upload_file_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX upload_file_tenant_idx ON public.upload_files USING btree (tenant_id);
 
 
 --
--- Name: user_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: user_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX user_id_idx ON public.tool_conversation_variables USING btree (user_id);
 
 
 --
--- Name: whitelists_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: whitelists_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX whitelists_tenant_idx ON public.whitelists USING btree (tenant_id);
 
 
 --
--- Name: workflow_app_log_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_app_log_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_app_log_app_idx ON public.workflow_app_logs USING btree (tenant_id, app_id);
 
 
 --
--- Name: workflow_app_log_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_app_log_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_app_log_workflow_run_id_idx ON public.workflow_app_logs USING btree (workflow_run_id);
 
 
 --
--- Name: workflow_archive_log_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_archive_log_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_archive_log_app_idx ON public.workflow_archive_logs USING btree (tenant_id, app_id);
 
 
 --
--- Name: workflow_archive_log_run_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_archive_log_run_created_at_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_archive_log_run_created_at_idx ON public.workflow_archive_logs USING btree (run_created_at);
 
 
 --
--- Name: workflow_archive_log_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_archive_log_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_archive_log_workflow_run_id_idx ON public.workflow_archive_logs USING btree (workflow_run_id);
 
 
 --
--- Name: workflow_conversation_variables_app_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_conversation_variables_app_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_conversation_variables_app_id_idx ON public.workflow_conversation_variables USING btree (app_id);
 
 
 --
--- Name: workflow_conversation_variables_conversation_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_conversation_variables_conversation_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_conversation_variables_conversation_id_idx ON public.workflow_conversation_variables USING btree (conversation_id);
 
 
 --
--- Name: workflow_conversation_variables_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_conversation_variables_created_at_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_conversation_variables_created_at_idx ON public.workflow_conversation_variables USING btree (created_at);
 
 
 --
--- Name: workflow_draft_variable_file_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_draft_variable_file_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_draft_variable_file_id_idx ON public.workflow_draft_variables USING btree (file_id);
 
 
 --
--- Name: workflow_draft_variables_app_id_user_id_key; Type: INDEX; Schema: public; Owner: postgres
---
-
-CREATE UNIQUE INDEX workflow_draft_variables_app_id_user_id_key ON public.workflow_draft_variables USING btree (app_id, user_id, node_id, name);
-
-
---
--- Name: workflow_node_execution_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_node_execution_id_idx ON public.workflow_node_executions USING btree (tenant_id, app_id, workflow_id, triggered_from, node_execution_id);
 
 
 --
--- Name: workflow_node_execution_node_run_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_node_run_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_node_execution_node_run_idx ON public.workflow_node_executions USING btree (tenant_id, app_id, workflow_id, triggered_from, node_id);
 
 
 --
--- Name: workflow_node_execution_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_node_execution_workflow_run_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_node_execution_workflow_run_id_idx ON public.workflow_node_executions USING btree (workflow_run_id);
 
 
 --
--- Name: workflow_node_executions_tenant_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_node_executions_tenant_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_node_executions_tenant_id_idx ON public.workflow_node_executions USING btree (tenant_id, workflow_id, node_id, created_at DESC);
 
 
 --
--- Name: workflow_pause_reasons_pause_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_pause_reasons_pause_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_pause_reasons_pause_id_idx ON public.workflow_pause_reasons USING btree (pause_id);
 
 
 --
--- Name: workflow_plugin_trigger_tenant_subscription_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_plugin_trigger_tenant_subscription_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_plugin_trigger_tenant_subscription_idx ON public.workflow_plugin_triggers USING btree (tenant_id, subscription_id, event_name);
 
 
 --
--- Name: workflow_run_created_at_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_run_created_at_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_run_created_at_id_idx ON public.workflow_runs USING btree (created_at, id);
 
 
 --
--- Name: workflow_run_triggerd_from_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_run_triggerd_from_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_run_triggerd_from_idx ON public.workflow_runs USING btree (tenant_id, app_id, triggered_from);
 
 
 --
--- Name: workflow_schedule_plan_next_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_schedule_plan_next_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_schedule_plan_next_idx ON public.workflow_schedule_plans USING btree (next_run_at);
 
 
 --
--- Name: workflow_trigger_log_created_at_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_trigger_log_created_at_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_trigger_log_created_at_idx ON public.workflow_trigger_logs USING btree (created_at);
 
 
 --
--- Name: workflow_trigger_log_status_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_trigger_log_status_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_trigger_log_status_idx ON public.workflow_trigger_logs USING btree (status);
 
 
 --
--- Name: workflow_trigger_log_tenant_app_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_trigger_log_tenant_app_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_trigger_log_tenant_app_idx ON public.workflow_trigger_logs USING btree (tenant_id, app_id);
 
 
 --
--- Name: workflow_trigger_log_workflow_id_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_trigger_log_workflow_id_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_trigger_log_workflow_id_idx ON public.workflow_trigger_logs USING btree (workflow_id);
 
 
 --
--- Name: workflow_trigger_log_workflow_run_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_trigger_log_workflow_run_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_trigger_log_workflow_run_idx ON public.workflow_trigger_logs USING btree (workflow_run_id);
 
 
 --
--- Name: workflow_version_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_version_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_version_idx ON public.workflows USING btree (tenant_id, app_id, version);
 
 
 --
--- Name: workflow_webhook_trigger_tenant_idx; Type: INDEX; Schema: public; Owner: postgres
+-- Name: workflow_webhook_trigger_tenant_idx; Type: INDEX; Schema: public; Owner: dify
 --
 
 CREATE INDEX workflow_webhook_trigger_tenant_idx ON public.workflow_webhook_triggers USING btree (tenant_id);
 
 
 --
--- Name: tool_published_apps tool_published_apps_app_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: tool_published_apps tool_published_apps_app_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: dify
 --
 
 ALTER TABLE ONLY public.tool_published_apps
@@ -6142,5 +5912,5 @@ ALTER TABLE ONLY public.tool_published_apps
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 5zgOvXV5ENvOBBCutAbQ7UzIICAD23MwMgq5PkbdReKQWLPvlqVa3DsKiUOEkNE
+\unrestrict 3gp3jXtMcDjNbcCz6VSqCgv9Mbc7MWVBC6J93LkbG5IrgPeQvoNNgg56AfJQFg6
 

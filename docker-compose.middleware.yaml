@@ -38,7 +38,7 @@ services:
       REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
     volumes:
       # Mount the redis data directory to the container.
-      - ${REDIS_HOST_VOLUME:-./volumes/redis/data}:/data
+      - redis_data:/data
     # Set the redis password when startup redis server.
     command: redis-server --requirepass ${REDIS_PASSWORD:-difyai123456}
     ports:
@@ -166,7 +166,7 @@ services:
 
   # The Weaviate vector store.
   weaviate:
-    image: semitechnologies/weaviate:1.19.0
+    image: semitechnologies/weaviate:1.30.0
     container_name: weaviate
     profiles:
       - ""
@@ -174,7 +174,7 @@ services:
     restart: always
     volumes:
       # Mount the Weaviate data directory to the container.
-      - ${WEAVIATE_HOST_VOLUME:-./volumes/weaviate}:/var/lib/weaviate
+      - weaviate_data:/var/lib/weaviate
     env_file:
       - ./middleware.env
     environment:
@@ -198,3 +198,14 @@ networks:
   ssrf_proxy_network:
     driver: bridge
     internal: true
+
+volumes:
+  pg_data:
+    driver: local
+    name: pg_data
+  redis_data:
+    driver: local
+    name: redis_data
+  weaviate_data:
+    driver: local
+    name: weaviate_data

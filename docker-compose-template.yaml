@@ -116,8 +116,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-dify}
       PGDATA: ${PGDATA:-/var/lib/postgresql/data/pgdata}
       POSTGRESQL_SHARED_PRELOAD_LIBRARIES: pg_stat_statements,pgaudit
-    ports:
-      - 5432:5432
     command: >
       postgres -c 'max_connections=${POSTGRES_MAX_CONNECTIONS:-100}'
                -c 'shared_buffers=${POSTGRES_SHARED_BUFFERS:-128MB}'
@@ -125,7 +123,9 @@ services:
                -c 'maintenance_work_mem=${POSTGRES_MAINTENANCE_WORK_MEM:-64MB}'
                -c 'effective_cache_size=${POSTGRES_EFFECTIVE_CACHE_SIZE:-4096MB}'
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "${EXPOSE_POSTGRES_PORT:-5432}:5432"
     healthcheck:
       test:
         [
@@ -144,7 +144,7 @@ services:
 
   # The redis cache.
   redis:
-    image: redis:7-alpine
+    image: redis:8
     container_name: redis
     restart: always
     environment:
@@ -191,7 +191,6 @@ services:
   # plugin daemon
   plugin_daemon:
     image: langgenius/dify-plugin-daemon:0.3.0-local
-    # image: dify-plugin-daemon:0.3.0-local
     container_name: dify-plugin-daemon
     restart: always
     environment:

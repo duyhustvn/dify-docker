@@ -4,10 +4,9 @@
 set -e
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$( cd "${SCRIPT_DIR}/../.." && pwd )"
-cd "${PROJECT_ROOT}"
 
-STRESS_TEST_DIR="scripts/stress-test"
+STRESS_TEST_DIR="${SCRIPT_DIR}"
+HOST="http://localhost:5001"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 REPORT_DIR="${STRESS_TEST_DIR}/reports"
 CSV_PREFIX="${REPORT_DIR}/capacity_${TIMESTAMP}"
@@ -99,7 +98,7 @@ if [ "$choice" = "2" ]; then
   echo -e "${BLUE}Starting Locust web UI on http://localhost:8089 ...${NC}"
   TEST_MODE="$TEST_MODE" uv --project api run locust \
     -f "$LOCUST_SCRIPT" \
-    --host http://localhost:5001 \
+    --host "${HOST}" \
     --web-port 8089
 else
   echo -e "${BLUE}Running in headless mode (TEST_MODE=${TEST_MODE})...${NC}"
@@ -107,7 +106,7 @@ else
 
   TEST_MODE="$TEST_MODE" uv --project api run locust \
     -f "$LOCUST_SCRIPT" \
-    --host http://localhost:5001 \
+    --host "${HOST}" \
     --headless \
     --print-stats \
     --csv="$CSV_PREFIX" \
